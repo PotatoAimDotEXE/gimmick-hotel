@@ -42,5 +42,8 @@
     }
   });
 
+  // Esc = back to the lobby
+  onEscape(() => (location.href = "index.html"));
+
   render();
 })();

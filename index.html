@@ -28,12 +28,20 @@
             <input id="player-name" type="text" maxlength="16" placeholder="Your name" />
           </div>
 
+          <!-- Single player / Party switch (applies to every game) -->
+          <div class="mode-switch">
+            <span class="mode-label" data-mode="single">Single player</span>
+            <button class="switch" id="mode-switch" role="switch" aria-checked="false" aria-label="Party mode">
+              <span class="switch-knob"></span>
+            </button>
+            <span class="mode-label" data-mode="party">Party</span>
+          </div>
+
           <nav class="menu">
-            <a class="menu-btn primary" href="hallway.html" id="btn-play">▶ PLAY</a>
+            <button class="menu-btn primary" id="btn-play">▶ PLAY</button>
             <button class="menu-btn" data-open="how-to">How to play</button>
-            <button class="menu-btn" data-open="scores">Leaderboard</button>
-            <button class="menu-btn" data-open="credits">Credits</button>
           </nav>
+          <p class="menu-note" id="mode-note" aria-live="polite"></p>
 
           <div class="desk" aria-hidden="true">
             <button class="bell" id="bell" aria-label="Ring the bell" tabindex="-1"></button>
@@ -42,6 +50,13 @@
 
         <!-- Right: decorative pillar -->
         <div class="pillar" aria-hidden="true"></div>
+      </div>
+
+      <!-- Small links under the desk -->
+      <div class="desk-links">
+        <button class="link-btn" data-open="credits">Credits</button>
+        <button class="link-btn" id="btn-reset">[dev] reset all data</button>
+        <span class="key-hint">Enter = play · Esc = close</span>
       </div>
     </section>
   </main>
@@ -61,13 +76,7 @@
       </li>
       <li>Escape before the timer runs out and beat your best score.</li>
     </ol>
-    <form method="dialog"><button>Close</button></form>
-  </dialog>
-
-  <dialog class="modal" id="scores">
-    <h2>Leaderboard</h2>
-    <p class="muted">Local scores only for now.</p>
-    <ol id="leaderboard-list"></ol>
+    <p class="muted">Keyboard: <strong>Esc</strong> goes back a menu.</p>
     <form method="dialog"><button>Close</button></form>
   </dialog>
 

@@ -347,6 +347,25 @@
     });
   }
 
+  /* ---------------- Keyboard ---------------- */
+  // Esc = back one menu:  suspect file -> suspects -> game menu -> hallway
+  onEscape(() => {
+    if (!$("screen-investigate").hidden && !$("view-suspect").hidden) return showView("suspects");
+    if (!$("screen-menu").hidden) return (location.href = "../hallway.html");
+    showScreen("menu");
+  });
+
+  // Left / right arrows = previous / next suspect while a suspect file is open
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if ($("view-suspect").hidden || $("screen-investigate").hidden || !currentSuspect) return;
+    if (document.querySelector("dialog[open]")) return;
+    const list = activeSuspects();
+    const i = list.findIndex((s) => s.id === currentSuspect.id);
+    const next = (i + (e.key === "ArrowRight" ? 1 : -1) + list.length) % list.length;
+    openSuspect(list[next]);
+  });
+
   /* ---------------- Helpers ---------------- */
   function localDateKey(d) {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;

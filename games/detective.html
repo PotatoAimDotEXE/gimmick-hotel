@@ -11,7 +11,7 @@
   <header class="topbar">
     <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
     <span>Room 01 · Detective Lie Detector</span>
-    <span id="topbar-case" class="muted"></span>
+    <span class="muted"><span id="topbar-case"></span> · <span class="key-hint">Esc = back</span></span>
   </header>
 
   <main class="game-stage">
@@ -28,7 +28,6 @@
             <button class="menu-btn" data-soon="Detective's Backlog">
               Detective's Backlog<br /><small>(Unlimited)</small>
             </button>
-            <button class="menu-btn" data-soon="Party Mode">Party Mode</button>
             <p class="dl-note" id="menu-note" aria-live="polite"></p>
           </div>
 
@@ -99,6 +98,7 @@
           </div>
           <div class="dl-suspect-actions">
             <button data-view="suspects">&larr; All suspects</button>
+            <span class="key-hint">← → = previous / next suspect</span>
             <button id="btn-accuse">Accuse this suspect</button>
           </div>
         </div>

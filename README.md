@@ -12,7 +12,7 @@ Recommended extensions: Live Server, Prettier, ESLint (optional), Error Lens (op
 
 ## Structure
 ```
-index.html          Lobby / main menu (Play, How to play, Leaderboard, Credits, bell easter egg)
+index.html          Lobby / main menu (Play, How to play, Single/Party switch, Credits, dev reset, bell easter egg)
 hallway.html        Hallway (3 doors + leaderboard)
 games/detective.html Room 01 – Detective Lie Detector (Case of the Day)
 games/understand.html Room 02 – Understand
@@ -46,5 +46,10 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - Score /20: 10 for the right suspect, 10 for reasoning (AI, see `grader.js`).
 - One attempt per day. To test again, open `games/detective.html?dev` and use the reset button on the result screen.
 - Add/edit cases in `js/detective/cases.js`. Cases rotate one per day starting from `START_DATE` in `detective.js`.
-- Backlog and Party Mode buttons show "coming soon".
+- Backlog shows "coming soon". Party mode is now the global switch on the main menu.
 - Note: the culprit is in the browser code for now, so a curious player could find it. Move it to the server when the AI grader is added.
+
+## Main menu & controls
+- **Single player / Party switch** applies to every game. Saved as `Store.getMode()` (`"single"` or `"party"`) so each game can check it. For now, Party just disables Play.
+- **Keyboard:** Esc = back one menu (closes pop-ups first). Enter = Play on the main menu. ← → flip between suspect files in the detective game. Add Esc to a new page with `onEscape(() => ...)` from `main.js`.
+- **[dev] reset all data** (under the desk) wipes every saved name, score, case and draft. Remove before release.

@@ -100,6 +100,9 @@ const Game = (function () {
     };
   }
 
+  // Esc = back to the hallway
+  onEscape(() => (location.href = "../hallway.html"));
+
   // initial state
   updateHud();
   document.getElementById("btn-start").onclick = start;

@@ -54,7 +54,47 @@ const Store = {
   topScores(limit = 10) {
     return [...this.getScores()].sort((a, b) => b.score - a.score).slice(0, limit);
   },
+
+  // "single" or "party" – set by the switch on the main menu, games read it
+  KEY_MODE: "er_mode",
+  getMode() {
+    return this.safeGet(this.KEY_MODE, "single");
+  },
+  setMode(mode) {
+    this.safeSet(this.KEY_MODE, mode === "party" ? "party" : "single");
+  },
+
+  // [dev] wipe every saved value this game created (all keys start with "er_")
+  resetAll() {
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith("er_"))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch {
+      /* storage blocked */
+    }
+  },
 };
+
+/* ---------------------------------------------------------
+   Keyboard: Esc = go back.
+   Call onEscape(fn) on a page with what "back" means there.
+   - If a pop-up is open, the browser closes it instead.
+   - If you're typing in a box, Esc just leaves the box.
+   --------------------------------------------------------- */
+function onEscape(handler) {
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (document.querySelector("dialog[open]")) return;
+    const el = document.activeElement;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA")) {
+      el.blur();
+      return;
+    }
+    e.preventDefault();
+    handler(e);
+  });
+}
 
 const GAME_LABELS = {
   detective: "Detective Lie Detector",
