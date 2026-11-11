@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape Room – Detective Lie Detector</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/detective.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
+    <span>Room 01 · Detective Lie Detector</span>
+    <span id="topbar-case" class="muted"></span>
+  </header>
+
+  <main class="game-stage">
+    <div class="dl-stage">
+
+      <!-- ============ 1. GAME MENU ============ -->
+      <section class="dl-screen" id="screen-menu">
+        <h1 class="dl-title">Detective Lie Detector</h1>
+        <div class="dl-art">[ art: detective office / evidence board ]</div>
+
+        <div class="dl-menu">
+          <div class="dl-menu-buttons">
+            <button class="menu-btn primary" id="btn-daily">Case of the Day</button>
+            <button class="menu-btn" data-soon="Detective's Backlog">
+              Detective's Backlog<br /><small>(Unlimited)</small>
+            </button>
+            <button class="menu-btn" data-soon="Party Mode">Party Mode</button>
+            <p class="dl-note" id="menu-note" aria-live="polite"></p>
+          </div>
+
+          <aside class="dl-side">
+            <h2>Top Detectives</h2>
+            <ol id="dl-leaderboard"></ol>
+            <h2>Fun fact</h2>
+            <p id="dl-fact" class="muted"></p>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============ 2. CLASSIFIED FOLDER + DIFFICULTY ============ -->
+      <section class="dl-screen" id="screen-folder" hidden>
+        <div class="dl-folder-row">
+          <button class="dl-folder" id="btn-open-folder" aria-label="Open the case file">
+            <span class="dl-stamp">CLASSIFIED</span>
+            <span class="dl-case-no" id="folder-case-no">CASE #000</span>
+            <span class="dl-case-date" id="folder-date"></span>
+            <span class="dl-hint">click to open</span>
+          </button>
+
+          <fieldset class="dl-difficulty" id="difficulty">
+            <legend>Difficulty</legend>
+            <label><input type="radio" name="difficulty" value="easy" /> Easy <small>(3 suspects)</small></label>
+            <label><input type="radio" name="difficulty" value="medium" /> Medium <small>(4 suspects)</small></label>
+            <label><input type="radio" name="difficulty" value="hard" /> Hard <small>(5 suspects)</small></label>
+            <p class="dl-note">Locked once you open the file.</p>
+          </fieldset>
+        </div>
+        <button class="dl-back" data-go="menu">&larr; Back to menu</button>
+      </section>
+
+      <!-- ============ 3. INVESTIGATION (file / suspects / suspect) ============ -->
+      <section class="dl-screen" id="screen-investigate" hidden>
+        <nav class="dl-toolbar">
+          <div class="dl-tabs" role="tablist">
+            <button role="tab" data-view="file">Case File</button>
+            <button role="tab" data-view="suspects">Suspects</button>
+          </div>
+          <div class="dl-toolbar-right">
+            <button data-go="menu">Menu</button>
+            <button class="dl-answer-btn" id="btn-answer">✎ Answer</button>
+          </div>
+        </nav>
+
+        <!-- 3a. opened case file -->
+        <div class="dl-view" id="view-file">
+          <div class="dl-book">
+            <article class="dl-page" id="file-left"></article>
+            <article class="dl-page" id="file-right"></article>
+          </div>
+        </div>
+
+        <!-- 3b. suspect board -->
+        <div class="dl-view" id="view-suspects" hidden>
+          <div class="dl-board">
+            <p class="dl-board-label">Click a suspect to open their file</p>
+            <div class="dl-suspects" id="suspect-list"></div>
+          </div>
+        </div>
+
+        <!-- 3c. single suspect file -->
+        <div class="dl-view" id="view-suspect" hidden>
+          <div class="dl-book">
+            <article class="dl-page dl-page-profile" id="suspect-left"></article>
+            <article class="dl-page" id="suspect-right"></article>
+          </div>
+          <div class="dl-suspect-actions">
+            <button data-view="suspects">&larr; All suspects</button>
+            <button id="btn-accuse">Accuse this suspect</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 4. RESULT ============ -->
+      <section class="dl-screen" id="screen-result" hidden>
+        <h1 class="dl-title" id="result-title">Case Closed</h1>
+        <div class="dl-result" id="result-body"></div>
+        <div class="actions">
+          <button id="btn-copy">Copy result</button>
+          <button data-go="menu">Game menu</button>
+          <a href="../hallway.html"><button>Back to hallway</button></a>
+        </div>
+        <p class="dl-note" id="result-next"></p>
+        <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's case</button>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ ANSWER POP-UP ============ -->
+  <dialog class="modal dl-answer" id="answer-dialog">
+    <form method="dialog" id="answer-form">
+      <h2>Your verdict</h2>
+
+      <fieldset>
+        <legend>Who is the culprit?</legend>
+        <div class="dl-choices" id="answer-choices"></div>
+      </fieldset>
+
+      <label for="answer-reason">Why? Explain your reasoning using evidence from the files.</label>
+      <textarea id="answer-reason" rows="6" maxlength="1200"
+        placeholder="I think it's ___ because..."></textarea>
+      <div class="dl-count"><span id="answer-count">0</span>/1200</div>
+
+      <p class="dl-note" id="answer-error" aria-live="polite"></p>
+
+      <div class="actions">
+        <button type="button" id="btn-answer-close">Close (keeps your answer)</button>
+        <button type="button" id="btn-submit" class="primary">Submit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/detective/cases.js"></script>
+  <script src="../js/detective/grader.js"></script>
+  <script src="../js/detective/detective.js"></script>
+</body>
+</html>

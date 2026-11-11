@@ -1,0 +1,240 @@
+/* =========================================================
+   DETECTIVE LIE DETECTOR – black & white placeholder styles.
+   Uses the variables from style.css, so re-theming there
+   re-themes this game too.
+   ========================================================= */
+
+[hidden] { display: none !important; }
+
+.dl-stage {
+  border: var(--border) solid var(--line);
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+}
+
+.dl-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.5rem;
+  gap: 1rem;
+}
+
+.dl-title { text-align: center; font-size: clamp(1.5rem, 3vw, 2.4rem); letter-spacing: 0.05em; }
+.dl-note { font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
+
+button.primary { font-weight: bold; }
+
+/* ---------- 1. Menu ---------- */
+.dl-art {
+  flex: 1;
+  min-height: 80px;
+  border: var(--border) dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.dl-menu {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 1.2rem;
+}
+
+.dl-menu-buttons { display: flex; flex-direction: column; gap: 0.6rem; }
+.dl-menu-buttons small { font-size: 0.75rem; }
+
+.dl-side {
+  border: var(--border) solid var(--line);
+  padding: 0.8rem 1rem;
+  overflow: auto;
+}
+.dl-side h2 { font-size: 1rem; margin: 0.2rem 0 0.4rem; }
+.dl-side ol { margin: 0 0 0.8rem 1.4rem; line-height: 1.6; }
+
+/* ---------- 2. Folder ---------- */
+.dl-folder-row {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.dl-folder {
+  height: 85%;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border: var(--border) solid var(--line);
+  box-shadow: 8px 8px 0 var(--line);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.dl-folder:hover, .dl-folder:focus-visible {
+  background: var(--bg);
+  color: var(--fg);
+  transform: translate(-3px, -3px);
+  box-shadow: 11px 11px 0 var(--line);
+}
+
+.dl-stamp {
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  border: var(--border) solid var(--line);
+  padding: 0.2rem 0.8rem;
+  transform: rotate(-8deg);
+  margin-bottom: 1rem;
+}
+.dl-case-no { font-weight: bold; }
+.dl-case-date { font-size: 0.9rem; }
+.dl-hint { font-size: 0.75rem; color: var(--muted); margin-top: 1rem; }
+
+.dl-difficulty {
+  border: var(--border) solid var(--line);
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 220px;
+}
+.dl-difficulty legend { padding: 0 0.4rem; font-weight: bold; }
+.dl-difficulty label { cursor: pointer; }
+.dl-difficulty input { accent-color: var(--fg); }
+.dl-difficulty input:disabled + * , .dl-difficulty input:disabled { cursor: not-allowed; }
+
+.dl-back { align-self: flex-start; }
+
+/* ---------- 3. Investigation ---------- */
+#screen-investigate { padding-top: 0.8rem; }
+
+.dl-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.dl-tabs, .dl-toolbar-right { display: flex; gap: 0.4rem; }
+.dl-tabs button.active { background: var(--hover-bg); color: var(--hover-fg); }
+.dl-answer-btn { font-weight: bold; }
+
+.dl-view { flex: 1; display: flex; flex-direction: column; gap: 0.6rem; min-height: 0; }
+
+/* open book: two pages side by side */
+.dl-book {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: var(--border) solid var(--line);
+  padding: 10px;
+  box-shadow: 6px 6px 0 var(--line);
+}
+.dl-page {
+  border: 2px solid var(--line);
+  padding: 1rem 1.2rem;
+  overflow: auto;
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+.dl-page + .dl-page { border-left: none; }
+.dl-page h2 { font-size: 1.05rem; margin-bottom: 0.6rem; text-decoration: underline; }
+.dl-page h3 { font-size: 0.95rem; margin: 0.8rem 0 0.3rem; }
+.dl-page p { margin-bottom: 0.7rem; }
+.dl-page ul { margin-left: 1.2rem; }
+.dl-page li { margin-bottom: 0.5rem; }
+
+/* suspect board */
+.dl-board {
+  flex: 1;
+  border: var(--border) solid var(--line);
+  outline: 6px double var(--line);
+  outline-offset: -12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+.dl-board-label { color: var(--muted); font-size: 0.85rem; }
+
+.dl-suspects {
+  display: flex;
+  gap: clamp(0.6rem, 2vw, 1.5rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dl-suspect-card {
+  width: clamp(80px, 11vw, 130px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.4rem;
+  transition: transform 0.15s;
+}
+.dl-suspect-card:hover, .dl-suspect-card:focus-visible { transform: translateY(-4px) rotate(-2deg); }
+.dl-name { font-size: 0.85rem; }
+
+.dl-portrait { display: block; width: 100%; aspect-ratio: 3 / 4; }
+.dl-portrait svg, .dl-portrait img { width: 100%; height: 100%; object-fit: cover; }
+.dl-portrait.big {
+  width: 40%;
+  max-width: 140px;
+  border: 2px solid var(--line);
+  margin-bottom: 0.6rem;
+}
+
+.dl-suspect-actions { display: flex; justify-content: space-between; }
+
+/* ---------- Answer pop-up ---------- */
+.dl-answer { width: min(560px, 92vw); }
+.dl-answer fieldset { border: 2px solid var(--line); padding: 0.6rem 0.8rem; margin-bottom: 0.8rem; }
+.dl-answer legend { padding: 0 0.3rem; }
+.dl-choices { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; }
+.dl-choices label { cursor: pointer; }
+.dl-choices input { accent-color: var(--fg); }
+.dl-answer textarea {
+  width: 100%;
+  margin-top: 0.4rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.6rem;
+  border: var(--border) solid var(--line);
+  resize: vertical;
+}
+.dl-count { text-align: right; font-size: 0.75rem; color: var(--muted); }
+.dl-answer .actions { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.4rem; }
+
+/* ---------- 4. Result ---------- */
+#screen-result { align-items: center; justify-content: center; text-align: center; }
+.dl-result { max-width: 520px; width: 100%; }
+.dl-result table { width: 100%; border-collapse: collapse; margin-bottom: 0.8rem; }
+.dl-result th, .dl-result td { border: 2px solid var(--line); padding: 0.4rem 0.8rem; text-align: left; }
+.dl-result tr.total { font-weight: bold; font-size: 1.15rem; }
+.dl-result p { margin-bottom: 0.5rem; }
+.dl-result details { text-align: left; border: 2px dashed var(--line); padding: 0.4rem 0.8rem; }
+.dl-result details p { margin-top: 0.4rem; white-space: pre-wrap; }
+#screen-result .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+.dl-dev { font-size: 0.75rem; border-style: dashed; }
+
+/* ---------- Phones / narrow screens ---------- */
+@media (max-width: 800px) {
+  .dl-stage { aspect-ratio: auto; min-height: 80vh; overflow: visible; }
+  .dl-screen { position: static; min-height: 80vh; }
+  .dl-menu { grid-template-columns: 1fr; }
+  .dl-folder-row { flex-direction: column; gap: 1.5rem; }
+  .dl-folder { height: auto; width: 60%; }
+  .dl-book { grid-template-columns: 1fr; }
+  .dl-page + .dl-page { border-left: 2px solid var(--line); border-top: none; }
+}

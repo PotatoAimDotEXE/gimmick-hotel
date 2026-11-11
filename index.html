@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape Room – Lobby</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="menu-stage">
+    <section class="room lobby">
+
+      <!-- Title / hotel sign -->
+      <div class="sign">
+        <span class="sign-small">WELCOME TO THE</span>
+        <h1>ESCAPE ROOM</h1>
+        <span class="sign-small">A reading adventure</span>
+      </div>
+
+      <div class="lobby-floor">
+        <!-- Left: decorative pillar -->
+        <div class="pillar" aria-hidden="true"></div>
+
+        <!-- Centre: reception desk with the menu -->
+        <div class="reception">
+          <div class="guestbook">
+            <label for="player-name">Sign the guestbook:</label>
+            <input id="player-name" type="text" maxlength="16" placeholder="Your name" />
+          </div>
+
+          <nav class="menu">
+            <a class="menu-btn primary" href="hallway.html" id="btn-play">▶ PLAY</a>
+            <button class="menu-btn" data-open="how-to">How to play</button>
+            <button class="menu-btn" data-open="scores">Leaderboard</button>
+            <button class="menu-btn" data-open="credits">Credits</button>
+          </nav>
+
+          <div class="desk" aria-hidden="true">
+            <button class="bell" id="bell" aria-label="Ring the bell" tabindex="-1"></button>
+          </div>
+        </div>
+
+        <!-- Right: decorative pillar -->
+        <div class="pillar" aria-hidden="true"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Pop-up panels ===== -->
+  <dialog class="modal" id="how-to">
+    <h2>How to play</h2>
+    <ol>
+      <li>Sign the guestbook with your name.</li>
+      <li>Press <strong>Play</strong> to enter the hallway.</li>
+      <li>Pick a door. Each room trains a reading skill:
+        <ul>
+          <li><strong>Locate</strong> – find key information fast.</li>
+          <li><strong>Understand</strong> – apply what you read.</li>
+          <li><strong>Evaluate</strong> – judge what is true and useful.</li>
+        </ul>
+      </li>
+      <li>Escape before the timer runs out and beat your best score.</li>
+    </ol>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+
+  <dialog class="modal" id="scores">
+    <h2>Leaderboard</h2>
+    <p class="muted">Local scores only for now.</p>
+    <ol id="leaderboard-list"></ol>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+
+  <dialog class="modal" id="credits">
+    <h2>Credits</h2>
+    <p>Made by our team for the KapiBarian Game Design Challenge.</p>
+    <p class="muted">Inspired by the PISA reading literacy framework.</p>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+
+  <script src="js/main.js"></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>
