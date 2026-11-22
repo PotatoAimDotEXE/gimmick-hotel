@@ -417,3 +417,8 @@ button:hover, button:focus-visible {
   --hover-bg: #8b3535;  /* door/button hover */
   --hover-fg: #2b1d14;  /* text on hover */
 }
+
+/* Hallway fades in after the title screen's door zoom
+   (the door is the same colour as the hallway background) */
+.hallway-page > * { animation: page-in 0.6s ease-out both; }
+@keyframes page-in { from { opacity: 0; } }

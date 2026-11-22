@@ -1,7 +1,10 @@
-/* Main menu (lobby): guestbook name, single/party switch, pop-ups, dev reset, bell easter egg. */
+/* Title screen: guestbook name, single/party switch, Play -> zoom into the door -> hallway,
+   parallax, pop-ups, dev reset, bell easter egg. */
 
 (function () {
   const $ = (id) => document.getElementById(id);
+  const stage = $("stage");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- Guestbook (player name) ----
   const nameInput = $("player-name");
@@ -10,7 +13,10 @@
 
   nameInput.addEventListener("change", () => Store.setName(nameInput.value || "Guest"));
   nameInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") $("btn-play").click();
+    if (e.key === "Enter") {
+      e.preventDefault();
+      play();
+    }
   });
 
   // ---- Single player / Party switch ----
@@ -20,12 +26,11 @@
   function renderMode() {
     const party = Store.getMode() === "party";
     modeSwitch.setAttribute("aria-checked", party);
-    document.querySelectorAll(".mode-label").forEach((l) =>
-      l.classList.toggle("active", l.dataset.mode === Store.getMode())
+    document.querySelectorAll(".mode-word").forEach((w) =>
+      w.classList.toggle("active", w.dataset.mode === Store.getMode())
     );
-    // Party mode isn't built yet -> Play is disabled for now
-    playBtn.disabled = party;
-    $("mode-note").textContent = party ? "Party mode is coming soon. Switch back to single player to play." : "";
+    playBtn.disabled = party; // Party mode isn't built yet
+    $("mode-note").textContent = party ? "Party mode is coming soon. Switch back to Solo to play." : "";
   }
 
   modeSwitch.addEventListener("click", () => {
@@ -33,28 +38,51 @@
     renderMode();
   });
 
-  // ---- Play ----
-  playBtn.addEventListener("click", () => {
-    if (playBtn.disabled) return;
+  // ---- Play: zoom into the door, fade to the hallway ----
+  let leaving = false;
+  function play() {
+    if (playBtn.disabled || leaving) return;
+    leaving = true;
     if (nameInput.value.trim()) Store.setName(nameInput.value);
-    location.href = "hallway.html";
-  });
+    if (reducedMotion) return (location.href = "hallway.html");
+    stage.classList.add("entering");
+    setTimeout(() => (location.href = "hallway.html"), 1500);
+  }
+  playBtn.addEventListener("click", play);
 
-  // Enter anywhere on the page (outside a text box / pop-up) = Play
+  // Enter anywhere (outside a pop-up / other button) = Play
   document.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" || document.querySelector("dialog[open]")) return;
     if (["INPUT", "TEXTAREA", "BUTTON", "A"].includes(document.activeElement.tagName)) return;
-    playBtn.click();
+    play();
   });
+
+  // If the player comes back with the browser's Back button, undo the zoom
+  window.addEventListener("pageshow", () => {
+    stage.classList.remove("entering");
+    leaving = false;
+  });
+
+  // ---- Parallax: background layers drift with the mouse ----
+  if (!reducedMotion) {
+    stage.addEventListener("mousemove", (e) => {
+      const r = stage.getBoundingClientRect();
+      stage.style.setProperty("--mx", (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+      stage.style.setProperty("--my", (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+    });
+    stage.addEventListener("mouseleave", () => {
+      stage.style.setProperty("--mx", 0);
+      stage.style.setProperty("--my", 0);
+    });
+  }
 
   // ---- Pop-up panels ----
   document.querySelectorAll("[data-open]").forEach((btn) => {
     btn.addEventListener("click", () => $(btn.dataset.open).showModal());
   });
-  // close a pop-up by clicking the dark area around it (Esc closes it too – built into <dialog>)
   document.querySelectorAll("dialog").forEach((d) => {
     d.addEventListener("click", (e) => {
-      if (e.target === d) d.close();
+      if (e.target === d) d.close(); // click the dark area to close (Esc works too)
     });
   });
 
@@ -64,10 +92,10 @@
   resetBtn.addEventListener("click", () => {
     if (!resetArmed) {
       resetArmed = true;
-      resetBtn.textContent = "click again to erase everything";
+      resetBtn.textContent = "click again to erase all";
       setTimeout(() => {
         resetArmed = false;
-        resetBtn.textContent = "[dev] reset all data";
+        resetBtn.textContent = "[dev] reset";
       }, 3000);
       return;
     }
@@ -75,14 +103,15 @@
     location.reload();
   });
 
-  // ---- Easter egg: ring the reception bell 5 times ----
+  // ---- Easter egg: ring the bell on the desk 5 times ----
   let rings = 0;
   $("bell").addEventListener("click", (e) => {
-    e.currentTarget.classList.remove("ring");
-    void e.currentTarget.offsetWidth; // restart animation
-    e.currentTarget.classList.add("ring");
+    const bell = e.currentTarget;
+    bell.classList.remove("ring");
+    void bell.offsetWidth; // restart the animation
+    bell.classList.add("ring");
     if (++rings === 5) {
-      alert("A capybara pops up behind the desk: \"Checking in?\" 🦫");
+      alert('The bellboy tips his hat: "Checking in, detective?" 🛎️');
       rings = 0;
     }
   });

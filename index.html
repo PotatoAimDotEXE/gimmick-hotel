@@ -3,62 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Escape Room – Lobby</title>
+  <title>Hotel Hysterics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/title.css" />
 </head>
-<body>
-  <main class="menu-stage">
-    <section class="room lobby">
+<body class="title-page">
+  <!--
+    Title screen. All art is 1280x720 and every layer is stacked
+    full-size, so positions below are % of that 1280x720 canvas.
+    Art lives in assets/main_menu/.
+  -->
+  <main class="title-stage" id="stage">
+    <div class="title-scene" id="scene">
 
-      <!-- Title / hotel sign -->
-      <div class="sign">
-        <span class="sign-small">WELCOME TO THE</span>
-        <h1>ESCAPE ROOM</h1>
-        <span class="sign-small">A reading adventure</span>
+      <!-- back to front -->
+      <div class="layer px" style="--depth: 0.35">
+        <img src="assets/main_menu/background bottom.png" alt="" />
       </div>
 
-      <div class="lobby-floor">
-        <!-- Left: decorative pillar -->
-        <div class="pillar" aria-hidden="true"></div>
-
-        <!-- Centre: reception desk with the menu -->
-        <div class="reception">
-          <div class="guestbook">
-            <label for="player-name">Sign the guestbook:</label>
-            <input id="player-name" type="text" maxlength="16" placeholder="Your name" />
-          </div>
-
-          <!-- Single player / Party switch (applies to every game) -->
-          <div class="mode-switch">
-            <span class="mode-label" data-mode="single">Single player</span>
-            <button class="switch" id="mode-switch" role="switch" aria-checked="false" aria-label="Party mode">
-              <span class="switch-knob"></span>
-            </button>
-            <span class="mode-label" data-mode="party">Party</span>
-          </div>
-
-          <nav class="menu">
-            <button class="menu-btn primary" id="btn-play">▶ PLAY</button>
-            <button class="menu-btn" data-open="how-to">How to play</button>
-          </nav>
-          <p class="menu-note" id="mode-note" aria-live="polite"></p>
-
-          <div class="desk" aria-hidden="true">
-            <button class="bell" id="bell" aria-label="Ring the bell" tabindex="-1"></button>
-          </div>
-        </div>
-
-        <!-- Right: decorative pillar -->
-        <div class="pillar" aria-hidden="true"></div>
+      <div class="layer px" style="--depth: 0.9">
+        <img src="assets/main_menu/pillars.png" alt="" />
+        <!-- easter egg: ring the bell 5 times -->
+        <button class="bell" id="bell" aria-label="Ring the bell" tabindex="-1">
+          <img src="assets/main_menu/bell.png" alt="" />
+        </button>
       </div>
 
-      <!-- Small links under the desk -->
-      <div class="desk-links">
-        <button class="link-btn" data-open="credits">Credits</button>
-        <button class="link-btn" id="btn-reset">[dev] reset all data</button>
-        <span class="key-hint">Enter = play · Esc = close</span>
+      <div class="layer px ui bellboy" style="--depth: 0.6">
+        <img src="assets/main_menu/bellboy.png" alt="" />
       </div>
-    </section>
+
+      <div class="layer ui">
+        <img src="assets/main_menu/title.png" alt="Hotel Hysterics" />
+      </div>
+
+      <div class="layer ui">
+        <img src="assets/main_menu/guestbook.png" alt="" />
+      </div>
+
+      <!-- guestbook: typing sits on the drawn underline -->
+      <label class="sr-only" for="player-name">Sign the guestbook</label>
+      <input class="guestbook-input ui" id="player-name" type="text" maxlength="16"
+             placeholder="your name" autocomplete="off" spellcheck="false" />
+
+      <button class="play-btn ui" id="btn-play" aria-label="Play">
+        <img src="assets/main_menu/play-button.png" alt="" />
+        <span class="shine"></span>
+      </button>
+
+      <!-- Single player / Party switch -->
+      <span class="mode-word ui" data-mode="single">Solo</span>
+      <button class="mode-toggle ui" id="mode-switch" role="switch" aria-checked="false" aria-label="Party mode">
+        <span class="knob"></span>
+      </button>
+      <span class="mode-word ui right" data-mode="party">Party</span>
+
+      <div class="layer ui">
+        <img src="assets/main_menu/bottom bar.png" alt="" />
+      </div>
+
+      <p class="mode-note ui" id="mode-note" aria-live="polite"></p>
+
+      <nav class="corner-links ui">
+        <button data-open="how-to">How to play</button>
+        <button data-open="credits">Credits</button>
+        <button id="btn-reset">[dev] reset</button>
+      </nav>
+    </div>
+
+    <!-- fades in at the end of the door zoom -->
+    <div class="door-fade" id="door-fade"></div>
   </main>
 
   <!-- ===== Pop-up panels ===== -->
@@ -69,14 +86,14 @@
       <li>Press <strong>Play</strong> to enter the hallway.</li>
       <li>Pick a door. Each room trains a reading skill:
         <ul>
-          <li><strong>Locate</strong> – find key information fast.</li>
-          <li><strong>Understand</strong> – apply what you read.</li>
-          <li><strong>Evaluate</strong> – judge what is true and useful.</li>
+          <li><strong>Detective Lie Detector</strong> – read the case and catch the culprit.</li>
+          <li><strong>Interrogation Room</strong> – find the lie in what you hear.</li>
+          <li><strong>Room 03</strong> – coming soon.</li>
         </ul>
       </li>
-      <li>Escape before the timer runs out and beat your best score.</li>
+      <li>Each room has one case a day. Come back tomorrow for a new one.</li>
     </ol>
-    <p class="muted">Keyboard: <strong>Esc</strong> goes back a menu.</p>
+    <p class="muted">Keyboard: <strong>Enter</strong> = play · <strong>Esc</strong> = back.</p>
     <form method="dialog"><button>Close</button></form>
   </dialog>
 

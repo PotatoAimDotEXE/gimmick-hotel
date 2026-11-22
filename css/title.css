@@ -1,0 +1,259 @@
+/* =========================================================
+   TITLE SCREEN (index.html)
+   The art is 1280x720. The stage keeps that 16:9 shape and
+   scales to fit the window. Positions are % of 1280x720 and
+   sizes use cqw (1cqw = 1% of the stage width) so everything
+   scales together.
+   ========================================================= */
+
+.title-page {
+  --cream: #e5e4d9;      /* title text / outlines in the art */
+  --tan: #ae8c69;        /* play button fill */
+  --wine: #30131c;       /* dark outline in the art */
+  --bar: #200e13;        /* bottom bar */
+  --door: #3f152e;       /* door colour = hallway background */
+
+  /* pop-ups (How to play / Credits) pick these up */
+  --bg: var(--bar);
+  --fg: var(--cream);
+  --muted: #c9a9a4;
+  --line: var(--cream);
+  --hover-bg: var(--cream);
+  --hover-fg: var(--bar);
+  --font: "Instrument Serif", Georgia, serif;
+
+  background: #000;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.title-stage {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--door);   /* shows through the transparent door */
+  container-type: inline-size;
+  font-family: var(--font);
+}
+
+.title-scene {
+  position: absolute;
+  inset: 0;
+  transform-origin: 72.77% 34.17%;   /* centre of the door */
+}
+
+/* every art layer fills the stage */
+.layer { position: absolute; inset: 0; pointer-events: none; }
+.layer > img { width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+
+/* parallax: menu.js sets --mx / --my between -1 and 1 */
+.px {
+  --d: calc(var(--depth, 0.5) * 1cqw);
+  transform: translate(calc(var(--mx, 0) * var(--d)), calc(var(--my, 0) * var(--d))) scale(1.03);
+  transition: transform 0.25s ease-out;
+}
+
+/* the bellboy breathes a little */
+.bellboy > img { animation: breathe 4.5s ease-in-out infinite; transform-origin: 35% 100%; }
+@keyframes breathe { 50% { transform: translateY(0.25cqw) scaleY(0.995); } }
+
+/* ---------- Bell easter egg ---------- */
+.bell {
+  position: absolute;
+  left: 43.36%; top: 74.31%;
+  width: 4.77%; height: 5.28%;
+  padding: 0; border: 0; background: none;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+}
+.bell:hover, .bell:focus-visible { background: none; }
+.bell img { width: 100%; height: 100%; display: block; }
+.bell.ring { animation: ring 0.4s; }
+@keyframes ring {
+  20% { transform: rotate(-14deg); }
+  50% { transform: rotate(12deg); }
+  80% { transform: rotate(-6deg); }
+}
+
+/* ---------- Guestbook input (sits on the drawn line) ---------- */
+.guestbook-input {
+  position: absolute;
+  left: 64.7%; top: 49.6%;
+  width: 15.3%; height: 3.8%;
+  padding: 0 0.3cqw;
+  border: 0;
+  background: transparent;
+  color: var(--cream);
+  font-family: var(--font);
+  font-style: italic;
+  font-size: 1.65cqw;
+  letter-spacing: 0.03em;
+  caret-color: var(--cream);
+}
+.guestbook-input::placeholder { color: var(--cream); opacity: 0.35; }
+.guestbook-input:focus { outline: none; background: rgba(229, 228, 217, 0.08); }
+
+/* ---------- Play button ---------- */
+.play-btn {
+  position: absolute;
+  left: 49.45%; top: 58.19%;
+  width: 23.91%; height: 11.94%;
+  padding: 0; border: 0; background: none;
+  cursor: pointer;
+  transition: transform 0.15s steps(3), filter 0.15s;
+}
+.play-btn img { width: 100%; height: 100%; display: block; }
+
+/* little pixel arrows that slide in on hover */
+.play-btn::before,
+.play-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 1.1cqw; height: 1.6cqw;
+  background: var(--cream);
+  opacity: 0;
+  transition: opacity 0.15s, transform 0.2s steps(3);
+}
+.play-btn::before { left: -2.2cqw; clip-path: polygon(0 0, 100% 50%, 0 100%); transform: translate(-1cqw, -50%); }
+.play-btn::after  { right: -2.2cqw; clip-path: polygon(100% 0, 0 50%, 100% 100%); transform: translate(1cqw, -50%); }
+
+/* shine that sweeps across – masked to the button's own shape */
+.play-btn .shine {
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 250, 235, 0.55) 45%, transparent 55%) -150% 0 / 250% 100% no-repeat;
+  -webkit-mask: url("../assets/main_menu/play-button.png") center / 100% 100%;
+          mask: url("../assets/main_menu/play-button.png") center / 100% 100%;
+  pointer-events: none;
+}
+
+.play-btn:hover, .play-btn:focus-visible {
+  background: none;
+  outline: none;
+  transform: translateY(-0.35cqw) scale(1.04);
+  filter: brightness(1.12) drop-shadow(0 0.4cqw 0 rgba(0, 0, 0, 0.45));
+}
+.play-btn:hover::before, .play-btn:focus-visible::before { opacity: 1; transform: translate(0, -50%); animation: nudge-r 0.8s 0.2s steps(2) infinite; }
+.play-btn:hover::after,  .play-btn:focus-visible::after  { opacity: 1; transform: translate(0, -50%); animation: nudge-l 0.8s 0.2s steps(2) infinite; }
+.play-btn:hover .shine, .play-btn:focus-visible .shine { animation: shine 0.7s ease-out; }
+.play-btn:active { transform: translateY(0.15cqw) scale(0.98); filter: brightness(0.95); }
+
+@keyframes nudge-r { 50% { transform: translate(0.4cqw, -50%); } }
+@keyframes nudge-l { 50% { transform: translate(-0.4cqw, -50%); } }
+@keyframes shine { to { background-position: 150% 0; } }
+
+/* Party mode on: Play is off */
+.play-btn:disabled { cursor: not-allowed; filter: grayscale(1) brightness(0.6); transform: none; }
+.play-btn:disabled::before, .play-btn:disabled::after, .play-btn:disabled .shine { display: none; }
+
+/* ---------- Single / Party toggle (drawn to match the art) ---------- */
+.mode-toggle {
+  position: absolute;
+  left: 58.13%; top: 71.25%;
+  width: 5.86%; height: 5.69%;
+  padding: 0;
+  border: 0.24cqw solid var(--cream);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.mode-toggle .knob {
+  position: absolute;
+  top: 50%; left: 0.28cqw;
+  width: 2.15cqw; height: 2.15cqw;
+  border-radius: 50%;
+  background: var(--cream);
+  transform: translateY(-50%);
+  transition: left 0.22s cubic-bezier(0.5, 1.6, 0.5, 1), background 0.2s, width 0.15s;
+}
+.mode-toggle:hover, .mode-toggle:focus-visible {
+  background: rgba(229, 228, 217, 0.12);
+  box-shadow: 0 0 0.9cqw rgba(229, 228, 217, 0.45);
+  outline: none;
+}
+.mode-toggle:hover .knob { width: 2.5cqw; }               /* knob stretches toward the other side */
+.mode-toggle:active .knob { width: 2.9cqw; }
+.mode-toggle[aria-checked="true"] { background: var(--cream); }
+.mode-toggle[aria-checked="true"] .knob { left: calc(100% - 2.15cqw - 0.28cqw); background: var(--wine); }
+.mode-toggle[aria-checked="true"]:hover .knob { left: calc(100% - 2.5cqw - 0.28cqw); }
+
+.mode-word {
+  position: absolute;
+  top: 72.4%;
+  right: calc(100% - 57.4%);
+  color: var(--cream);
+  font-style: italic;
+  font-size: 1.5cqw;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.mode-word.right { right: auto; left: 64.75%; }
+.mode-word.active { opacity: 1; }
+
+/* ---------- Bottom bar extras ---------- */
+.mode-note {
+  position: absolute;
+  left: 2%; top: 90.5%;
+  max-width: 28%;
+  color: var(--cream);
+  font-style: italic;
+  font-size: 1.15cqw;
+  opacity: 0.8;
+}
+.corner-links {
+  position: absolute;
+  right: 1.8%; top: 89.6%;
+  display: flex;
+  gap: 1.2cqw;
+}
+.corner-links button {
+  padding: 0.2cqw 0.3cqw;
+  border: 0;
+  background: none;
+  color: var(--cream);
+  font-family: var(--font);
+  font-style: italic;
+  font-size: 1.15cqw;
+  opacity: 0.6;
+  cursor: pointer;
+}
+.corner-links button:hover, .corner-links button:focus-visible {
+  background: none;
+  color: var(--cream);
+  opacity: 1;
+  text-decoration: underline;
+  outline: none;
+}
+
+/* ---------- Pop-ups in the title theme ---------- */
+.title-page .modal { font-size: 1.05rem; line-height: 1.6; }
+.title-page .modal h2 { font-style: italic; font-weight: normal; font-size: 1.9rem; }
+.title-page .modal button { font-family: var(--font); font-size: 1rem; }
+
+/* ---------- Play: zoom into the door, then fade ---------- */
+.door-fade {
+  position: absolute; inset: 0;
+  background: var(--door);
+  opacity: 0;
+  pointer-events: none;
+}
+.title-stage.entering .ui { opacity: 0; transition: opacity 0.35s ease-in; pointer-events: none; }
+.title-stage.entering .px { transition: none; transform: none; }
+.title-stage.entering .title-scene { transform: scale(5); transition: transform 1.4s cubic-bezier(0.55, 0, 0.75, 0.3); }
+.title-stage.entering .door-fade { opacity: 1; transition: opacity 0.45s 1s ease-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bellboy > img, .play-btn:hover::before, .play-btn:hover::after { animation: none; }
+  .px { transform: scale(1.03); }
+}

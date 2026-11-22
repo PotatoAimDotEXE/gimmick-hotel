@@ -12,7 +12,8 @@ Recommended extensions: Live Server, Prettier, ESLint (optional), Error Lens (op
 
 ## Structure
 ```
-index.html          Lobby / main menu (Play, How to play, Single/Party switch, Credits, dev reset, bell easter egg)
+index.html          Title screen "Hotel Hysterics" (art layers, guestbook, Play -> door zoom -> hallway, Solo/Party switch)
+css/title.css       Title screen styles, hover animations, door-zoom transition
 hallway.html        Hallway (3 doors + leaderboard)
 games/detective.html Room 01 – Detective Lie Detector (Case of the Day)
 games/interrogation.html Room 02 – Interrogation Room (Log of the Day)
@@ -64,3 +65,9 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - Score = statements called correctly, out of 3 / 4 / 5. Result shows as a pop-up over the room. One attempt per day; test again with `games/interrogation.html?dev`.
 - Keys: Enter/Space/→ = next (or skip typing), F = flag, C = open case file, ↑↓ = difficulty, Esc = back.
 - Add/edit logs in `js/interrogation/logs.js`. Logs rotate one per day from `START_DATE` in `interrogation.js`.
+
+## Title screen art (assets/main_menu/)
+- Original Photopea exports: `background bottom.png`, `background top.png`, `bellboy.png`, `bottom bar.png`, `buttons.png`, `title text.png` (all 1280x720).
+- Cut from those for the game (so parts can animate): `pillars.png` (background top without the bell), `bell.png`, `title.png` (title without "Play"), `guestbook.png`, `play-button.png` (frame + "Play" text).
+- The door is a transparent hole in `background bottom.png`; the stage colour `#3f152e` shows through it.
+- If you re-export a layer, keep it 1280x720 and the same file name, and it drops straight in. If the button/title/bell art changes, the cut files need re-making.
