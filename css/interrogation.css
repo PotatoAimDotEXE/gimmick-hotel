@@ -1,0 +1,227 @@
+/* =========================================================
+   INTERROGATION ROOM – black & white placeholder styles.
+   Uses detective.css for the stage + case-file book,
+   and the variables from style.css for colours.
+   ========================================================= */
+
+.ir-center { text-align: center; }
+.ir-row { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.ir-row-center { display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ---------- Table (shared by menu + interrogation) ---------- */
+.table-top {
+  height: 18px;
+  margin: 0 -1.5rem;              /* stretch edge to edge */
+  border-top: var(--border) solid var(--line);
+  border-bottom: var(--border) solid var(--line);
+  background: repeating-linear-gradient(90deg, var(--bg) 0 22px, var(--line) 22px 24px);
+  flex-shrink: 0;
+}
+
+/* ---------- CRT TV ---------- */
+.crt {
+  display: block;
+  position: relative;
+  padding: 14px 14px 26px;
+  border: var(--border) solid var(--line);
+  border-radius: 10px 10px 4px 4px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: 8px 0 0 -2px var(--bg), 8px 0 0 1px var(--line); /* side depth */
+}
+.crt::after {                      /* little control knobs */
+  content: "";
+  position: absolute;
+  right: 16px;
+  bottom: 7px;
+  width: 30px;
+  height: 10px;
+  background: radial-gradient(circle, var(--line) 3px, transparent 4px) 0 0 / 15px 10px repeat-x;
+}
+.crt-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 100%;
+  border: var(--border) solid var(--line);
+  border-radius: 18px / 12px;     /* curved tube glass */
+  background: var(--fg);          /* screen is inverted: black glass, white text */
+  color: var(--bg);
+  padding: 0.8rem;
+  text-align: center;
+  /* scanlines */
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px);
+}
+.crt-head { font-weight: bold; letter-spacing: 0.15em; }
+.crt-sub { font-size: 0.8rem; letter-spacing: 0.1em; }
+.crt-hint { font-size: 0.7rem; opacity: 0.7; }
+
+/* difficulty options on the screen */
+.crt-options { display: flex; flex-direction: column; gap: 0.35rem; width: 100%; max-width: 230px; }
+.crt-options button {
+  background: transparent;
+  color: var(--bg);
+  border: 2px solid var(--bg);
+  padding: 0.35rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+.crt-options button small { opacity: 0.75; font-size: 0.7rem; align-self: center; }
+/* selected = inverted (white box). hover/focus = dashed border only,
+   so the mouse resting on an option never looks like a second selection */
+.crt-options button.on,
+.crt-options button.on:hover {
+  background: var(--bg);
+  color: var(--fg);
+}
+.crt-options button:not(.on):hover:not(:disabled) {
+  background: transparent;
+  color: var(--bg);
+  border-style: dashed;
+}
+.crt-options button:focus-visible { outline: 2px dashed var(--bg); outline-offset: 3px; }
+.crt-options button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ---------- 1. Room menu ---------- */
+.ir-scene {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: -1rem;            /* TV sits on the table */
+}
+.ir-scene .crt { width: min(340px, 45%); height: 92%; }
+.ir-art {
+  flex: 1;
+  align-self: stretch;
+  border: var(--border) dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+.ir-menu-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.ir-menu-buttons small { font-size: 0.75rem; }
+
+/* ---------- 3. Interrogation ---------- */
+.ir-room { gap: 0.7rem; }
+
+.ir-room-scene {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  align-items: end;
+  gap: 1rem;
+  margin-bottom: -0.7rem;
+}
+
+.crt-small { height: 85%; padding: 10px 10px 22px; text-align: left; cursor: zoom-in; }
+.crt-small:hover, .crt-small:focus-visible {
+  background: var(--bg);
+  color: var(--fg);
+  transform: translateY(-3px);
+  outline: none;
+}
+.crt-small .crt-screen { justify-content: flex-start; padding-top: 1rem; }
+.crt-summary { font-size: 0.78rem; line-height: 1.4; overflow: hidden; }
+
+.ir-suspect {
+  justify-self: center;
+  width: min(300px, 100%);
+  aspect-ratio: 1;
+  color: var(--fg);
+}
+.ir-suspect svg, .ir-suspect img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.ir-status {
+  align-self: start;
+  justify-self: end;
+  border: var(--border) solid var(--line);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* dialogue box – inverted like the reference image */
+.ir-dialogue {
+  position: relative;
+  min-height: 92px;
+  background: var(--fg);
+  color: var(--bg);
+  border: var(--border) solid var(--line);
+  padding: 0.7rem 1.2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+.ir-speaker { font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.75; margin-bottom: 0.4rem; }
+.ir-line { font-size: 1.05rem; min-height: 1.4em; }
+.ir-more { position: absolute; right: 1rem; bottom: 0.4rem; font-size: 0.7rem; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.ir-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  padding: 0.2rem 1rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: var(--border) solid var(--fg);
+  outline: var(--border) solid var(--bg);
+  animation: stamp 0.25s ease-out;
+}
+@keyframes stamp {
+  from { transform: translate(-50%, -50%) rotate(-8deg) scale(2.2); opacity: 0; }
+  to   { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 1; }
+}
+
+.ir-flag, .ir-next { min-width: 200px; padding: 0.6rem 1rem; font-weight: bold; }
+.ir-flag small, .ir-next small { font-weight: normal; opacity: 0.7; font-size: 0.75rem; }
+.ir-flag:disabled, .ir-next:disabled,
+.ir-flag:disabled:hover, .ir-next:disabled:hover {
+  background: var(--bg);
+  color: var(--muted);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+/* ---------- Zoomed case summary ---------- */
+.ir-zoom { width: min(900px, 94vw); max-width: none; }
+.ir-zoom .dl-book { height: min(60vh, 460px); margin-bottom: 1rem; }
+
+/* ---------- 4. Result (pop-up over the room) ---------- */
+.ir-result-modal { width: min(780px, 94vw); max-width: none; text-align: center; }
+.ir-result-modal .dl-title { margin-bottom: 0.6rem; }
+.ir-result-modal .ir-row-center { margin-top: 0.8rem; }
+.ir-result { max-width: 760px; margin: 0 auto; }
+.ir-result-modal #result-next { margin-top: 0.8rem; }
+.ir-result-modal #result-title:focus { outline: none; }
+.ir-result th, .ir-result td { font-size: 0.85rem; }
+.ir-result td:last-child { text-align: center; font-weight: bold; }
+.ir-result tr.wrong td:last-child { background: var(--fg); color: var(--bg); }  /* wrong calls = black box */
+.ir-quote { font-style: italic; }
+.ir-total { font-weight: bold; font-size: 1.1rem; }
+
+/* ---------- Phones / narrow screens ---------- */
+@media (max-width: 800px) {
+  .ir-scene { flex-direction: column; align-items: stretch; margin-bottom: 0; }
+  .ir-scene .crt { width: 100%; height: auto; min-height: 220px; }
+  .ir-art { display: none; }
+  .ir-menu-buttons { grid-template-columns: 1fr; }
+  .ir-room-scene { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+  .crt-small { height: auto; min-height: 150px; }
+  .ir-suspect { grid-column: 1 / -1; grid-row: 1; width: 140px; }
+  .ir-flag, .ir-next { min-width: 0; flex: 1; }
+  .ir-zoom .dl-book { height: auto; max-height: 70vh; overflow: auto; }
+}

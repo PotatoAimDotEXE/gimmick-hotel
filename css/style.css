@@ -407,3 +407,13 @@ button:hover, button:focus-visible {
 /* keep the small links right under the desk */
 .lobby { justify-content: flex-start; }
 .lobby-floor { margin-top: auto; }
+
+
+.hallway-page {
+  --bg: #3f152e;        /* background */
+  --fg: #d2b450;        /* text */
+  --muted: #b89f7a;     /* secondary text */
+  --line: #f3e6c8;      /* borders + doors */
+  --hover-bg: #8b3535;  /* door/button hover */
+  --hover-fg: #2b1d14;  /* text on hover */
+}

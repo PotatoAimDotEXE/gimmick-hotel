@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escape Room – Interrogation Room</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- shares the stage + case-file book styles with the detective game -->
+  <link rel="stylesheet" href="../css/detective.css" />
+  <link rel="stylesheet" href="../css/interrogation.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
+    <span>Room 02 · Interrogation Room</span>
+    <span class="muted"><span id="topbar-log"></span> · <span class="key-hint">Esc = back</span></span>
+  </header>
+
+  <main class="game-stage">
+    <div class="dl-stage">
+
+      <!-- ============ 1. ROOM MENU: CRT on the table ============ -->
+      <section class="dl-screen" id="screen-menu">
+        <h1 class="dl-title">Interrogation Room</h1>
+
+        <div class="ir-scene">
+          <div class="crt">
+            <div class="crt-screen">
+              <p class="crt-head">LOG #<span id="crt-log-no"></span></p>
+              <p class="crt-sub" id="crt-sub">SELECT DIFFICULTY</p>
+              <div class="crt-options" role="radiogroup" aria-label="Difficulty" id="difficulty">
+                <button role="radio" data-diff="easy">EASY <small>3 lines · 1 lie</small></button>
+                <button role="radio" data-diff="medium">MEDIUM <small>4 lines · 1 lie</small></button>
+                <button role="radio" data-diff="hard">HARD <small>5 lines · 2 lies</small></button>
+              </div>
+              <p class="crt-hint">↑ ↓ to choose</p>
+            </div>
+          </div>
+          <div class="ir-art">[ art: interrogation room ]</div>
+        </div>
+        <div class="table-top" aria-hidden="true"></div>
+
+        <div class="ir-menu-buttons">
+          <button class="menu-btn primary" id="btn-daily">Log of the Day</button>
+          <button class="menu-btn" data-soon="Detective's Backlog">
+            Detective's Backlog <small>(Unlimited)</small>
+          </button>
+        </div>
+        <p class="dl-note ir-center" id="menu-note" aria-live="polite"></p>
+      </section>
+
+      <!-- ============ 2. INSTRUCTIONS + CASE FILE ============ -->
+      <section class="dl-screen" id="screen-brief" hidden>
+        <div class="dl-book">
+          <article class="dl-page" id="brief-left"></article>
+          <article class="dl-page" id="brief-right"></article>
+        </div>
+        <div class="ir-row">
+          <button data-go="menu">&larr; Back</button>
+          <button class="primary" id="btn-start">Start interrogation ▶</button>
+        </div>
+      </section>
+
+      <!-- ============ 3. INTERROGATION ============ -->
+      <section class="dl-screen ir-room" id="screen-room" hidden>
+        <div class="ir-room-scene">
+          <button class="crt crt-small" id="btn-tv" aria-label="Open the case summary">
+            <span class="crt-screen">
+              <span class="crt-head">CASE SUMMARY</span>
+              <span class="crt-summary" id="tv-summary"></span>
+              <span class="crt-hint">click (or press C) to zoom</span>
+            </span>
+          </button>
+
+          <div class="ir-suspect" id="suspect-figure" aria-hidden="true"></div>
+
+          <div class="ir-status">
+            <div>Statement <strong id="st-num">1</strong>/<span id="st-total">3</span></div>
+            <div>Flags left: <strong id="flags-left">1</strong></div>
+          </div>
+        </div>
+        <div class="table-top" aria-hidden="true"></div>
+
+        <div class="ir-dialogue" id="dialogue">
+          <div class="ir-speaker" id="speaker"></div>
+          <p class="ir-line" id="line" aria-live="polite"></p>
+          <span class="ir-more" id="more" aria-hidden="true">▼</span>
+          <span class="ir-stamp" id="stamp" hidden>FLAGGED</span>
+        </div>
+
+        <div class="ir-row">
+          <button class="ir-flag" id="btn-flag">⚑ FLAG AS LIE <small>(F)</small></button>
+          <button class="ir-next" id="btn-next">NEXT → <small>(Enter)</small></button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============ 4. RESULT – pop-up over the interrogation room ============ -->
+  <dialog class="modal ir-result-modal" id="result-dialog">
+    <h1 class="dl-title" id="result-title" tabindex="-1" autofocus>Interrogation over</h1>
+    <div class="dl-result ir-result" id="result-body"></div>
+    <div class="ir-row-center">
+      <button id="btn-copy">Copy result</button>
+      <button data-go="menu">Room menu</button>
+      <a href="../hallway.html"><button>Back to hallway</button></a>
+    </div>
+    <p class="dl-note ir-center" id="result-next"></p>
+    <div class="ir-row-center">
+      <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's log</button>
+    </div>
+  </dialog>
+
+  <!-- ============ ZOOMED-IN CASE SUMMARY (click the TV) ============ -->
+  <dialog class="modal ir-zoom" id="tv-dialog">
+    <div class="dl-book">
+      <article class="dl-page" id="zoom-left"></article>
+      <article class="dl-page" id="zoom-right"></article>
+    </div>
+    <form method="dialog" class="ir-row-center"><button>Close (Esc)</button></form>
+  </dialog>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/interrogation/logs.js"></script>
+  <script src="../js/interrogation/interrogation.js"></script>
+</body>
+</html>

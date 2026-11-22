@@ -15,16 +15,19 @@ Recommended extensions: Live Server, Prettier, ESLint (optional), Error Lens (op
 index.html          Lobby / main menu (Play, How to play, Single/Party switch, Credits, dev reset, bell easter egg)
 hallway.html        Hallway (3 doors + leaderboard)
 games/detective.html Room 01 – Detective Lie Detector (Case of the Day)
-games/understand.html Room 02 – Understand
+games/interrogation.html Room 02 – Interrogation Room (Log of the Day)
 games/evaluate.html Room 03 – Evaluate & reflect
 css/style.css       All styles. Colors are variables at the top → swap for the pixel theme later
 js/main.js          Shared: player name + scores (localStorage). Replace with backend for multiplayer
 js/menu.js          Main menu logic
 js/hallway.js       Hallway logic + capybara easter egg
-css/detective.css   Detective game styles
+css/detective.css   Detective game styles (stage + case-file book are reused by Room 02)
+css/interrogation.css Interrogation Room styles
 js/detective/cases.js     Case data – WRITERS EDIT THIS (briefing, suspects, culprit, rubric)
 js/detective/grader.js    AI reasoning grader – placeholder, swap in the real AI call later
 js/detective/detective.js Detective game logic
+js/interrogation/logs.js  Interrogation logs – WRITERS EDIT THIS (suspect, case file, statements, which are lies)
+js/interrogation/interrogation.js Interrogation game logic
 js/game.js          Shared game shell: timer, score, result screen, "copy result" (Wordle-style share)
 assets/             Put pixel art, sprites, sounds here
 ```
@@ -53,3 +56,11 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - **Single player / Party switch** applies to every game. Saved as `Store.getMode()` (`"single"` or `"party"`) so each game can check it. For now, Party just disables Play.
 - **Keyboard:** Esc = back one menu (closes pop-ups first). Enter = Play on the main menu. ← → flip between suspect files in the detective game. Add Esc to a new page with `onEscape(() => ...)` from `main.js`.
 - **[dev] reset all data** (under the desk) wipes every saved name, score, case and draft. Remove before release.
+
+## Interrogation Room (Room 02)
+- Flow: room menu (difficulty picked on the CRT TV) → instructions + case file → interrogation → result.
+- Easy = 3 statements / 1 lie, Medium = 4 / 1, Hard = 5 / 2. Players get as many flags as there are lies.
+- No going back: progress is saved after every statement, so refreshing can't undo a choice.
+- Score = statements called correctly, out of 3 / 4 / 5. Result shows as a pop-up over the room. One attempt per day; test again with `games/interrogation.html?dev`.
+- Keys: Enter/Space/→ = next (or skip typing), F = flag, C = open case file, ↑↓ = difficulty, Esc = back.
+- Add/edit logs in `js/interrogation/logs.js`. Logs rotate one per day from `START_DATE` in `interrogation.js`.

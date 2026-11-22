@@ -98,6 +98,39 @@ function onEscape(handler) {
 
 const GAME_LABELS = {
   detective: "Detective Lie Detector",
-  understand: "Understand",
+  interrogation: "Interrogation Room",
   evaluate: "Evaluate",
 };
+
+/* ---------------------------------------------------------
+   Daily helpers – for "of the day" modes (one try per day).
+   --------------------------------------------------------- */
+const Daily = {
+  // "2026-11-22" in the player's local time
+  key(d = new Date()) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  },
+  // whole days from start to d (0 on the start day)
+  daysSince(start, d = new Date()) {
+    const a = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+    const b = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    return Math.max(0, Math.floor((b - a) / 86400000));
+  },
+  // "November 22nd 2026"
+  pretty(d = new Date()) {
+    const n = d.getDate();
+    const suf = n % 10 === 1 && n !== 11 ? "st" : n % 10 === 2 && n !== 12 ? "nd" : n % 10 === 3 && n !== 13 ? "rd" : "th";
+    return d.toLocaleString("en-GB", { month: "long" }) + " " + n + suf + " " + d.getFullYear();
+  },
+  // "7h 14m" until midnight
+  timeLeft() {
+    const t = new Date();
+    const mid = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1);
+    const mins = Math.ceil((mid - t) / 60000);
+    return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+  },
+};
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
