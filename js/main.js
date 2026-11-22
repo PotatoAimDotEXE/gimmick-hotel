@@ -99,7 +99,7 @@ function onEscape(handler) {
 const GAME_LABELS = {
   detective: "Detective Lie Detector",
   interrogation: "Interrogation Room",
-  evaluate: "Evaluate",
+  paralegal: "Paranormal Paralegal",
 };
 
 /* ---------------------------------------------------------

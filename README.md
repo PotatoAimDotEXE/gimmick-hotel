@@ -17,18 +17,22 @@ css/title.css       Title screen styles, hover animations, door-zoom transition
 hallway.html        Hallway (3 doors + leaderboard)
 games/detective.html Room 01 – Detective Lie Detector (Case of the Day)
 games/interrogation.html Room 02 – Interrogation Room (Log of the Day)
-games/evaluate.html Room 03 – Evaluate & reflect
+games/paralegal.html Room 03 – Paranormal Paralegal (Case of the Day)
 css/style.css       All styles. Colors are variables at the top → swap for the pixel theme later
 js/main.js          Shared: player name + scores (localStorage). Replace with backend for multiplayer
 js/menu.js          Main menu logic
 js/hallway.js       Hallway logic + capybara easter egg
 css/detective.css   Detective game styles (stage + case-file book are reused by Room 02)
 css/interrogation.css Interrogation Room styles
+css/paralegal.css   Paranormal Paralegal styles
 js/detective/cases.js     Case data – WRITERS EDIT THIS (briefing, suspects, culprit, rubric)
 js/detective/grader.js    AI reasoning grader – placeholder, swap in the real AI call later
 js/detective/detective.js Detective game logic
 js/interrogation/logs.js  Interrogation logs – WRITERS EDIT THIS (suspect, case file, statements, which are lies)
 js/interrogation/interrogation.js Interrogation game logic
+js/paralegal/cases.js     Paralegal cases – WRITERS EDIT THIS (Jane's lines, 5 pages, keywords, rubric)
+js/paralegal/grader.js    Summary grader – placeholder keyword check, swap in the AI later
+js/paralegal/paralegal.js Paralegal game logic
 js/game.js          Shared game shell: timer, score, result screen, "copy result" (Wordle-style share)
 assets/             Put pixel art, sprites, sounds here
 ```
@@ -71,3 +75,12 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - Cut from those for the game (so parts can animate): `pillars.png` (background top without the bell), `bell.png`, `title.png` (title without "Play"), `guestbook.png`, `play-button.png` (frame + "Play" text).
 - The door is a transparent hole in `background bottom.png`; the stage colour `#3f152e` shows through it.
 - If you re-export a layer, keep it 1280x720 and the same file name, and it drops straight in. If the button/title/bell art changes, the cut files need re-making.
+
+## Paranormal Paralegal (Room 03)
+- Flow: case file cover (difficulty) → Jane Debrief (skippable, can replay) → closed folder in the middle (click to open) → read pages move onto the left half of the folder → summary sheet (title + description) → confirm submit → pages return, folder closes, CASE CLOSED stamp.
+- Click the top page to turn it; click the pile on the left to bring the last page back (or use ◀ ▶ / arrow keys).
+- Easy = 3 pages, Medium = 4, Hard = 5. Keywords from pages 4–5 only count on Medium/Hard.
+- In page text, wrap key words in `[[double brackets]]` to highlight them. Highlights are hidden on Hard.
+- Score /15: title 5 + description 10. For now `grader.js` does a simple keyword check so it's playable; replace it with the AI call later.
+- Title + description are saved as you type. One attempt per day; test again with `games/paralegal.html?dev`.
+- Keys: ← → = pages (or difficulty on the cover), Enter = next debrief line, Esc = back / cancel the confirm box.

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Hysterics – Paranormal Paralegal</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- shares the stage styles with the detective game -->
+  <link rel="stylesheet" href="../css/detective.css" />
+  <link rel="stylesheet" href="../css/paralegal.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
+    <span>Room 03 · Paranormal Paralegal</span>
+    <span class="muted"><span id="topbar-case"></span> · <span class="key-hint">Esc = back</span></span>
+  </header>
+
+  <main class="game-stage">
+    <div class="dl-stage">
+
+      <!-- ============ 1. CASE FILE COVER (menu + difficulty) ============ -->
+      <section class="dl-screen pp-center" id="screen-cover">
+        <div class="pp-folder">
+          <div class="pp-title-stamp">
+            <span class="pp-circle"></span>
+            <span class="pp-stamp-text">Paranormal<br />Paralegal</span>
+          </div>
+          <p class="pp-case-line" id="cover-case"></p>
+
+          <div class="pp-difficulty" role="radiogroup" aria-label="Difficulty">
+            <p class="pp-label" id="diff-label">select difficulty</p>
+            <div class="pp-diff-row">
+              <button role="radio" data-diff="easy">Easy<small>3 pages</small></button>
+              <button role="radio" data-diff="medium">Medium<small>4 pages</small></button>
+              <button role="radio" data-diff="hard">Hard<small>5 pages</small></button>
+            </div>
+          </div>
+
+          <div class="pp-cover-buttons">
+            <button class="primary" id="btn-daily">Case of the Day</button>
+            <button data-soon="Detective's Backlog">Detective's Backlog</button>
+            <a href="../hallway.html" class="pp-wide"><button>Back to Hallway</button></a>
+          </div>
+          <p class="dl-note" id="cover-note" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ============ 2. DEBRIEF (Jane, skippable) ============ -->
+      <section class="dl-screen" id="screen-debrief" hidden>
+        <div class="pp-debrief-scene">
+          <div class="pp-jane" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <circle cx="60" cy="40" r="20" fill="none" stroke="currentColor" stroke-width="5"/>
+              <path d="M40 30 Q60 6 80 30" fill="none" stroke="currentColor" stroke-width="5"/>
+              <path d="M16 120 Q16 70 60 70 Q104 70 104 120" fill="none" stroke="currentColor" stroke-width="5"/>
+            </svg>
+            <span class="muted">[ art: Jane Debrief ]</span>
+          </div>
+        </div>
+        <div class="pp-dialogue" id="debrief-box">
+          <div class="pp-speaker">Jane Debrief</div>
+          <p class="pp-line" id="debrief-line" aria-live="polite"></p>
+          <span class="pp-progress" id="debrief-progress"></span>
+        </div>
+        <div class="pp-row">
+          <button id="btn-skip">Skip debrief ▶▶</button>
+          <button class="primary" id="btn-debrief-next">Next ▶ <small>(Enter)</small></button>
+        </div>
+      </section>
+
+      <!-- ============ 3. DESK: the case folder ============ -->
+      <section class="dl-screen" id="screen-desk" hidden>
+        <nav class="pp-toolbar">
+          <button data-go="cover">&larr; Cover</button>
+          <button id="btn-replay">Replay debrief</button>
+          <span class="pp-counter" id="page-counter"></span>
+        </nav>
+
+        <div class="pp-desk" id="desk">
+          <button class="pp-arrow prev" id="btn-prev" aria-label="Previous page">◀</button>
+
+          <!-- the stack sits in the middle of the screen; the folder cover opens to the left of it -->
+          <div class="pp-stack" id="stack">
+            <div class="pp-board" aria-hidden="true"></div>
+            <!-- pages are added here by paralegal.js -->
+
+            <!-- the folder cover: front = outside of the folder, back = inside (left half when open) -->
+            <div class="pp-cover" id="folder-cover">
+              <div class="pp-face pp-front" id="cover-front">
+                <div class="pp-front-intro">
+                  <p class="pp-tab">CASE FILE</p>
+                  <p class="pp-case-no" id="front-case"></p>
+                  <p class="muted" id="front-date"></p>
+                  <p class="pp-open-hint">click to open</p>
+                </div>
+                <div class="pp-wax">CASE<br />CLOSED</div>
+                <div class="pp-result">
+                  <p class="pp-score" id="result-score"></p>
+                  <button class="pp-link" id="btn-breakdown">click to see your breakdown</button>
+                  <div class="pp-result-buttons">
+                    <button id="btn-share">Share</button>
+                    <a href="../hallway.html"><button>Back to Hallway</button></a>
+                  </div>
+                  <p class="dl-note" id="result-next"></p>
+                  <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's case</button>
+                </div>
+              </div>
+              <div class="pp-face pp-back">
+                <p class="pp-tab">CASE FILE</p>
+                <p id="flap-case"></p>
+                <p class="muted pp-flap-hint" id="flap-hint"></p>
+              </div>
+            </div>
+          </div>
+
+          <button class="pp-arrow next" id="btn-next" aria-label="Next page">▶</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ BREAKDOWN POP-UP ============ -->
+  <dialog class="modal pp-breakdown" id="breakdown">
+    <h2>Your breakdown</h2>
+    <div id="breakdown-body"></div>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/paralegal/cases.js"></script>
+  <script src="../js/paralegal/grader.js"></script>
+  <script src="../js/paralegal/paralegal.js"></script>
+</body>
+</html>

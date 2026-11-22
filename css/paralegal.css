@@ -1,0 +1,289 @@
+/* =========================================================
+   PARANORMAL PARALEGAL – black & white placeholder styles.
+   Uses detective.css for the stage, style.css for colours.
+   ========================================================= */
+
+.pp-center { align-items: center; justify-content: center; }
+.pp-row { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.pp-link {
+  border: 0; background: none; padding: 0.2rem 0;
+  text-decoration: underline; font-size: 0.9rem; cursor: pointer;
+}
+.pp-link:hover, .pp-link:focus-visible { background: none; color: var(--fg); text-decoration-thickness: 3px; outline: none; }
+
+/* ---------- 1. Cover ---------- */
+.pp-folder {
+  height: 94%;
+  aspect-ratio: 3 / 4;
+  border: var(--border) solid var(--line);
+  box-shadow: 8px 8px 0 var(--line);
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.pp-title-stamp {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin-top: 0.4rem;
+}
+.pp-circle {
+  width: clamp(90px, 13vw, 150px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid var(--line);
+  background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(0,0,0,0.08) 6px 8px);
+}
+.pp-stamp-text {
+  position: absolute;
+  font-size: clamp(1.1rem, 2.3vw, 1.8rem);
+  font-weight: bold;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: rotate(-12deg);
+  background: var(--bg);
+  padding: 0.1rem 0.5rem;
+  border: 2px solid var(--line);
+}
+.pp-case-line { font-size: 0.8rem; color: var(--muted); }
+
+.pp-difficulty { width: 100%; }
+.pp-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.5rem; }
+.pp-diff-row { display: flex; gap: 0.5rem; justify-content: center; }
+.pp-diff-row button { flex: 1; display: flex; flex-direction: column; gap: 0.1rem; padding: 0.45rem 0.3rem; }
+.pp-diff-row small { font-size: 0.7rem; opacity: 0.75; }
+.pp-diff-row button.on { background: var(--fg); color: var(--bg); }
+.pp-diff-row button:not(.on):hover:not(:disabled) { background: var(--bg); color: var(--fg); border-style: dashed; }
+.pp-diff-row button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.pp-cover-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; width: 100%; }
+.pp-cover-buttons button { width: 100%; font-size: 0.85rem; padding: 0.5rem 0.3rem; }
+.pp-wide { grid-column: 1 / -1; justify-self: center; width: 60%; }
+
+/* ---------- 2. Debrief ---------- */
+.pp-debrief-scene { flex: 1; min-height: 0; display: flex; align-items: flex-end; justify-content: center; }
+.pp-jane { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; font-size: 0.75rem; }
+.pp-jane svg { width: clamp(140px, 20vw, 240px); }
+
+.pp-dialogue {
+  position: relative;
+  min-height: 100px;
+  background: var(--fg);
+  color: var(--bg);
+  padding: 0.7rem 1.4rem 1.1rem;
+  cursor: pointer;
+}
+.pp-speaker { font-size: 0.85rem; font-weight: bold; margin-bottom: 0.35rem; }
+.pp-line { font-style: italic; text-align: center; font-size: 1.05rem; line-height: 1.5; min-height: 1.5em; }
+.pp-progress { position: absolute; right: 1rem; bottom: 0.35rem; font-size: 0.7rem; opacity: 0.6; }
+#btn-debrief-next small { font-weight: normal; opacity: 0.7; font-size: 0.75rem; }
+
+/* ---------- 3. Desk ---------- */
+#screen-desk { gap: 0.6rem; padding-top: 0.8rem; }
+.pp-toolbar { display: flex; align-items: center; gap: 0.5rem; }
+.pp-counter { margin-left: auto; font-size: 0.85rem; font-weight: bold; }
+
+/* the desk is a size container so the folder can size itself from it */
+.pp-desk { position: relative; flex: 1; min-height: 0; container-type: size; }
+
+/* The pile of pages is centred. Its width (--w) is set so the opened
+   cover still fits on the left: page = 3:4, max 29% of the desk width. */
+.pp-stack {
+  --gap: 20px;                               /* board edge + hinge */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: min(86cqh, 38cqw);
+  aspect-ratio: 3 / 4;
+  transform: translate(-50%, -50%);
+  perspective: 2000px;
+}
+
+/* back board of the folder, under the pile */
+.pp-board {
+  position: absolute;
+  inset: -10px;
+  border: var(--border) solid var(--line);
+  box-shadow: 6px 6px 0 var(--line);
+  background: var(--bg);
+}
+
+.pp-arrow { position: absolute; top: 50%; transform: translateY(-50%); font-size: 1.3rem; padding: 0.6rem 0.8rem; z-index: 400; }
+.pp-arrow.next { left: calc(50% + min(86cqh, 38cqw) * 0.375 + 28px); }
+.pp-arrow.prev { right: calc(50% + min(86cqh, 38cqw) * 1.125 + 48px); }
+.pp-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
+.pp-arrow:disabled:hover { background: var(--bg); color: var(--fg); }
+
+/* ---------- pages ---------- */
+.pp-page {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  box-shadow: 3px 3px 0 var(--line);
+  padding: 1rem 1.2rem;
+  overflow: auto;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.25, 1), box-shadow 0.15s;
+}
+/* read pages are moved onto the left half of the open folder */
+.pp-page.off { transform: translateX(calc(-100% - var(--gap) - 20px)) rotate(calc(var(--tilt, 0deg) * -1.6)); }
+
+/* click the top page to turn it / click the left pile to bring one back */
+.pp-page.clickable { cursor: pointer; }
+.pp-page.clickable:hover { box-shadow: 7px 7px 0 var(--line); }
+
+.pp-page-no { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.pp-page h2 { font-size: 1.05rem; margin: 0.2rem 0 0.6rem; text-decoration: underline; }
+.pp-page p { margin-bottom: 0.6rem; }
+.pp-page mark { background: var(--fg); color: var(--bg); padding: 0 0.2em; }   /* key point */
+.pp-img { display: block; width: 100%; max-height: 40%; object-fit: contain; margin-top: 0.4rem; }
+.pp-img-placeholder {
+  height: 90px;
+  border: 2px dashed var(--line);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* summary sheet */
+.pp-answer label { display: block; font-weight: bold; font-size: 0.85rem; margin: 0.5rem 0 0.2rem; }
+.pp-answer input, .pp-answer textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.88rem;
+  padding: 0.4rem 0.5rem;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  resize: none;
+}
+.pp-count { text-align: right; font-size: 0.7rem; color: var(--muted); margin: 0.1rem 0 0 !important; }
+.pp-error { font-size: 0.8rem; min-height: 1.2em; margin: 0 !important; }
+.pp-submit { font-weight: bold; font-size: 1rem; }
+
+/* "are you sure?" box on top of the sheet */
+.pp-confirm {
+  position: absolute;
+  inset: 25% 8%;
+  background: var(--bg);
+  border: var(--border) solid var(--line);
+  box-shadow: 6px 6px 0 var(--line);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+  z-index: 5;
+}
+
+/* ---------- the folder cover (two-sided, hinged on the left) ---------- */
+.pp-cover {
+  position: absolute;
+  inset: -10px;                              /* same size as the board */
+  z-index: 300;
+  transform-origin: 0 50%;                   /* the spine */
+  transform-style: preserve-3d;
+  transform: rotateY(-180deg);               /* open: lying on the left */
+  transition: transform 0.85s cubic-bezier(0.6, 0, 0.3, 1);
+}
+.pp-cover.shut { transform: rotateY(0deg); }
+
+.pp-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--bg);
+  border: var(--border) solid var(--line);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+.pp-back {                                   /* inside of the cover = left half when open */
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  border-style: dashed;
+  font-size: 0.85rem;
+}
+.pp-tab { font-weight: bold; letter-spacing: 0.25em; font-size: 0.8rem; }
+.pp-case-no { font-size: 1.6rem; font-weight: bold; }
+.pp-open-hint { margin-top: 1.5rem; font-size: 0.8rem; text-decoration: underline; animation: blink 1.2s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0.3; } }
+.pp-flap-hint { margin-top: auto; font-size: 0.8rem; line-height: 1.5; }
+
+/* closed + not opened yet: the front can be clicked */
+#screen-desk.folded .pp-front { cursor: pointer; }
+#screen-desk.folded .pp-front:hover { box-shadow: inset 0 0 0 3px var(--line); }
+
+/* front shows either the intro (case no.) or the result */
+.pp-wax, .pp-result { display: none; }
+.pp-cover.stamped .pp-front-intro { display: none; }
+.pp-cover.stamped .pp-wax { display: grid; }
+.pp-cover.stamped .pp-result { display: flex; }
+
+.pp-wax {
+  width: clamp(110px, 14vw, 170px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 6px double var(--line);
+  place-items: center;
+  font-weight: bold;
+  font-size: clamp(1.1rem, 2.1vw, 1.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  transform: rotate(-14deg) scale(2.6);
+  opacity: 0;
+  animation: wax 0.35s 0.1s cubic-bezier(0.5, 0, 0.7, 1.4) forwards;
+}
+@keyframes wax { to { transform: rotate(-14deg) scale(1); opacity: 1; } }
+#screen-desk.done:not(.instant) .pp-stack { animation: thud 0.25s 0.42s; }
+@keyframes thud { 40% { transform: translate(-50%, calc(-50% + 4px)); } }
+
+.pp-result { flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0; animation: fade-in 0.4s 0.6s forwards; }
+@keyframes fade-in { to { opacity: 1; } }
+.pp-score { font-size: 2rem; font-weight: bold; }
+.pp-result-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+
+/* page controls only while the folder is open and in use */
+#screen-desk.folded .pp-arrow,
+#screen-desk.closing .pp-arrow,
+#screen-desk.closing #btn-replay,
+#screen-desk.closing [data-go] { visibility: hidden; }
+#screen-desk.done [data-go] { visibility: visible; }
+
+/* already closed when you come back: no animation */
+#screen-desk.instant *, #screen-desk.instant { transition: none !important; animation-duration: 0s !important; animation-delay: 0s !important; }
+
+/* ---------- Breakdown pop-up ---------- */
+.pp-breakdown { width: min(640px, 92vw); max-width: none; }
+.pp-breakdown h3 { font-size: 0.9rem; margin: 0.8rem 0 0.3rem; }
+.pp-table { width: 100%; border-collapse: collapse; }
+.pp-table th, .pp-table td { border: 2px solid var(--line); padding: 0.35rem 0.7rem; text-align: left; }
+.pp-table tr.total { font-weight: bold; }
+.pp-quote { border-left: 4px solid var(--line); padding-left: 0.7rem; white-space: pre-wrap; }
+.pp-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pp-keys ul { list-style: none; margin: 0 !important; line-height: 1.7; }
+
+/* ---------- Phones / narrow screens ---------- */
+@media (max-width: 800px) {
+  .pp-folder { height: auto; width: 100%; aspect-ratio: auto; gap: 1rem; }
+  .pp-desk { min-height: 70vh; }
+  .pp-arrow { padding: 0.5rem; }
+  .pp-keys { grid-template-columns: 1fr; }
+}
