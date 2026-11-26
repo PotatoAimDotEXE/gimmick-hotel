@@ -129,7 +129,7 @@
     typeLine();
   }
 
-  // John D'Brief changes pose twice per line: when it starts, and halfway through the typing
+  // John D'Brief changes pose at most once per line: when a new line starts
   const poses = [...document.querySelectorAll("#john .pose")];
   let pose = 0;
   function showPose(i) {
@@ -155,11 +155,9 @@
     el.textContent = "";
     typing = true;
     let i = 0;
-    const half = Math.floor(full.length / 2);
     clearInterval(typeTimer);
     typeTimer = setInterval(() => {
       el.textContent = full.slice(0, ++i);
-      if (i === half && poses.length > 1) changePose(); // second pose change, halfway through
       if (i >= full.length) finishTyping();
     }, TYPE_SPEED);
   }
