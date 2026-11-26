@@ -46,15 +46,16 @@
           <button class="dl-folder" id="btn-open-folder" aria-label="Open the case file">
             <span class="dl-stamp">CLASSIFIED</span>
             <span class="dl-case-no" id="folder-case-no">CASE #000</span>
+            <span class="dl-case-title" id="folder-title"></span>
             <span class="dl-case-date" id="folder-date"></span>
             <span class="dl-hint">click to open</span>
           </button>
 
           <fieldset class="dl-difficulty" id="difficulty">
             <legend>Difficulty</legend>
-            <label><input type="radio" name="difficulty" value="easy" /> Easy <small>(3 suspects)</small></label>
-            <label><input type="radio" name="difficulty" value="medium" /> Medium <small>(4 suspects)</small></label>
-            <label><input type="radio" name="difficulty" value="hard" /> Hard <small>(5 suspects)</small></label>
+            <label><input type="radio" name="difficulty" value="easy" /> Easy <small>(3 people)</small></label>
+            <label><input type="radio" name="difficulty" value="medium" /> Medium <small>(4 people)</small></label>
+            <label><input type="radio" name="difficulty" value="hard" /> Hard <small>(5 people)</small></label>
             <p class="dl-note">Locked once you open the file.</p>
           </fieldset>
         </div>
@@ -66,13 +67,16 @@
         <nav class="dl-toolbar">
           <div class="dl-tabs" role="tablist">
             <button role="tab" data-view="file">Case File</button>
-            <button role="tab" data-view="suspects">Suspects</button>
+            <button role="tab" data-view="suspects">People of interest</button>
           </div>
           <div class="dl-toolbar-right">
             <button data-go="menu">Menu</button>
             <button class="dl-answer-btn" id="btn-answer">✎ Answer</button>
           </div>
         </nav>
+
+        <!-- the case question: big, so it is always easy to spot -->
+        <p class="dl-question" id="case-question"></p>
 
         <!-- 3a. opened case file -->
         <div class="dl-view" id="view-file">
@@ -85,7 +89,8 @@
         <!-- 3b. suspect board -->
         <div class="dl-view" id="view-suspects" hidden>
           <div class="dl-board">
-            <p class="dl-board-label">Click a suspect to open their file</p>
+            <p class="dl-board-title">People of interest</p>
+            <p class="dl-board-label">Click a person to read their interview</p>
             <div class="dl-suspects" id="suspect-list"></div>
           </div>
         </div>
@@ -97,9 +102,9 @@
             <article class="dl-page" id="suspect-right"></article>
           </div>
           <div class="dl-suspect-actions">
-            <button data-view="suspects">&larr; All suspects</button>
-            <span class="key-hint">← → = previous / next suspect</span>
-            <button id="btn-accuse">Accuse this suspect</button>
+            <button data-view="suspects">&larr; People of interest</button>
+            <span class="key-hint">← → = previous / next person</span>
+            <button id="btn-accuse">Choose this person</button>
           </div>
         </div>
       </section>
@@ -125,11 +130,11 @@
       <h2>Your verdict</h2>
 
       <fieldset>
-        <legend>Who is the culprit?</legend>
+        <legend class="dl-question dl-question-small" id="answer-question">Who is it?</legend>
         <div class="dl-choices" id="answer-choices"></div>
       </fieldset>
 
-      <label for="answer-reason">Why? Explain your reasoning using evidence from the files.</label>
+      <label for="answer-reason" id="answer-instructions">Explain your reasoning using evidence from the files.</label>
       <textarea id="answer-reason" rows="6" maxlength="1200"
         placeholder="I think it's ___ because..."></textarea>
       <div class="dl-count"><span id="answer-count">0</span>/1200</div>

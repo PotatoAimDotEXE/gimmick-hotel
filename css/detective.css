@@ -238,3 +238,46 @@ button.primary { font-weight: bold; }
   .dl-book { grid-template-columns: 1fr; }
   .dl-page + .dl-page { border-left: 2px solid var(--line); border-top: none; }
 }
+
+/* ---------- Case question: big so it's always easy to spot ---------- */
+.dl-question {
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  font-weight: bold;
+  text-align: center;
+  border: var(--border) solid var(--line);
+  padding: 0.35rem 1rem;
+  letter-spacing: 0.02em;
+}
+.dl-question::before { content: "? "; opacity: 0.5; }
+.dl-question-small { font-size: 1.15rem; border: 0; padding: 0 0.3rem; text-align: left; }
+.dl-question-small::before { content: ""; }
+
+/* folder + case file titles */
+.dl-case-title { font-size: 1rem; font-style: italic; }
+.dl-file-title { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.2rem !important; }
+
+/* evidence items on the right page */
+.dl-evidence { margin-bottom: 0.9rem; }
+.dl-evidence h3 { font-size: 0.9rem; margin-bottom: 0.25rem; }
+.dl-evidence p { margin-bottom: 0.25rem; }
+.dl-evidence ul { margin-left: 1.1rem; }
+.dl-ev-note { font-style: italic; font-size: 0.85rem; color: var(--muted); }
+
+/* people of interest board + interview log */
+.dl-board-title { font-weight: bold; font-size: 1.1rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.dl-q { margin-bottom: 0.8rem; }
+.dl-a { line-height: 1.6; }
+
+/* scroll shadow: a dark edge appears at the bottom (or top) of a page
+   when there's more to read, so players don't miss evidence below */
+.dl-page {
+  background:
+    linear-gradient(var(--bg) 30%, transparent) center top,
+    linear-gradient(transparent, var(--bg) 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.35), transparent) center top,
+    radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.35), transparent) center bottom;
+  background-color: var(--bg);
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 16px, 100% 16px;
+  background-attachment: local, local, scroll, scroll;
+}

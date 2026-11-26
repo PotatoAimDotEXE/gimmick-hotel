@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Escape Room – Interrogation Room</title>
+  <title>Hotel Hysterics – Interrogation Room</title>
   <link rel="stylesheet" href="../css/style.css" />
   <!-- shares the stage + case-file book styles with the detective game -->
   <link rel="stylesheet" href="../css/detective.css" />
@@ -29,9 +29,9 @@
               <p class="crt-head">LOG #<span id="crt-log-no"></span></p>
               <p class="crt-sub" id="crt-sub">SELECT DIFFICULTY</p>
               <div class="crt-options" role="radiogroup" aria-label="Difficulty" id="difficulty">
-                <button role="radio" data-diff="easy">EASY <small>3 lines · 1 lie</small></button>
-                <button role="radio" data-diff="medium">MEDIUM <small>4 lines · 1 lie</small></button>
-                <button role="radio" data-diff="hard">HARD <small>5 lines · 2 lies</small></button>
+                <button role="radio" data-diff="easy">EASY <small></small></button>
+                <button role="radio" data-diff="medium">MEDIUM <small></small></button>
+                <button role="radio" data-diff="hard">HARD <small></small></button>
               </div>
               <p class="crt-hint">↑ ↓ to choose</p>
             </div>
@@ -49,7 +49,7 @@
         <p class="dl-note ir-center" id="menu-note" aria-live="polite"></p>
       </section>
 
-      <!-- ============ 2. INSTRUCTIONS + CASE FILE ============ -->
+      <!-- ============ 2. INSTRUCTIONS + CASE BRIEF ============ -->
       <section class="dl-screen" id="screen-brief" hidden>
         <div class="dl-book">
           <article class="dl-page" id="brief-left"></article>
@@ -64,10 +64,10 @@
       <!-- ============ 3. INTERROGATION ============ -->
       <section class="dl-screen ir-room" id="screen-room" hidden>
         <div class="ir-room-scene">
-          <button class="crt crt-small" id="btn-tv" aria-label="Open the case summary">
+          <button class="crt crt-small" id="btn-tv" aria-label="Open the case brief">
             <span class="crt-screen">
-              <span class="crt-head">CASE SUMMARY</span>
-              <span class="crt-summary" id="tv-summary"></span>
+              <span class="crt-head">CASE BRIEF</span>
+              <span class="crt-summary" id="tv-title"></span>
               <span class="crt-hint">click (or press C) to zoom</span>
             </span>
           </button>
@@ -81,6 +81,14 @@
         </div>
         <div class="table-top" aria-hidden="true"></div>
 
+        <!-- the detective's (player's) questions: separate box above the suspect's -->
+        <div class="ir-detective-box" id="detective-box" hidden>
+          <span class="ir-detective-tag">Detective (you)</span>
+          <p class="ir-detective-line" id="detective-line"></p>
+          <span class="ir-more" id="det-more" aria-hidden="true">▼</span>
+        </div>
+
+        <!-- the suspect's answers -->
         <div class="ir-dialogue" id="dialogue">
           <div class="ir-speaker" id="speaker"></div>
           <p class="ir-line" id="line" aria-live="polite"></p>
@@ -93,11 +101,30 @@
           <button class="ir-next" id="btn-next">NEXT → <small>(Enter)</small></button>
         </div>
       </section>
-
     </div>
   </main>
 
-  <!-- ============ 4. RESULT – pop-up over the interrogation room ============ -->
+  <!-- ============ CASE BRIEF (click the TV) – read only ============ -->
+  <dialog class="modal ir-brief-modal" id="tv-dialog">
+    <h2 class="ir-modal-title">Case Brief</h2>
+    <div class="ir-brief" id="tv-brief"></div>
+    <form method="dialog" class="ir-row-center"><button>Close (Esc)</button></form>
+  </dialog>
+
+  <!-- ============ PROOF PICKER: flag -> select one -> confirm ============ -->
+  <dialog class="modal ir-brief-modal" id="proof-dialog">
+    <p class="ir-step">Step 2 of 3 · Select your proof</p>
+    <p class="ir-flagged-line">You flagged: <q id="proof-line"></q></p>
+    <p class="ir-proof-ask">Tap the part of the brief (a sentence part or a picture) that shows this is a lie.</p>
+    <div class="ir-brief selectable" id="proof-brief"></div>
+    <div class="ir-row ir-proof-footer">
+      <button id="btn-proof-cancel">Cancel (don't flag)</button>
+      <span class="ir-picked" id="proof-picked">Nothing selected yet</span>
+      <button class="primary" id="btn-proof-confirm" disabled>Confirm ✓</button>
+    </div>
+  </dialog>
+
+  <!-- ============ RESULT – pop-up over the interrogation room ============ -->
   <dialog class="modal ir-result-modal" id="result-dialog">
     <h1 class="dl-title" id="result-title" tabindex="-1" autofocus>Interrogation over</h1>
     <div class="dl-result ir-result" id="result-body"></div>
@@ -110,15 +137,6 @@
     <div class="ir-row-center">
       <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's log</button>
     </div>
-  </dialog>
-
-  <!-- ============ ZOOMED-IN CASE SUMMARY (click the TV) ============ -->
-  <dialog class="modal ir-zoom" id="tv-dialog">
-    <div class="dl-book">
-      <article class="dl-page" id="zoom-left"></article>
-      <article class="dl-page" id="zoom-right"></article>
-    </div>
-    <form method="dialog" class="ir-row-center"><button>Close (Esc)</button></form>
   </dialog>
 
   <script src="../js/main.js"></script>

@@ -225,3 +225,129 @@
   .ir-flag, .ir-next { min-width: 0; flex: 1; }
   .ir-zoom .dl-book { height: auto; max-height: 70vh; overflow: auto; }
 }
+
+/* =========================================================
+   Detective lines, proof picker, highlighted results
+   ========================================================= */
+
+/* detective (you) speaking: white box, suspect dims */
+.ir-dialogue { transition: background 0.2s, color 0.2s; }
+.ir-dialogue.is-detective {
+  background: var(--bg);
+  color: var(--fg);
+  border-style: double;
+  border-width: 6px;
+  text-align: left;
+}
+.ir-dialogue.is-detective .ir-speaker { opacity: 1; font-weight: bold; }
+.ir-dialogue.is-detective .ir-line::before { content: "\201C"; }
+.ir-dialogue.is-detective .ir-line::after { content: "\201D"; }
+.ir-suspect { transition: opacity 0.25s, transform 0.25s; }
+.ir-suspect.dimmed { opacity: 0.3; transform: scale(0.97); }
+
+/* ---------- the brief (TV pop-up, proof picker, results) ---------- */
+.ir-brief-modal { width: min(880px, 94vw); max-width: none; max-height: 90vh; flex-direction: column; }
+.ir-brief-modal[open] { display: flex; }   /* only when open, or closed pop-ups would show */
+.ir-modal-title { margin-bottom: 0.5rem; }
+.ir-brief {
+  overflow: auto;
+  border: 2px solid var(--line);
+  padding: 0.9rem 1.1rem;
+  line-height: 1.8;
+  font-size: 0.95rem;
+  margin-bottom: 0.8rem;
+}
+.ir-brief p { margin-bottom: 0.7rem; }
+.ir-brief-title { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+
+/* clauses you can tap */
+.ir-clause {
+  display: inline;
+  padding: 0.05rem 0.15rem;
+  margin: 0;
+  border: 0;
+  border-bottom: 2px dotted var(--muted);
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.ir-clause:hover, .ir-clause:focus-visible { background: rgba(0, 0, 0, 0.08); color: var(--fg); outline: 2px dashed var(--line); outline-offset: 1px; }
+.ir-clause.picked, .ir-clause.picked:hover { background: var(--fg); color: var(--bg); border-bottom-color: var(--fg); outline: none; }
+
+/* pictures (placeholders until the art is drawn) */
+.ir-assets { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.4rem; }
+.ir-asset {
+  flex: 1 1 220px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  border: 2px dashed var(--line);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: left;
+}
+button.ir-asset { cursor: pointer; }
+button.ir-asset:hover, button.ir-asset:focus-visible { background: rgba(0, 0, 0, 0.06); color: var(--fg); border-style: solid; outline: none; }
+.ir-asset.picked, .ir-asset.picked:hover { background: var(--fg); color: var(--bg); border-style: solid; }
+.ir-asset img { width: 100%; display: block; image-rendering: pixelated; }
+.ir-asset-ph { color: inherit; opacity: 0.75; font-style: italic; }
+.ir-asset-text { font-weight: bold; border: 2px solid currentColor; padding: 0.3rem 0.4rem; letter-spacing: 0.03em; }
+.ir-asset.proof { border-style: solid; border-width: 4px; }
+.ir-asset-note { font-size: 0.75rem; font-weight: bold; margin: -0.3rem 0 0 !important; width: 100%; }
+
+/* proof picker frame */
+.ir-step { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.ir-flagged-line { font-size: 1.1rem; font-weight: bold; margin: 0.2rem 0; }
+.ir-flagged-line q { font-style: italic; }
+.ir-proof-ask { font-size: 0.9rem; margin-bottom: 0.6rem; }
+.ir-proof-footer { flex-wrap: nowrap; }
+.ir-picked { flex: 1; text-align: center; font-size: 0.8rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#btn-proof-confirm:disabled { opacity: 0.35; cursor: not-allowed; }
+#btn-proof-confirm:disabled:hover { background: var(--bg); color: var(--fg); }
+
+/* results: proofs highlighted in the brief */
+.ir-result-modal { max-height: 92vh; overflow: auto; }
+.ir-proofs { text-align: left; margin-top: 0.8rem; }
+.ir-proofs summary { cursor: pointer; font-weight: bold; margin-bottom: 0.4rem; }
+.ir-proofs .ir-brief { max-height: none; font-size: 0.88rem; }
+.ir-brief mark.lie, .ir-legend mark.lie { background: var(--fg); color: var(--bg); padding: 0 0.15em; }
+.ir-brief mark.true, .ir-legend mark.true { background: none; color: inherit; border-bottom: 2px solid var(--fg); }
+.ir-brief sup { font-weight: bold; font-size: 0.65rem; margin-right: 1px; }
+.ir-legend { font-size: 0.75rem; }
+.ir-your-proof { font-size: 0.75rem; font-style: italic; }
+.ir-result td:nth-child(3) { max-width: 220px; }
+
+/* ---------- detective (player) box: separate from the suspect's box ---------- */
+.ir-detective-box {
+  position: relative;
+  align-self: flex-start;
+  width: min(70%, 640px);
+  margin-bottom: -0.3rem;
+  padding: 0.45rem 1rem 0.55rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: var(--border) solid var(--line);
+  border-left-width: 10px;                 /* marks it as "you" */
+  cursor: pointer;
+  opacity: 0.55;                           /* greyed while the suspect answers */
+  transition: opacity 0.2s, transform 0.2s;
+}
+.ir-detective-box.active { opacity: 1; transform: translateY(-2px); box-shadow: 5px 5px 0 var(--line); }
+.ir-detective-tag { font-size: 0.7rem; font-weight: bold; letter-spacing: 0.15em; text-transform: uppercase; }
+.ir-detective-line { font-size: 1rem; font-style: italic; min-height: 1.4em; }
+.ir-detective-line::before { content: "\201C"; }
+.ir-detective-line::after { content: "\201D"; }
+.ir-detective-box .ir-more { right: 0.7rem; bottom: 0.3rem; }
+/* suspect box waits while you're asking */
+.ir-dialogue.waiting { opacity: 0.45; }
+.ir-dialogue.waiting .ir-line { letter-spacing: 0.3em; }

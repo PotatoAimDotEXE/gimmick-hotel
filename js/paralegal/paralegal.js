@@ -3,22 +3,35 @@
    Flow: Case file cover (difficulty) -> Jane's debrief
          (skippable) -> open folder with a pile of pages
          (next = page slides off, prev = page comes back) ->
-         last page: title + description -> confirm submit ->
+         last page: title + summary -> confirm submit ->
          pages stack up, cover swings shut, CASE CLOSED stamp
-   Case of the Day: one attempt per day, saved in localStorage.
+   Case of the Day: one random case per day, one attempt.
+   Scored out of 5 using each version's rubric (see grader.js).
    ========================================================= */
 
 (function () {
   /* ---------------- Today's case ---------------- */
   const START_DATE = new Date(2026, 10, 1); // 1 Nov 2026 = case #101 (change freely)
-  const dayIndex = Daily.daysSince(START_DATE);
-  const caseData = PARALEGAL_CASES[dayIndex % PARALEGAL_CASES.length];
-  const caseNumber = 101 + dayIndex;
+  const caseNumber = 101 + Daily.daysSince(START_DATE);
 
-  const KEY_RESULT = "er_para_result_" + Daily.key();
-  const KEY_DRAFT = "er_para_draft_" + Daily.key();
-  const PAGES = { easy: 3, medium: 4, hard: 5 };
+  const KEY_RESULT = "er_pp_result_" + Daily.key();
+  const KEY_DRAFT = "er_pp_draft_" + Daily.key();
+  const KEY_PICK = "er_pp_case_" + Daily.key(); // which case today is
+  const KEY_LAST = "er_pp_last_case"; // previous pick, so it doesn't repeat
   const TYPE_SPEED = 22;
+
+  // Today's case: picked at random once, kept for the day (never the same as last time)
+  function pickCase() {
+    const found = PARALEGAL_CASES.find((c) => c.id === Store.safeGet(KEY_PICK, null));
+    if (found) return found;
+    const last = Store.safeGet(KEY_LAST, null);
+    const pool = PARALEGAL_CASES.length > 1 ? PARALEGAL_CASES.filter((c) => c.id !== last) : PARALEGAL_CASES;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    Store.safeSet(KEY_PICK, pick.id);
+    Store.safeSet(KEY_LAST, pick.id);
+    return pick;
+  }
+  const caseData = pickCase();
 
   let draft = Store.safeGet(KEY_DRAFT, null) || {
     difficulty: "easy",
@@ -33,8 +46,13 @@
   const $ = (id) => document.getElementById(id);
   const saveDraft = () => Store.safeSet(KEY_DRAFT, draft);
   const getResult = () => Store.safeGet(KEY_RESULT, null);
-  const infoPages = () => caseData.pages.slice(0, PAGES[draft.difficulty]);
-  const totalPages = () => infoPages().length + 1; // + the answer sheet
+  const version = (d = draft.difficulty) => caseData.versions[d];
+  // page 1 = case report, then one page per piece of evidence
+  const infoPages = (d) => [
+    { kind: "report", heading: "Case Report", body: version(d).report },
+    ...version(d).evidence.map((ev) => ({ kind: "evidence", ...ev })),
+  ];
+  const totalPages = () => infoPages().length + 1; // + the summary sheet
 
   $("topbar-case").textContent = "Case #" + caseNumber;
   $("cover-case").textContent = `CASE #${caseNumber} · ${Daily.pretty()}`;
@@ -52,6 +70,7 @@
 
   /* ---------------- 1. Cover ---------------- */
   const diffButtons = [...document.querySelectorAll("[data-diff]")];
+  diffButtons.forEach((b) => (b.querySelector("small").textContent = infoPages(b.dataset.diff).length + " pages"));
 
   function renderCover() {
     const result = getResult();
@@ -178,12 +197,23 @@
     infoPages().forEach((pg, i) => {
       const el = document.createElement("article");
       el.className = "pp-page";
-      let html = `<p class="pp-page-no">Page ${i + 1}</p><h2>${escapeHtml(pg.heading)}</h2>`;
-      html += pg.body.map((t) => `<p>${rich(t)}</p>`).join("");
-      if ("image" in pg) {
-        html += pg.image
-          ? `<img class="pp-img" src="${pg.image}" alt="" />`
-          : `<div class="pp-img pp-img-placeholder">[ image / chart ]</div>`;
+      let html = `<p class="pp-page-no">Page ${i + 1}</p>`;
+      if (pg.kind === "report") {
+        html += `<h2>${escapeHtml(pg.heading)}</h2>` + pg.body.map((t) => `<p>${rich(t)}</p>`).join("");
+      } else {
+        // evidence: picture placeholder (until the art is drawn), log table or note
+        html += `<p class="pp-ev-tag">Evidence</p><h2>${escapeHtml(pg.label)}</h2>`;
+        if (pg.kind === "table") {
+          const head = pg.table.head.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
+          const rows = pg.table.rows.map((r) => `<tr>${r.map((c) => `<td>${rich(c)}</td>`).join("")}</tr>`).join("");
+          html += `<table class="pp-log"><tr>${head}</tr>${rows}</table>`;
+        } else if (pg.kind === "picture") {
+          html += pg.image
+            ? `<img class="pp-img" src="${pg.image}" alt="${escapeHtml(pg.text || "")}" />`
+            : `<div class="pp-picture"><span class="pp-picture-tag">[ picture ]</span><p>${rich(pg.text)}</p></div>`;
+        } else {
+          html += `<div class="pp-note"><p>${rich(pg.text)}</p></div>`;
+        }
       }
       el.innerHTML = html;
       pageEls.push(el);
@@ -195,11 +225,11 @@
     ans.innerHTML = `
       <p class="pp-page-no">Summary sheet</p>
       <h2>Case Summary</h2>
-      <label for="ans-title">Case title</label>
-      <input id="ans-title" type="text" maxlength="80" placeholder="Give the case a short, fitting title" />
-      <label for="ans-desc">Description</label>
-      <textarea id="ans-desc" rows="7" maxlength="700" placeholder="Summarise what happened. Mention every key point."></textarea>
-      <p class="pp-count"><span id="ans-words">0</span> words</p>
+      <label for="ans-title">Title <span class="pp-task">${escapeHtml(version().task.title)}</span></label>
+      <input id="ans-title" type="text" maxlength="80" placeholder="A short title" />
+      <label for="ans-desc">Summary <span class="pp-task">${escapeHtml(version().task.summary)}</span></label>
+      <textarea id="ans-desc" rows="6" maxlength="700" placeholder="One or two sentences."></textarea>
+      <p class="pp-count"><span id="ans-words">0</span> words · aim for 25–60</p>
       <p class="pp-error" id="ans-error" aria-live="polite"></p>
       <button class="pp-link pp-submit" id="btn-submit">Press to submit</button>
 
@@ -326,7 +356,7 @@
     err.textContent = "";
     if (!draft.title.trim()) return (err.textContent = "Give the case a title first.");
     if (draft.description.trim().split(/\s+/).length < 8)
-      return (err.textContent = "Write a bit more in the description (at least 8 words).");
+      return (err.textContent = "Write a bit more in the summary (at least 8 words).");
     $("confirm").hidden = false;
     $("btn-confirm").focus();
   }
@@ -344,9 +374,10 @@
     const grading = gradeSummary({
       caseData,
       difficulty: draft.difficulty,
+      version: version(),
       title: draft.title,
-      description: draft.description,
-    }).catch(() => ({ titleScore: 0, descriptionScore: 0, found: [], missed: [], feedback: "Couldn't reach the grader." }));
+      summary: draft.description,
+    }).catch(() => ({ checks: [], total: 0, max: 5, traps: [], feedback: "Couldn't reach the grader." }));
 
     // 1. the read pages come back from the left onto the pile, one by one
     const off = pageEls.filter((el) => el.classList.contains("off")).reverse();
@@ -369,18 +400,19 @@
     await wait(900);
 
     const g = await grading;
+    const max = g.max || 5;
     const result = {
+      caseId: caseData.id,
       caseNumber,
       difficulty: draft.difficulty,
       title: draft.title,
-      description: draft.description,
-      titleScore: clamp(g.titleScore, 5),
-      descriptionScore: clamp(g.descriptionScore, 10),
-      found: g.found || [],
-      missed: g.missed || [],
+      summary: draft.description,
+      checks: g.checks || [],
+      traps: g.traps || [],
+      total: clamp(g.total, max),
+      max,
       feedback: g.feedback || "",
     };
-    result.total = result.titleScore + result.descriptionScore;
     Store.safeSet(KEY_RESULT, result);
     Store.addScore("paralegal", result.total);
 
@@ -400,7 +432,7 @@
     });
     cover.style.zIndex = 300;
     cover.classList.add("shut", "stamped");
-    $("result-score").textContent = `${r.total}/15`;
+    $("result-score").textContent = `${r.total}/${r.max}`;
     $("result-next").textContent = "Next case in " + Daily.timeLeft() + ".";
     $("page-counter").textContent = "Case closed";
   }
@@ -412,19 +444,29 @@
   $("btn-breakdown").addEventListener("click", () => {
     const r = getResult();
     if (!r) return;
-    const list = (arr, mark) => (arr.length ? arr.map((w) => `<li>${mark} ${escapeHtml(w)}</li>`).join("") : "<li class='muted'>none</li>");
+    const v = caseData.versions[r.difficulty];
+    const rows = r.checks
+      .map((c) => `<tr class="${c.got ? "" : "missed"}"><td>${c.field === "title" ? "Title" : "Summary"}</td><td>${escapeHtml(c.what)}</td><td>${c.got ? "✓ 1" : "✗ 0"}</td></tr>`)
+      .join("");
+    const traps =
+      r.difficulty === "hard"
+        ? r.traps.length
+          ? `<div class="pp-traps"><h3>Traps you fell into</h3>${r.traps
+              .map((t) => `<p><strong>${escapeHtml(t.name)}</strong> – ${escapeHtml(t.info)}</p>`)
+              .join("")}</div>`
+          : `<div class="pp-traps"><h3>Traps</h3><p>You avoided every trap. ✓</p></div>`
+        : "";
     $("breakdown-body").innerHTML = `
+      <p class="pp-big-score">${r.total} / ${r.max}</p>
       <table class="pp-table">
-        <tr><th>Title</th><td>${r.titleScore} / 5</td></tr>
-        <tr><th>Description</th><td>${r.descriptionScore} / 10</td></tr>
-        <tr class="total"><th>Total</th><td>${r.total} / 15</td></tr>
+        <tr><th></th><th>What earns the point</th><th></th></tr>
+        ${rows}
       </table>
-      <h3>Your title</h3><p class="pp-quote">${escapeHtml(r.title)}</p>
-      <h3>Your description</h3><p class="pp-quote">${escapeHtml(r.description)}</p>
-      <div class="pp-keys">
-        <div><h3>Key points you covered</h3><ul>${list(r.found, "✓")}</ul></div>
-        <div><h3>Key points you missed</h3><ul>${list(r.missed, "✗")}</ul></div>
-      </div>
+      ${traps}
+      <h3>Your answer</h3>
+      <p class="pp-quote"><strong>${escapeHtml(r.title)}</strong><br />${escapeHtml(r.summary)}</p>
+      <h3>A full-marks answer</h3>
+      <p class="pp-quote"><strong>${escapeHtml(v.sample.title)}</strong><br />${escapeHtml(v.sample.summary)}</p>
       ${r.feedback ? `<p class="muted">${escapeHtml(r.feedback)}</p>` : ""}`;
     $("breakdown").showModal();
   });
@@ -433,10 +475,8 @@
   $("btn-share").addEventListener("click", async (e) => {
     const r = getResult();
     if (!r) return;
-    const bar = "🟩".repeat(r.total) + "⬜".repeat(15 - r.total);
-    const text =
-      `Paranormal Paralegal · Case #${r.caseNumber} (${r.difficulty})\n${bar}\n` +
-      `Title ${r.titleScore}/5 · Description ${r.descriptionScore}/10 · ${r.total}/15`;
+    const bar = r.checks.map((c) => (c.got ? "🟩" : "⬜")).join("");
+    const text = `Paranormal Paralegal · Case #${r.caseNumber} (${r.difficulty})\n${bar}\nScore: ${r.total}/${r.max}`;
     try {
       await navigator.clipboard.writeText(text);
       e.target.textContent = "Copied!";
@@ -452,6 +492,7 @@
       try {
         localStorage.removeItem(KEY_RESULT);
         localStorage.removeItem(KEY_DRAFT);
+        localStorage.removeItem(KEY_PICK); // also picks a new case
       } catch {}
       location.reload();
     });

@@ -14,11 +14,31 @@
 
   const dateKey = localDateKey(now);
   const dayIndex = Math.max(0, daysBetween(START_DATE, now));
-  const caseData = CASES[dayIndex % CASES.length];
   const caseNumber = 101 + dayIndex;
 
-  const KEY_RESULT = "er_detective_result_" + dateKey;
-  const KEY_DRAFT = "er_detective_draft_" + dateKey;
+  const KEY_RESULT = "er_det_result_" + dateKey;
+  const KEY_DRAFT = "er_det_draft_" + dateKey;
+  const KEY_PICK = "er_det_case_" + dateKey; // which case today is
+  const KEY_LAST = "er_det_last_case"; // the previous pick, so it doesn't repeat
+
+  // Today's case is picked at random once, then kept for the day.
+  // A new day or a dev reset picks again (never the same as last time).
+  function pickCase() {
+    const saved = Store.safeGet(KEY_PICK, null);
+    const found = CASES.find((c) => c.id === saved);
+    if (found) return found;
+    const last = Store.safeGet(KEY_LAST, null);
+    const pool = CASES.length > 1 ? CASES.filter((c) => c.id !== last) : CASES;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    Store.safeSet(KEY_PICK, pick.id);
+    Store.safeSet(KEY_LAST, pick.id);
+    return pick;
+  }
+  const caseData = pickCase();
+
+  const MAX_PICK = 4; // points for choosing the right person (automatic)
+  const MAX_REASON = 6; // points for the reasoning (AI)
+  const MAX_TOTAL = MAX_PICK + MAX_REASON;
 
   let draft = Store.safeGet(KEY_DRAFT, null) || {
     difficulty: "easy",
@@ -72,7 +92,7 @@
     if (!top.length) list.innerHTML = '<li class="muted">No cases solved yet.</li>';
     top.forEach((s) => {
       const li = document.createElement("li");
-      li.textContent = `${s.name} – ${s.score}/20`;
+      li.textContent = `${s.name} – ${s.score}/${MAX_TOTAL}`;
       list.appendChild(li);
     });
 
@@ -99,6 +119,7 @@
   /* ---------------- 2. Folder + difficulty ---------------- */
   function renderFolder() {
     $("folder-case-no").textContent = "CASE #" + caseNumber;
+    $("folder-title").textContent = caseData.title;
     $("folder-date").textContent = prettyDate(now);
     document.querySelectorAll('input[name="difficulty"]').forEach((r) => {
       r.checked = r.value === draft.difficulty;
@@ -122,6 +143,11 @@
   });
 
   /* ---------------- 3. Investigation ---------------- */
+  // A case (or a person in it) can have a different version per difficulty:
+  // versions: { easy: {...}, medium: {...}, hard: {...} } overrides the normal fields.
+  const caseView = () => ({ ...caseData, ...((caseData.versions || {})[draft.difficulty] || {}) });
+  const personView = (s) => ({ ...s, ...((s.versions || {})[draft.difficulty] || {}) });
+
   function activeSuspects() {
     const ids = caseData.difficulty[draft.difficulty];
     return caseData.suspects.filter((s) => ids.includes(s.id));
@@ -148,10 +174,34 @@
     </svg>`;
   }
 
+  // "{count}" -> Three / Four / Five (people shown on this difficulty), **text** -> bold
+  const NUMBER_WORDS = { 3: "Three", 4: "Four", 5: "Five" };
+  function fillText(t) {
+    const n = activeSuspects().length;
+    return escapeHtml(t.replace("{count}", NUMBER_WORDS[n] || n)).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  }
+
   function renderInvestigation() {
-    const b = caseData.briefing;
-    renderPage($("file-left"), b.left.heading, b.left.body);
-    renderPage($("file-right"), b.right.heading, b.right.body);
+    const cv = caseView();
+    $("case-question").textContent = cv.question;
+
+    const left = $("file-left");
+    left.innerHTML =
+      `<p class="dl-file-title">${escapeHtml(caseData.title)}</p><h2>Case Report</h2>` +
+      cv.report.map((t) => `<p>${fillText(t)}</p>`).join("");
+
+    const right = $("file-right");
+    right.innerHTML =
+      "<h2>Evidence</h2>" +
+      cv.evidence
+        .map((ev) => {
+          const body = ev.lines
+            ? `<ul>${ev.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`
+            : `<p>${escapeHtml(ev.text)}</p>`;
+          const note = ev.note ? `<p class="dl-ev-note">${escapeHtml(ev.note)}</p>` : "";
+          return `<div class="dl-evidence"><h3>${escapeHtml(ev.label)}</h3>${body}${note}</div>`;
+        })
+        .join("");
 
     const list = $("suspect-list");
     list.innerHTML = "";
@@ -165,22 +215,21 @@
     });
   }
 
-  function openSuspect(s) {
-    currentSuspect = s;
+  function openSuspect(person) {
+    currentSuspect = person;
+    const s = personView(person);
     const left = $("suspect-left");
-    left.innerHTML = `<div class="dl-portrait big">${portrait(s)}</div><h2></h2><p class="muted"></p><h3>Statement</h3><p class="stmt"></p>`;
+    left.innerHTML = `<div class="dl-portrait big">${portrait(s)}</div><h2></h2><p class="muted"></p>`;
     left.querySelector("h2").textContent = s.name;
     left.querySelector(".muted").textContent = s.role;
-    left.querySelector(".stmt").textContent = "“" + s.statement + "”";
 
+    // interview log: the detective's question + their answer
+    const answer = s.a + (draft.difficulty === "hard" && s.hardExtra ? " " + s.hardExtra : "");
+    const firstName = s.name.split(" ")[0];
     const right = $("suspect-right");
-    right.innerHTML = "<h2>Alibi</h2><p class='alibi'></p><h2>Evidence</h2><ul></ul>";
-    right.querySelector(".alibi").textContent = s.alibi;
-    s.evidence.forEach((e) => {
-      const li = document.createElement("li");
-      li.textContent = e;
-      right.querySelector("ul").appendChild(li);
-    });
+    right.innerHTML = `<h2>Interview Log</h2>
+      <p class="dl-q"><strong>Detective:</strong> ${escapeHtml(s.q)}</p>
+      <p class="dl-a"><strong>${escapeHtml(firstName)}:</strong> ${escapeHtml(answer)}</p>`;
     showView("suspect");
   }
 
@@ -194,6 +243,8 @@
       draft.suspect = preselectId;
       saveDraft();
     }
+    $("answer-question").textContent = caseView().question;
+    $("answer-instructions").textContent = caseView().instructions;
     const box = $("answer-choices");
     box.innerHTML = "";
     activeSuspects().forEach((s) => {
@@ -260,7 +311,7 @@
       difficulty: draft.difficulty,
       suspect: draft.suspect,
       reasoning: draft.reasoning,
-      suspectPts: correct ? 10 : 0,
+      suspectPts: correct ? MAX_PICK : 0,
       reasoningPts: null,
       feedback: "",
       grading: true,
@@ -272,8 +323,8 @@
 
   async function finishGrading(result) {
     try {
-      const g = await gradeReasoning({ caseData, suspectId: result.suspect, reasoning: result.reasoning });
-      result.reasoningPts = g.score === null ? null : Math.max(0, Math.min(10, Math.round(g.score)));
+      const g = await gradeReasoning({ caseData: caseView(), suspectId: result.suspect, reasoning: result.reasoning });
+      result.reasoningPts = g.score === null ? null : Math.max(0, Math.min(MAX_REASON, Math.round(g.score)));
       result.feedback = g.feedback || "";
     } catch {
       result.feedback = "Couldn't reach the grader. Reasoning not scored.";
@@ -292,25 +343,26 @@
     const r = getResult();
     showScreen("result");
     const body = $("result-body");
-    const correct = r.suspectPts === 10;
+    const correct = r.suspectPts === MAX_PICK;
 
-    $("result-title").textContent = r.grading ? "Grading…" : correct ? "Case Closed" : "The culprit got away";
+    $("result-title").textContent = r.grading ? "Grading…" : correct ? "Case Closed" : "Not quite, detective";
 
     const reasoningLine = r.grading
       ? "grading…"
       : r.reasoningPts === null
-      ? "– / 10 (pending)"
-      : r.reasoningPts + " / 10";
+      ? `– / ${MAX_REASON} (pending)`
+      : `${r.reasoningPts} / ${MAX_REASON}`;
 
     body.innerHTML = `
       <table>
         <tr><th>Case</th><td>#${r.caseNumber} · ${capitalise(r.difficulty)}</td></tr>
-        <tr><th>You accused</th><td>${escapeHtml(nameOf(r.suspect))} ${correct ? "✓" : "✗"}</td></tr>
-        <tr><th>Suspect</th><td>${r.suspectPts} / 10</td></tr>
+        <tr><th>Question</th><td>${escapeHtml(caseData.question)}</td></tr>
+        <tr><th>You chose</th><td>${escapeHtml(nameOf(r.suspect))} ${correct ? "✓" : "✗"}</td></tr>
+        <tr><th>Right person</th><td>${r.suspectPts} / ${MAX_PICK}</td></tr>
         <tr><th>Reasoning</th><td>${reasoningLine}</td></tr>
-        <tr class="total"><th>Total</th><td>${r.grading ? "…" : total(r) + " / 20"}</td></tr>
+        <tr class="total"><th>Total</th><td>${r.grading ? "…" : total(r) + " / " + MAX_TOTAL}</td></tr>
       </table>
-      ${correct ? "" : `<p>The culprit was <strong>${escapeHtml(nameOf(caseData.culprit))}</strong>.</p>`}
+      ${correct ? "" : `<p>The answer was <strong>${escapeHtml(nameOf(caseData.culprit))}</strong>.</p>`}
       ${r.feedback ? `<p class="muted">${escapeHtml(r.feedback)}</p>` : ""}
       <details><summary>Your reasoning</summary><p>${escapeHtml(r.reasoning)}</p></details>
     `;
@@ -324,9 +376,9 @@
     if (!r) return;
     const text =
       `Detective Lie Detector · Case #${r.caseNumber} (${capitalise(r.difficulty)})\n` +
-      `Suspect: ${r.suspectPts === 10 ? "✅" : "❌"}\n` +
-      `Reasoning: ${r.reasoningPts === null ? "?" : r.reasoningPts}/10\n` +
-      `Score: ${total(r)}/20`;
+      `Right person: ${r.suspectPts === MAX_PICK ? "✅" : "❌"}\n` +
+      `Reasoning: ${r.reasoningPts === null ? "?" : r.reasoningPts}/${MAX_REASON}\n` +
+      `Score: ${total(r)}/${MAX_TOTAL}`;
     try {
       await navigator.clipboard.writeText(text);
       e.target.textContent = "Copied!";
@@ -342,6 +394,7 @@
       try {
         localStorage.removeItem(KEY_RESULT);
         localStorage.removeItem(KEY_DRAFT);
+        localStorage.removeItem(KEY_PICK); // pick a different case
       } catch {}
       location.reload();
     });

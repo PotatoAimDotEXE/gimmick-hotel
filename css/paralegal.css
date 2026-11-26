@@ -287,3 +287,35 @@
   .pp-arrow { padding: 0.5rem; }
   .pp-keys { grid-template-columns: 1fr; }
 }
+
+/* ---------- evidence pages ---------- */
+.pp-ev-tag { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: bold; margin: 0.2rem 0 -0.4rem !important; }
+.pp-picture {
+  border: 2px dashed var(--line);
+  padding: 0.8rem;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.pp-picture-tag { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; }
+.pp-picture p { margin: 0 !important; font-style: italic; }
+.pp-note { border: 2px solid var(--line); padding: 0.8rem; box-shadow: 3px 3px 0 var(--line); }
+.pp-note p { margin: 0 !important; }
+.pp-log { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.pp-log th, .pp-log td { border: 1.5px solid var(--line); padding: 0.3rem 0.45rem; text-align: left; vertical-align: top; }
+.pp-log th { background: var(--fg); color: var(--bg); }
+.pp-log td:first-child { white-space: nowrap; font-weight: bold; }
+
+/* ---------- summary sheet task ---------- */
+.pp-task { display: block; font-weight: normal; font-size: 0.78rem; font-style: italic; color: var(--muted); margin-top: 0.1rem; }
+
+/* ---------- breakdown (rubric out of 5) ---------- */
+.pp-big-score { font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 0.5rem; }
+.pp-table td:last-child { white-space: nowrap; font-weight: bold; text-align: center; }
+.pp-table tr.missed td:last-child { background: var(--fg); color: var(--bg); }
+.pp-table th { font-size: 0.8rem; }
+.pp-traps { border: 2px dashed var(--line); padding: 0.5rem 0.8rem; margin-top: 0.8rem; }
+.pp-traps h3 { margin-top: 0 !important; }
+.pp-breakdown { max-height: 90vh; overflow: auto; }
