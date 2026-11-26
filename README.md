@@ -83,7 +83,7 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - If you re-export a layer, keep it 1280x720 and the same file name, and it drops straight in. If the button/title/bell art changes, the cut files need re-making.
 
 ## Paranormal Paralegal (Room 03)
-- Flow: case file cover (difficulty) → Jane Debrief (skippable, can replay) → closed folder in the middle (click to open) → read pages move onto the left half of the folder → summary sheet (title + summary) → confirm submit → pages return, folder closes, CASE CLOSED stamp.
+- Flow: case file cover (difficulty) → John D'Brief, the bellboy (skippable, can replay; three sprite poses swap while he talks) → closed folder in the middle (click to open) → read pages move onto the left half of the folder → summary sheet (title + summary) → confirm submit → pages return, folder closes, CASE CLOSED stamp.
 - 3 cases in `js/paralegal/cases.js` (Floaty 'Breller, the cat painting, Lost, Found & Floating). One is picked at random each day. Case names are never shown (one is the model answer title).
 - Each difficulty has its own case report + evidence list. Page 1 = case report, then one page per evidence item, so adding evidence adds pages.
 - Key words in `[[double brackets]]` are highlighted on Easy and Medium (hidden on Hard).
@@ -91,3 +91,8 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - Breakdown shows every rubric line ✓/✗, traps fallen into (Hard), your answer and a full-marks answer.
 - No timer, hints or retry yet. One attempt per day; test again with `games/paralegal.html?dev` (also picks a new case).
 - Keys: ← → = pages (or difficulty on the cover), Enter = next debrief line / open folder, Esc = back / cancel the confirm box.
+
+## Character sprites (assets/characters/)
+- One shared list in `js/main.js` (`SPRITES`) maps a character's name to their sprite. Every suspect file, the People of interest board and the interrogation room use it automatically.
+- To add a character: put the PNG (transparent background) in `assets/characters/` and add one line to `SPRITES`, using the exact name from the case files.
+- Current sprites: Tung Tung Tung Sahur, Jane Maid, Jack O'Lantern, plus John D'Brief's three poses (`john-dbrief-1/2/3.png`, used in the Paralegal debrief).

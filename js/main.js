@@ -68,7 +68,8 @@ const Store = {
   resetAll() {
     try {
       Object.keys(localStorage)
-        .filter((k) => k.startsWith("er_"))
+        // keep each room's "last case" so a reset always brings a different case
+        .filter((k) => k.startsWith("er_") && !k.endsWith("_last_case"))
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* storage blocked */
@@ -133,4 +134,41 @@ const Daily = {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* ---------------------------------------------------------
+   Character sprites – one list for every game.
+   Add a character here once and every suspect file, portrait
+   and interrogation uses it. Paths are from the project root.
+   --------------------------------------------------------- */
+// A sprite is a path, or { src, focus, zoom }:
+//   focus = the point across the picture's width that sits in the middle of
+//           the frame ("77%" = right of centre, shifts the sprite left)
+//   zoom  = size in the detective portrait frames (1.08 = default, smaller = zoomed out)
+//   y     = move up/down, in % of the frame's height (5 = up a bit, -5 = down a bit)
+//   tilt  = rotate in degrees (3 = tilt right/clockwise, -3 = tilt left)
+//   y and tilt work in both the detective game and the interrogation room.
+const SPRITES = {
+  "Tung Tung Tung Sahur": { src: "assets/characters/tung.png", zoom: 0.97, y: -3, tilt:-1.5},
+  "Jane Maid": { src: "assets/characters/jane-maid.png", focus: "67%", zoom: 0.97 },
+  "Jack O'Lantern": { src: "assets/characters/jack-olantern.png", focus: "47%", zoom: 1.02, y: -3, tilt:-2 },
+};
+// pages inside games/ need "../" in front
+function spriteFor(name, root = "../") {
+  const s = SPRITES[name];
+  return s ? root + (typeof s === "string" ? s : s.src) : "";
+}
+function spriteFocus(name) {
+  const s = SPRITES[name];
+  return s && typeof s === "object" && s.focus ? s.focus : "50%";
+}
+function spriteZoom(name) {
+  const s = SPRITES[name];
+  return s && typeof s === "object" && s.zoom ? s.zoom : 1.08;
+}
+// y / tilt as CSS variables, for a style="" attribute
+function spriteMove(name) {
+  const s = SPRITES[name];
+  const o = s && typeof s === "object" ? s : {};
+  return `--y: ${Number(o.y) || 0}; --tilt: ${Number(o.tilt) || 0}deg;`;
 }

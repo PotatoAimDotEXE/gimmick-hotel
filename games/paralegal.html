@@ -48,20 +48,20 @@
 
       <!-- ============ 2. DEBRIEF (Jane, skippable) ============ -->
       <section class="dl-screen" id="screen-debrief" hidden>
+        <div class="pp-debrief-stage">
         <div class="pp-debrief-scene">
-          <div class="pp-jane" aria-hidden="true">
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="40" r="20" fill="none" stroke="currentColor" stroke-width="5"/>
-              <path d="M40 30 Q60 6 80 30" fill="none" stroke="currentColor" stroke-width="5"/>
-              <path d="M16 120 Q16 70 60 70 Q104 70 104 120" fill="none" stroke="currentColor" stroke-width="5"/>
-            </svg>
-            <span class="muted">[ art: Jane Debrief ]</span>
+          <!-- John D'Brief (the bellboy): three poses swap while he talks -->
+          <div class="pp-john" id="john" aria-hidden="true">
+            <img class="pose on" src="../assets/characters/john-dbrief-1.png" alt="" />
+            <img class="pose" src="../assets/characters/john-dbrief-2.png" alt="" />
+            <img class="pose" src="../assets/characters/john-dbrief-3.png" alt="" />
           </div>
         </div>
         <div class="pp-dialogue" id="debrief-box">
-          <div class="pp-speaker">Jane Debrief</div>
+          <div class="pp-speaker">John D'Brief</div>
           <p class="pp-line" id="debrief-line" aria-live="polite"></p>
           <span class="pp-progress" id="debrief-progress"></span>
+        </div>
         </div>
         <div class="pp-row">
           <button id="btn-skip">Skip debrief ▶▶</button>

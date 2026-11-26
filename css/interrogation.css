@@ -351,3 +351,30 @@ button.ir-asset:hover, button.ir-asset:focus-visible { background: rgba(0, 0, 0,
 /* suspect box waits while you're asking */
 .ir-dialogue.waiting { opacity: 0.45; }
 .ir-dialogue.waiting .ir-line { letter-spacing: 0.3em; }
+
+/* suspect sprite stands on the table */
+.ir-suspect { align-self: end; }
+.ir-suspect img { object-position: center bottom; }
+
+/* ---------- suspect up close: drawn large, cut off by the table ---------- */
+.ir-room-scene { position: relative; overflow: hidden; }   /* the table line is the bottom edge */
+.crt-small { position: relative; z-index: 2; }
+.ir-status { grid-column: 3; position: relative; z-index: 2; }
+.ir-suspect {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -24%;
+  height: 120%;
+  width: auto;
+  aspect-ratio: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 1;
+  transform-origin: 50% 100%;
+}
+.ir-suspect img { height: 100%; width: auto; max-width: none; object-fit: initial;
+  transform: translateY(calc(var(--y, 0) * -1%)) rotate(var(--tilt, 0deg)); transform-origin: 50% 100%; }
+.ir-suspect svg { height: 75%; width: auto; }

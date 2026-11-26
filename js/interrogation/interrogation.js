@@ -193,7 +193,8 @@
   let typeTarget = null; // the box currently typing (detective or suspect)
 
   function portrait() {
-    if (log.image) return `<img src="${log.image}" alt="" />`;
+    const src = log.image || spriteFor(log.suspect); // shared sprite list in main.js
+    if (src) return `<img src="${src}" alt="" style="${log.image ? "" : spriteMove(log.suspect)}" />`;
     return `<svg viewBox="0 0 120 120">
       <circle cx="60" cy="42" r="22" fill="none" stroke="currentColor" stroke-width="5"/>
       <path d="M18 120 Q18 74 60 74 Q102 74 102 120" fill="none" stroke="currentColor" stroke-width="5"/>

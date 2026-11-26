@@ -281,3 +281,21 @@ button.primary { font-weight: bold; }
   background-size: 100% 40px, 100% 40px, 100% 16px, 100% 16px;
   background-attachment: local, local, scroll, scroll;
 }
+
+/* character sprites: fill the frame's height (slightly zoomed), standing on
+   the bottom edge. Wide sprites get cropped at the sides instead of shrinking;
+   --fx (from SPRITES in main.js) picks which part stays in view. */
+.dl-portrait { position: relative; overflow: hidden; }
+.dl-portrait img.dl-sprite {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: calc(100% * var(--zoom, 1.08));
+  width: auto;
+  max-width: none;
+  object-fit: initial;
+  transform: translateX(calc(-1 * var(--fx, 50%))) translateY(calc(var(--y, 0) * -1%)) rotate(var(--tilt, 0deg));
+  transform-origin: var(--fx, 50%) 100%;
+}
+/* board cards: a frame line under the portrait so sprites stand on it */
+.dl-suspect-card .dl-portrait { border-bottom: 2px solid var(--line); }

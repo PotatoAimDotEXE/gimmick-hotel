@@ -8,7 +8,7 @@
 
    Each case:
      id, name        internal only
-     debrief         Jane's lines about today's case (after the intro)
+     debrief         John D'Brief's lines about today's case (after the intro)
      versions        one full version per difficulty: easy / medium / hard
        report        case report paragraphs (page 1)
        evidence      one page per item, in order. Add more items to add pages.
@@ -33,9 +33,9 @@
    they're hidden on hard). Pick the words the rubric grades.
    ========================================================= */
 
-/* General intro Jane gives before every case. */
+/* General intro John D'Brief (the bellboy) gives before every case. */
 const PARALEGAL_INTRO = [
-  "Welcome to the firm. I'm Jane Debrief, and I'll be your supervisor.",
+  "Welcome to the firm. I'm John D'Brief. Most guests just call me the bellboy, but tonight I'm your supervisor.",
   "Something strange has happened in the hotel, and your boss needs a short summary of it.",
   "Read the case report first, then every piece of evidence in the file.",
   {

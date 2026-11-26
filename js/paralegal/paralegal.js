@@ -1,6 +1,6 @@
 /* =========================================================
    PARANORMAL PARALEGAL – game logic
-   Flow: Case file cover (difficulty) -> Jane's debrief
+   Flow: Case file cover (difficulty) -> John D'Brief's debrief
          (skippable) -> open folder with a pile of pages
          (next = page slides off, prev = page comes back) ->
          last page: title + summary -> confirm submit ->
@@ -129,16 +129,37 @@
     typeLine();
   }
 
+  // John D'Brief changes pose twice per line: when it starts, and halfway through the typing
+  const poses = [...document.querySelectorAll("#john .pose")];
+  let pose = 0;
+  function showPose(i) {
+    pose = i;
+    poses.forEach((p, k) => p.classList.toggle("on", k === i));
+  }
+  function changePose() {
+    let next = pose;
+    while (next === pose) next = Math.floor(Math.random() * poses.length); // a different pose
+    showPose(next);
+  }
+  function startTalking() {
+    if (lineIdx === 0) return showPose(0); // first line: hand-on-chest pose
+    changePose();
+  }
+  function stopTalking() {} // he keeps the pose until the next line
+
   function typeLine() {
     const full = lines[lineIdx];
+    startTalking();
     const el = $("debrief-line");
     $("debrief-progress").textContent = `${lineIdx + 1}/${lines.length}`;
     el.textContent = "";
     typing = true;
     let i = 0;
+    const half = Math.floor(full.length / 2);
     clearInterval(typeTimer);
     typeTimer = setInterval(() => {
       el.textContent = full.slice(0, ++i);
+      if (i === half && poses.length > 1) changePose(); // second pose change, halfway through
       if (i >= full.length) finishTyping();
     }, TYPE_SPEED);
   }
@@ -147,6 +168,7 @@
     clearInterval(typeTimer);
     $("debrief-line").textContent = lines[lineIdx];
     typing = false;
+    stopTalking();
   }
 
   function debriefNext() {
@@ -158,6 +180,7 @@
   function endDebrief() {
     clearInterval(typeTimer);
     typing = false;
+    stopTalking();
     draft.debriefDone = true;
     saveDraft();
     openDesk();
