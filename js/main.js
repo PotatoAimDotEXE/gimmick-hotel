@@ -136,6 +136,8 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+//test
+
 /* ---------------------------------------------------------
    Character sprites – one list for every game.
    Add a character here once and every suspect file, portrait
