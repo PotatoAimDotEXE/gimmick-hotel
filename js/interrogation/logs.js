@@ -129,8 +129,8 @@ const LOGS = [
       easy: {
         brief: [
           // "the cart jerked" added so Jane's line 3 can be checked
-          "At **6:20 p.m.**, Jane Maid was taking a $2,400 bottle of wine to the hotel's **private dining room**. John Attenz saw her set the bottle on the **top shelf** of her cart. One of the wheels caught on the edge of a **rug**, the cart jerked, and the bottle slid off and shattered.",
-          "John called the **front desk** while Jane stayed by the cart to warn guests about the broken glass.",
+          "At **6:20 p.m.**, Jane Maid was taking a $2,400 bottle of wine to the hotel's **private dining room**. Atten Dan saw her set the bottle on the **top shelf** of her cart. One of the wheels caught on the edge of a **rug**, the cart jerked, and the bottle slid off and shattered.",
+          "Atten called the **front desk** while Jane stayed by the cart to warn guests about the broken glass.",
         ],
         assets: [
           { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
@@ -145,10 +145,10 @@ const LOGS = [
 
       medium: {
         brief: [
-          "At 6:20 p.m., Jane Maid was wheeling a $2,400 bottle of wine to the hotel's private dining room, where a guest was celebrating a birthday. The cart had two shelves, and the lower one held clean napkins and glasses. John Attenz, who was folding tablecloths near the lobby, watched Jane place the bottle up high, on the cart's upper shelf.",
+          "At 6:20 p.m., Jane Maid was wheeling a $2,400 bottle of wine to the hotel's private dining room, where a guest was celebrating a birthday. The cart had two shelves, and the lower one held clean napkins and glasses. Atten Dan, who was folding tablecloths near the lobby, watched Jane place the bottle up high, on the cart's upper shelf.",
           // "The cart jerked" added so Jane's line 3 can be checked
           "Halfway across the lobby, one of the cart's wheels snagged on the edge of a rug. The cart jerked, and the bottle slipped off and smashed on the floor.",
-          "John picked up the lobby phone and rang the front desk, while Jane stayed beside the cart, warning guests to keep away from the broken glass.",
+          "Atten picked up the lobby phone and rang the front desk, while Jane stayed beside the cart, warning guests to keep away from the broken glass.",
         ],
         assets: [
           { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
@@ -159,7 +159,7 @@ const LOGS = [
           { say: "I put the bottle on the bottom shelf so it wouldn't fall far.", lie: true, proof: ["place the bottle up high", "on the cart's upper shelf"] },
           { say: "Then a wheel caught on the rug and the whole cart jerked.", proof: ["one of the cart's wheels snagged on the edge of a rug", "The cart jerked"] },
           { detective: "What did you do after the bottle broke?" },
-          { say: "I called the front desk myself.", lie: true, proof: ["John picked up the lobby phone and rang the front desk"] },
+          { say: "I called the front desk myself.", lie: true, proof: ["Atten picked up the lobby phone and rang the front desk"] },
           { say: "I stayed by the cart to keep guests away from the glass.", proof: ["Jane stayed beside the cart, warning guests"] },
           { detective: "What else was on the cart?" },
           { say: "Napkins and glasses, on the lower shelf.", proof: ["the lower one held clean napkins and glasses"] },
@@ -169,8 +169,8 @@ const LOGS = [
       hard: {
         brief: [
           "The private dining room had been booked for a birthday dinner at 6:30 p.m., and the guest had ordered a rare $2,400 bottle of wine to open at the table. At 6:20, housekeeper Jane Maid collected the bottle from the cellar and set off across the lobby with a two-shelf cart, its lower shelf already stacked with napkins, glasses and a spare tablecloth.",
-          "John Attenz, who was folding tablecloths by the reception sofas, said later that he had noticed Jane lift the bottle onto the cart's upper shelf instead of tucking it in beside the glasses, and that the cart was moving quickly. Halfway across the lobby, one wheel snagged on the edge of a rug, the cart lurched, and the bottle slid off and burst on the marble floor.",
-          "Within a minute, John had dialled the front desk from the lobby phone. Jane, meanwhile, stood guard beside the cart and waved guests away from the broken glass until a cleaner arrived at 6:28.",
+          "Atten Dan, who was folding tablecloths by the reception sofas, said later that he had noticed Jane lift the bottle onto the cart's upper shelf instead of tucking it in beside the glasses, and that the cart was moving quickly. Halfway across the lobby, one wheel snagged on the edge of a rug, the cart lurched, and the bottle slid off and burst on the marble floor.",
+          "Within a minute, Atten had dialled the front desk from the lobby phone. Jane, meanwhile, stood guard beside the cart and waved guests away from the broken glass until a cleaner arrived at 6:28.",
         ],
         assets: [
           { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
@@ -179,7 +179,7 @@ const LOGS = [
             desc: "Front desk call log on a clipboard.",
             lines: [
               "FRONT DESK · INCOMING CALLS",
-              "6:21 PM · Lobby phone (Ext. 101) · Caller: J. Attenz · Broken bottle, lobby",
+              "6:21 PM · Lobby phone (Ext. 101) · Caller: A. Dan · Broken bottle, lobby",
               "6:24 PM · Room 312 · Caller: Guest · Extra towels",
             ],
             file: "",
@@ -192,7 +192,7 @@ const LOGS = [
           { say: "I put the bottle on the bottom shelf so it wouldn't fall far.", lie: true, proof: ["lift the bottle onto the cart's upper shelf"] },
           { say: "Then a wheel caught on the rug and the whole cart jerked.", proof: ["one wheel snagged on the edge of a rug", "the cart lurched"] },
           { detective: "What did you do after the bottle broke?" },
-          { say: "I called the front desk myself.", lie: true, proof: ["John had dialled the front desk from the lobby phone", "img:calllog"] },
+          { say: "I called the front desk myself.", lie: true, proof: ["Atten had dialled the front desk from the lobby phone", "img:calllog"] },
           { say: "I stayed by the cart to keep guests away from the glass.", proof: ["stood guard beside the cart and waved guests away"] },
           { say: "A cleaner came a few minutes later.", proof: ["until a cleaner arrived at 6:28"] },
           { say: "I think someone had kicked the rug out of place earlier.", uncheckable: true },

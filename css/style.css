@@ -107,38 +107,47 @@ button:hover, button:focus-visible {
   gap: 0.4rem;
 }
 
+/* door art: the frame (assets/hallway/door-open.png) with two panes
+   (door-pane-left/right.png) over the doorway that slide apart on hover */
 .door-frame {
-  width: 70%;
-  max-width: 150px;
-  aspect-ratio: 1 / 2;
-  border: var(--border) solid var(--line);
-  padding: 6px;
-  perspective: 600px;
-}
-
-.door-panel {
   position: relative;
+  width: 70%;
+  max-width: 160px;
+  aspect-ratio: 530 / 1080;
+}
+.door-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  border: var(--border) solid var(--line);
-  background: var(--bg);
-  transform-origin: left center;
-  transition: transform 0.35s ease, background 0.2s;
+  image-rendering: pixelated;
+}
+.door-panes {
+  position: absolute;
+  /* the doorway inside the frame art */
+  left: 20.75%;
+  top: 31.3%;
+  width: 61.89%;
+  height: 60.83%;
   display: flex;
-  justify-content: center;
-  padding-top: 15%;
+  overflow: hidden;                /* panes disappear into the frame */
+}
+.pane {
+  width: 50%;
+  height: 100%;
+  image-rendering: pixelated;
+  transition: transform 0.45s ease-in-out;
 }
 
-.door-number { font-weight: bold; font-size: 1.2rem; }
-
-.door-knob {
+/* the number sits in the round window at the top of the arch */
+.door-number {
   position: absolute;
-  right: 12%;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  border: var(--border) solid var(--line);
-  border-radius: 50%;
+  left: 50%;
+  top: 13.9%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: clamp(0.6rem, 1.1vw, 0.85rem);
+  color: var(--fg);
 }
 
 .door h2 { font-size: 1.2rem; margin-top: 0.4rem; }
@@ -146,13 +155,10 @@ button:hover, button:focus-visible {
 .best { font-size: 0.8rem; }
 
 /* door "opens" on hover / keyboard focus */
-.door:hover .door-panel,
-.door:focus-visible .door-panel {
-  transform: rotateY(-55deg);
-  background: var(--hover-bg);
-}
-.door:hover .door-number,
-.door:focus-visible .door-number { color: var(--hover-fg); }
+.door:hover .pane-left,
+.door:focus-visible .pane-left { transform: translateX(-100%); }
+.door:hover .pane-right,
+.door:focus-visible .pane-right { transform: translateX(100%); }
 .door:focus-visible { outline: var(--border) dashed var(--line); outline-offset: 6px; }
 
 /* ---------- Side panel / leaderboard ---------- */

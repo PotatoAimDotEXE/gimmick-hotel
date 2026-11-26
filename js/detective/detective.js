@@ -167,7 +167,7 @@
 
   function portrait(s) {
     const src = s.image || spriteFor(s.name); // shared sprite list in main.js
-    if (src) return `<img class="dl-sprite" src="${src}" alt="${escapeHtml(s.name)}" style="--fx: ${spriteFocus(s.name)}; --zoom: ${spriteZoom(s.name)}; ${spriteMove(s.name)}" />`;
+    if (src) return `<img class="dl-sprite" src="${src}" alt="${escapeHtml(s.name)}" style="--fx: ${spriteFocus(s.name)}; --zoom: ${spriteZoom(s.name)}; ${spriteMove(s.name)} ${spriteFile(s.name)}" />`;
     // placeholder figure (head + shoulders)
     return `<svg viewBox="0 0 60 80" aria-hidden="true">
       <circle cx="30" cy="26" r="11" fill="none" stroke="currentColor" stroke-width="4"/>

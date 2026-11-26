@@ -148,10 +148,19 @@ function escapeHtml(s) {
 //   y     = move up/down, in % of the frame's height (5 = up a bit, -5 = down a bit)
 //   tilt  = rotate in degrees (3 = tilt right/clockwise, -3 = tilt left)
 //   y and tilt work in both the detective game and the interrogation room.
+//   file  = separate settings for the big picture on a person's interview page
+//           in the detective game, e.g. file: { zoom: 1.1, y: -2, tilt: 1, focus: "55%" }
+//           (that page shows the whole picture; these don't change the small cards)
 const SPRITES = {
-  "Tung Tung Tung Sahur": { src: "assets/characters/tung.png", zoom: 0.97, y: -3, tilt:-1.5},
-  "Jane Maid": { src: "assets/characters/jane-maid.png", focus: "67%", zoom: 0.97 },
+  "Tung Tung Tung Sahur": { src: "assets/characters/tung.png", zoom: 0.97, y: -3, tilt:-1.5, file: {y: -3}},
+  "Jane Maid": { src: "assets/characters/jane-maid.png", focus: "74%", zoom: 1.22, y: -14},
   "Jack O'Lantern": { src: "assets/characters/jack-olantern.png", focus: "47%", zoom: 1.02, y: -3, tilt:-2 },
+  "Tralalero Tralala": { src: "assets/characters/tralalero.png", zoom: 1.1, y: -10, file: {zoom: 0.95, y: 3} },
+  "Atten Dan": { src: "assets/characters/atten-dan.png" },
+  "Capybara PNG": { src: "assets/characters/capybara.png" },
+  // Kit and Bea share one sprite (they never appear in the same case)
+  "Kit": { src: "assets/characters/kit-bea.png" },
+  "Bea": { src: "assets/characters/kit-bea.png" },
 };
 // pages inside games/ need "../" in front
 function spriteFor(name, root = "../") {
@@ -165,6 +174,12 @@ function spriteFocus(name) {
 function spriteZoom(name) {
   const s = SPRITES[name];
   return s && typeof s === "object" && s.zoom ? s.zoom : 1.08;
+}
+// settings for the big interview-page picture (detective game), as CSS variables
+function spriteFile(name) {
+  const s = SPRITES[name];
+  const f = (s && typeof s === "object" && s.file) || {};
+  return `--fzoom: ${Number(f.zoom) || 1}; --fy: ${Number(f.y) || 0}; --ftilt: ${Number(f.tilt) || 0}deg; --ffx: ${f.focus || "50%"};`;
 }
 // y / tilt as CSS variables, for a style="" attribute
 function spriteMove(name) {

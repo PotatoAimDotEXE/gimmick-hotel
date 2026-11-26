@@ -342,3 +342,115 @@
 }
 .pp-john .pose.on { opacity: 1; }
 .pp-debrief-stage .pp-dialogue { position: relative; z-index: 2; }
+
+/* =========================================================
+   PIXEL-ART FOLDER (assets/paralegal/)
+     folder-closed.png      whole closed folder (papers poking out)
+     folder-cover.png       just its front cover = front of the flap
+     folder-open-left.png   inside of the flap (left half when open)
+     folder-open-right.png  the back board the pages lie on
+     paper.png              every page + the spare sheets
+   ========================================================= */
+
+/* --H = page height. The open folder is centred on the screen, so the
+   pile sits right of centre and the flap opens to the left of it. */
+.pp-desk { --H: min(86cqh, 38cqw); }
+.pp-stack {
+  height: var(--H);
+  left: calc(50% + var(--H) * 0.42);
+}
+
+/* folder board + flap are bigger than a page: margins top/bottom,
+   a small one at the spine (left) and a wider one on the right */
+.pp-board,
+.pp-cover,
+.pp-closed-back { inset: -5.3% -12% -5.3% -6%; }
+
+.pp-board {
+  border: none;
+  box-shadow: none;
+  background: url("../assets/paralegal/folder-open-right.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+
+/* the arrows sit just outside the open folder */
+.pp-arrow.next { left: calc(50% + var(--H) * 0.885 + 14px); }
+.pp-arrow.prev { right: calc(50% + var(--H) * 0.885 + 14px); }
+
+/* ---------- pages on paper ---------- */
+.pp-page,
+.pp-sheet {
+  background: url("../assets/paralegal/paper.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  border: none;
+  box-shadow: none;
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.3));
+}
+.pp-page { padding: 1.3rem 1.5rem; }
+.pp-page.clickable:hover { box-shadow: none; filter: drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.35)); }
+/* read pages land on the inside of the flap (mirror of the pile) */
+.pp-page.off { transform: translateX(-112%) rotate(calc(var(--tilt, 0deg) * -1.6)); }
+
+/* spare sheets under the pile (no content) */
+.pp-sheet {
+  position: absolute;
+  inset: 0;
+  transform: rotate(var(--tilt, 0deg));
+  pointer-events: none;
+}
+
+/* ---------- closed folder: papers poking out behind the cover ---------- */
+.pp-closed-back {
+  position: absolute;
+  z-index: 299;                              /* just under the cover */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;                 /* hide fast when opening */
+}
+.pp-closed-back::before {
+  content: "";
+  position: absolute;
+  /* line the art's front cover up with the flap */
+  left: -14%;
+  top: -7.3%;
+  width: 122.08%;
+  height: 113.17%;
+  background: url("../assets/paralegal/folder-closed.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+.pp-stack:has(> .pp-cover.shut) .pp-closed-back {
+  opacity: 1;
+  transition: opacity 0.2s 0.75s;            /* show after the flap lands */
+}
+#screen-desk.instant .pp-closed-back { transition: none; }
+
+/* ---------- the flap ---------- */
+.pp-face {
+  border: none;
+  background: transparent;
+  /* light text on the dark red folder */
+  --fg: #f3e6c8;
+  --line: #f3e6c8;
+  --muted: #cdb594;
+  --bg: transparent;
+  color: var(--fg);
+}
+.pp-front {
+  background: url("../assets/paralegal/folder-cover.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+.pp-back { border: none; }
+/* inside of the flap; the blue tab sticks out past the edge */
+.pp-back::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -6.96%;
+  width: 106.96%;
+  background: url("../assets/paralegal/folder-open-left.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  z-index: -1;
+}
+.pp-face .pp-link { color: var(--fg); }
+#screen-desk.folded .pp-front:hover { box-shadow: none; filter: brightness(1.12); }

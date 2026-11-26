@@ -189,8 +189,8 @@ button.primary { font-weight: bold; }
 .dl-portrait { display: block; width: 100%; aspect-ratio: 3 / 4; }
 .dl-portrait svg, .dl-portrait img { width: 100%; height: 100%; object-fit: cover; }
 .dl-portrait.big {
-  width: 40%;
-  max-width: 140px;
+  width: min(100%, 320px);
+  aspect-ratio: 1;
   border: 2px solid var(--line);
   margin-bottom: 0.6rem;
 }
@@ -299,3 +299,12 @@ button.primary { font-weight: bold; }
 }
 /* board cards: a frame line under the portrait so sprites stand on it */
 .dl-suspect-card .dl-portrait { border-bottom: 2px solid var(--line); }
+/* interview page: the whole picture, sitting on the bottom edge.
+   Uses the sprite's own "file" settings (--fzoom, --fy, --ftilt, --ffx) from main.js */
+.dl-portrait.big img.dl-sprite {
+  left: 0; bottom: 0; width: 100%; height: 100%;
+  object-fit: contain; object-position: var(--ffx, 50%) 100%;
+  transform: translateY(calc(var(--fy, 0) * -1%)) rotate(var(--ftilt, 0deg)) scale(var(--fzoom, 1));
+  transform-origin: 50% 100%;
+}
+.dl-portrait.big svg { width: 60%; height: 80%; margin: 20% auto 0; display: block; }

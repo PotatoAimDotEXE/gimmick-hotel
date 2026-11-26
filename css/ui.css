@@ -1,0 +1,119 @@
+/* =========================================================
+   Pixel-art UI for the three game rooms (loaded last).
+   Art lives in assets/ui/.
+   ========================================================= */
+
+/* ---------- In-game buttons: assets/ui/button.png ----------
+   The sprite is 9-sliced, so the pointed ends keep their shape
+   whatever the button's size. Three versions of the sprite:
+     button.png        normal
+     button-hover.png  mouse over
+     button-active.png selected (tabs, difficulty, etc.)
+   Buttons that aren't "buttons" to the player are left alone:
+   the detective folder, the TV, suspect cards, tap-to-prove text,
+   text links and the [dev] reset. */
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev) {
+  border: 3px solid transparent;
+  border-image: url("../assets/ui/button.png") 40 40 30 40 fill / 14px 14px 10px 14px stretch;
+  background: none !important;
+  color: #2b1d14 !important;
+  padding: 0.45rem 1.1rem;
+  image-rendering: pixelated;
+  box-shadow: none;
+  transition: transform 0.08s;
+}
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):hover:not(:disabled),
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):focus-visible {
+  border-image-source: url("../assets/ui/button-hover.png");
+  outline: none;
+}
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):focus-visible {
+  outline: 2px dashed #2b1d14;
+  outline-offset: 3px;
+}
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+/* selected: detective tabs, difficulty choices, TV options */
+body.game .dl-tabs button.active,
+body.game .pp-diff-row button.on,
+body.game .crt-options button.on,
+body.game button[aria-checked="true"],
+body.game button[aria-selected="true"] {
+  border-image-source: url("../assets/ui/button-active.png") !important;
+  color: #f3e6c8 !important;
+}
+
+body.game button:disabled { opacity: 0.4; }
+
+/* =========================================================
+   Room 01 – Detective Lie Detector
+   ========================================================= */
+
+/* ---------- People of interest cards: assets/ui/suspect-frame1/2/3.png ----------
+   The three frames take turns (1, 2, 3, 1, ...). The portrait sits in the
+   frame's photo window and the name on the strip underneath. */
+.dl-suspect-card {
+  position: relative;
+  display: block;
+  aspect-ratio: 302 / 485;
+  padding: 0;
+  border: none !important;
+  background: url("../assets/ui/suspect-frame1.png") 0 0 / 100% 100% no-repeat !important;
+  image-rendering: pixelated;
+  color: #2b1d14 !important;
+}
+.dl-suspect-card:nth-child(3n + 2) { background-image: url("../assets/ui/suspect-frame2.png") !important; }
+.dl-suspect-card:nth-child(3n) { background-image: url("../assets/ui/suspect-frame3.png") !important; }
+.dl-suspect-card .dl-portrait {
+  position: absolute;
+  left: 5.6%;
+  top: 3.5%;
+  width: 86.8%;
+  height: 73%;
+  aspect-ratio: auto;
+  border-bottom: none;
+}
+.dl-suspect-card .dl-name {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 77%;
+  bottom: 3%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: clamp(0.65rem, 0.95vw, 0.85rem);
+  line-height: 1.15;
+}
+.dl-suspect-card:focus-visible { outline: 2px dashed #2b1d14; outline-offset: 3px; }
+
+/* ---------- Answer pop-up + result: assets/ui/score-report.png ----------
+   9-sliced: the corners and the bottom band (with the side notches) keep
+   their shape; only the plain middle stretches. */
+.modal.dl-answer,
+.modal.ir-result-modal,
+.dl-report {
+  border: 3px solid transparent;
+  border-image: url("../assets/ui/score-report.png") 44 64 268 64 fill / 22px 32px 134px 32px stretch;
+  background: transparent;
+  color: #2b1d14;
+}
+.modal.dl-answer { padding: 1.8rem 2.2rem 1.6rem; }
+/* Room 02's result pop-up uses the same card */
+.modal.ir-result-modal { padding: 1.8rem 2.4rem 1.6rem; }
+
+#screen-result { align-items: center; justify-content: center; }
+.dl-report {
+  width: min(600px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 1.6rem 2.4rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.dl-report .dl-title { font-size: clamp(1.4rem, 2.4vw, 2rem); }
+.dl-report .dl-result { max-width: none; }
+.dl-report .actions { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }

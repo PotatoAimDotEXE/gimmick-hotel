@@ -88,7 +88,7 @@ const CASES = [
       },
       {
         id: "john",
-        name: "John Attenz",
+        name: "Atten Dan",
         role: "Hotel attendant",
         q: "What did you see when you checked the display room?",
         a: "The mallet was in the case at 6:40. When I came back at 6:43, the case was open. I heard someone running, but by the time I looked into the hallway, it was empty.",
@@ -198,8 +198,8 @@ const CASES = [
           {
             label: "A. Security footage log, second-floor corridor",
             lines: [
-              "20:13:40 – John Attenz enters the reading room carrying a tea tray.",
-              "20:14:55 – John Attenz leaves the reading room.",
+              "20:13:40 – Atten Dan enters the reading room carrying a tea tray.",
+              "20:14:55 – Atten Dan leaves the reading room.",
               "20:15:10 – Jane Maid enters the reading room with a blanket.",
               "20:16:02 – Jane Maid leaves toward the staff lift. Her cart stays in the corridor.",
               "20:20:14 – Jack O'Lantern walks past the reading room toward the stairwell. His face is visible when he glances back.",
@@ -303,7 +303,7 @@ const CASES = [
       {
         // Hard only (with the biscuit red herring)
         id: "john",
-        name: "John Attenz",
+        name: "Atten Dan",
         role: "Kitchen staff",
         q: "When did you last see Milo?",
         a: "I took Milo his tea a little before quarter past eight. He wanted another biscuit, even though there were already two on the tray, so I headed back to the kitchen. I was still there, plating the biscuit, when the alarm went off.",
@@ -333,7 +333,7 @@ const CASES = [
   },
 
   /* ---------------------------------------------------------
-     CASE 3 – The Shattered Vase        answer: John Attenz
+     CASE 3 – The Shattered Vase        answer: Atten Dan
      --------------------------------------------------------- */
   {
     id: "shattered-vase",
@@ -341,16 +341,16 @@ const CASES = [
     question: "Who was primarily at fault for breaking the vase?",
     instructions: "Name who was primarily at fault, explain how each person contributed, and say whose actions mattered most. Use the evidence.",
     report: [
-      "At 7:14 p.m., Jane Maid and John Attenz got into a fight in the hotel lobby. John wanted to move a linen cart so he could open the ballroom doors for an event. Jane told him to wait until the guests had cleared the hallway.",
-      "The argument grew louder. Both staff members grabbed the cart, and it hit a table. The hotel's blue ceramic vase fell and shattered. Jane and John each say the other person moved the cart.",
+      "At 7:14 p.m., Jane Maid and Atten Dan got into a fight in the hotel lobby. Atten wanted to move a linen cart so he could open the ballroom doors for an event. Jane told him to wait until the guests had cleared the hallway.",
+      "The argument grew louder. Both staff members grabbed the cart, and it hit a table. The hotel's blue ceramic vase fell and shattered. Jane and Atten each say the other person moved the cart.",
       "**Decide who was primarily at fault for breaking the vase.** Explain how each person contributed and whose actions mattered most.",
     ],
     evidence: [
       {
         label: "A. Lobby security footage review, 7:14 p.m.",
         lines: [
-          "7:14:11 – John takes hold of the cart and pulls it away from the wall. Jane's hands are at her sides.",
-          "7:14:12 – Jane grabs the far handle. John takes another step backward, pulling the cart toward the display table.",
+          "7:14:11 – Atten takes hold of the cart and pulls it away from the wall. Jane's hands are at her sides.",
+          "7:14:12 – Jane grabs the far handle. Atten takes another step backward, pulling the cart toward the display table.",
           "7:14:13 – The cart hits the table. The vase falls.",
         ],
         note: "The camera shows the lobby clearly and records no sound.",
@@ -370,11 +370,11 @@ const CASES = [
         name: "Jane Maid",
         role: "Housekeeper",
         q: "Why did you grab the cart?",
-        a: "John had already pulled it away from the wall. I grabbed the other handle to stop him. I was angry, and I shouted at him. Then the cart hit the table.",
+        a: "Atten had already pulled it away from the wall. I grabbed the other handle to stop him. I was angry, and I shouted at him. Then the cart hit the table.",
       },
       {
         id: "john",
-        name: "John Attenz",
+        name: "Atten Dan",
         role: "Banquet attendant",
         q: "Who moved the cart?",
         a: "I put my hands on it because I needed the ballroom doors clear. Jane grabbed the other end and yanked it. That's when it started moving.",
@@ -413,9 +413,9 @@ const CASES = [
       { points: 2, criterion: "Explains why the footage is stronger evidence than Jack's photo." },
     ],
     // note: the original 4-point row also asks the player to "explain how Jane also contributed".
-    // Choosing John is checked automatically; the AI can look for the Jane part using the sample answer.
+    // Choosing Atten is checked automatically; the AI can look for the Jane part using the sample answer.
     sample:
-      "John Attenz was primarily at fault. At 7:14:11, he pulled the cart while Jane's hands were still at her sides. After she grabbed the other handle, he kept pulling, and the cart hit the table. Jane contributed by shouting and grabbing the cart, but John started the movement and continued it just before the crash. The staff notice gave them a way to avoid the damage. They could have called the front desk and waited for the hallway to clear. Jack's photo shows Jane holding the cart after the vase broke. The footage shows how it broke.",
+      "Atten Dan was primarily at fault. At 7:14:11, he pulled the cart while Jane's hands were still at her sides. After she grabbed the other handle, he kept pulling, and the cart hit the table. Jane contributed by shouting and grabbing the cart, but Atten started the movement and continued it just before the crash. The staff notice gave them a way to avoid the damage. They could have called the front desk and waited for the hallway to clear. Jack's photo shows Jane holding the cart after the vase broke. The footage shows how it broke.",
   },
 ];
 

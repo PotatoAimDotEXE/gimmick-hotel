@@ -6,8 +6,9 @@
   <title>Escape Room – Detective Lie Detector</title>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/detective.css" />
+  <link rel="stylesheet" href="../css/ui.css" />
 </head>
-<body>
+<body class="game">
   <header class="topbar">
     <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
     <span>Room 01 · Detective Lie Detector</span>
@@ -111,15 +112,18 @@
 
       <!-- ============ 4. RESULT ============ -->
       <section class="dl-screen" id="screen-result" hidden>
-        <h1 class="dl-title" id="result-title">Case Closed</h1>
-        <div class="dl-result" id="result-body"></div>
-        <div class="actions">
-          <button id="btn-copy">Copy result</button>
-          <button data-go="menu">Game menu</button>
-          <a href="../hallway.html"><button>Back to hallway</button></a>
+        <!-- score report card (assets/ui/score-report.png) -->
+        <div class="dl-report">
+          <h1 class="dl-title" id="result-title">Case Closed</h1>
+          <div class="dl-result" id="result-body"></div>
+          <div class="actions">
+            <button id="btn-copy">Copy result</button>
+            <button data-go="menu">Game menu</button>
+            <a href="../hallway.html"><button>Back to hallway</button></a>
+          </div>
+          <p class="dl-note" id="result-next"></p>
+          <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's case</button>
         </div>
-        <p class="dl-note" id="result-next"></p>
-        <button class="dl-dev" id="btn-dev-reset" hidden>[dev] reset today's case</button>
       </section>
     </div>
   </main>

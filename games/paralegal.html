@@ -8,8 +8,9 @@
   <!-- shares the stage styles with the detective game -->
   <link rel="stylesheet" href="../css/detective.css" />
   <link rel="stylesheet" href="../css/paralegal.css" />
+  <link rel="stylesheet" href="../css/ui.css" />
 </head>
-<body>
+<body class="game">
   <header class="topbar">
     <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
     <span>Room 03 · Paranormal Paralegal</span>
@@ -83,7 +84,14 @@
           <!-- the stack sits in the middle of the screen; the folder cover opens to the left of it -->
           <div class="pp-stack" id="stack">
             <div class="pp-board" aria-hidden="true"></div>
+            <!-- spare sheets so the pile looks thicker (just art, no content) -->
+            <div class="pp-sheet" style="--tilt: 2.2deg" aria-hidden="true"></div>
+            <div class="pp-sheet" style="--tilt: -2.6deg" aria-hidden="true"></div>
+            <div class="pp-sheet" style="--tilt: 0.8deg" aria-hidden="true"></div>
             <!-- pages are added here by paralegal.js -->
+
+            <!-- closed folder art behind the cover (papers poking out); only shows while it's shut -->
+            <div class="pp-closed-back" aria-hidden="true"></div>
 
             <!-- the folder cover: front = outside of the folder, back = inside (left half when open) -->
             <div class="pp-cover" id="folder-cover">
