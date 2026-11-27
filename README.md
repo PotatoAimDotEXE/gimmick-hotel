@@ -15,15 +15,15 @@ Recommended extensions: Live Server, Prettier, ESLint (optional), Error Lens (op
 index.html          Title screen "Hotel Hysterics" (art layers, guestbook, Play -> door zoom -> hallway, Solo/Party switch)
 css/title.css       Title screen styles, hover animations, door-zoom transition
 hallway.html        Hallway (3 doors + leaderboard)
-games/detective.html Room 01 – Detective Lie Detector (Case of the Day)
-games/interrogation.html Room 02 – Interrogation Room (Log of the Day)
+games/detective.html Room 01 – Effective Detective (Case of the Day)
+games/interrogation.html Room 02 – Interrogation Station (Log of the Day)
 games/paralegal.html Room 03 – Paranormal Paralegal (Case of the Day)
 css/style.css       All styles. Colors are variables at the top → swap for the pixel theme later
 js/main.js          Shared: player name + scores (localStorage). Replace with backend for multiplayer
 js/menu.js          Main menu logic
 js/hallway.js       Hallway logic + capybara easter egg
 css/detective.css   Detective game styles (stage + case-file book are reused by Room 02)
-css/interrogation.css Interrogation Room styles
+css/interrogation.css Interrogation Station styles
 css/paralegal.css   Paranormal Paralegal styles
 js/detective/cases.js     Case data – the 3 cases (report, evidence, interviews, answer, rubric)
 js/detective/grader.js    AI reasoning grader – placeholder, swap in the real AI call later
@@ -49,7 +49,7 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - Theme: change the variables in `:root` in `style.css` (dark reds, browns, gold), add pixel font + door sprites.
 - Multiplayer leaderboard: swap `Store` in `main.js` for Firebase / Supabase (both have free tiers).
 
-## Detective Lie Detector (Room 01)
+## Effective Detective (Room 01)
 - Flow: game menu → Case of the Day → classified folder + difficulty → case file (report + evidence) ⇄ people of interest ⇄ interview log → Answer → result.
 - 3 real cases in `js/detective/cases.js`: The Missing Mallet, The False Alarm (its own version per difficulty), The Shattered Vase.
 - Today's case is picked **at random** and kept for the day; a new day or a dev reset picks again (never the same case twice in a row).
@@ -65,7 +65,7 @@ Round length is set by `data-time` on `<body>` (seconds; brief says 2–5 min pe
 - **Keyboard:** Esc = back one menu (closes pop-ups first). Enter = Play on the main menu. ← → flip between suspect files in the detective game. Add Esc to a new page with `onEscape(() => ...)` from `main.js`.
 - **[dev] reset all data** (under the desk) wipes every saved name, score, case and draft. Remove before release.
 
-## Interrogation Room (Room 02)
+## Interrogation Station (Room 02)
 - Flow: room menu (difficulty picked on the CRT TV) → instructions + case brief → interrogation → result pop-up over the room.
 - 3 real cases in `js/interrogation/logs.js`: The Missing Crown, The Broken Bottle, The Staring Capybara (placeholder title). Each has its own brief, pictures and dialogue per difficulty. Today's case is picked at random (never the same twice in a row).
 - Easy = 3 statements / 1 lie, Medium = 6 / 2, Hard = 8 / 2. Flags = number of lies. No going back (saved after every line).

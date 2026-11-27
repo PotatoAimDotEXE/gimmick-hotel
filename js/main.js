@@ -98,8 +98,8 @@ function onEscape(handler) {
 }
 
 const GAME_LABELS = {
-  detective: "Detective Lie Detector",
-  interrogation: "Interrogation Room",
+  detective: "Effective Detective",
+  interrogation: "Interrogation Station",
   paralegal: "Paranormal Paralegal",
 };
 
@@ -158,11 +158,12 @@ const SPRITES = {
   "Jane Maid": { src: "assets/characters/jane-maid.png", focus: "74%", zoom: 1.22, y: -14},
   "Jack O'Lantern": { src: "assets/characters/jack-olantern.png", focus: "47%", zoom: 1.02, y: -3, tilt:-2 },
   "Tralalero Tralala": { src: "assets/characters/tralalero.png", zoom: 1.1, y: -10, file: {zoom: 0.95, y: 3} },
-  "Atten Dan": { src: "assets/characters/atten-dan.png" },
-  "Capybara PNG": { src: "assets/characters/capybara.png" },
+  "Atten Dan": { src: "assets/characters/atten-dan.png", zoom: 0.99, y: -4, file: {zoom: 1.02, y: -3} },
+  "Capybara": { src: "assets/characters/capybara.png" },
+  "Sue Pervisor": { src: "assets/characters/sue-pervisor.png", zoom: 1.2, y: -19.5, file: {y: -13, zoom: 1.1} },
   // Kit and Bea share one sprite (they never appear in the same case)
-  "Kit": { src: "assets/characters/kit-bea.png" },
-  "Bea": { src: "assets/characters/kit-bea.png" },
+  "Kit": { src: "assets/characters/kit-bea.png", y: -10, file: {y: -3} },
+  "Bea": { src: "assets/characters/kit-bea.png", y: -10, file: {y: -3} },
 };
 // pages inside games/ need "../" in front
 function spriteFor(name, root = "../") {

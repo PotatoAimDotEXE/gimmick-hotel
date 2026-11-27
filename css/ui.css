@@ -11,8 +11,8 @@
      button-active.png selected (tabs, difficulty, etc.)
    Buttons that aren't "buttons" to the player are left alone:
    the detective folder, the TV, suspect cards, tap-to-prove text,
-   text links and the [dev] reset. */
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev) {
+   text links, the [dev] reset and the paralegal page arrows. */
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow) {
   border: 3px solid transparent;
   border-image: url("../assets/ui/button.png") 40 40 30 40 fill / 14px 14px 10px 14px stretch;
   background: none !important;
@@ -22,16 +22,16 @@ body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .
   box-shadow: none;
   transition: transform 0.08s;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):hover:not(:disabled),
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):hover:not(:disabled),
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):focus-visible {
   border-image-source: url("../assets/ui/button-hover.png");
   outline: none;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):focus-visible {
   outline: 2px dashed #2b1d14;
   outline-offset: 3px;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev):active:not(:disabled) {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):active:not(:disabled) {
   transform: translateY(2px);
 }
 
@@ -48,7 +48,7 @@ body.game button[aria-selected="true"] {
 body.game button:disabled { opacity: 0.4; }
 
 /* =========================================================
-   Room 01 – Detective Lie Detector
+   Room 01 – Effective Detective
    ========================================================= */
 
 /* ---------- People of interest cards: assets/ui/suspect-frame1/2/3.png ----------

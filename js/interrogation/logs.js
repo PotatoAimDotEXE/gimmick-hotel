@@ -202,25 +202,25 @@ const LOGS = [
   },
 
   /* ---------------------------------------------------------
-     CASE 3 – The Staring Capybara (placeholder title)   suspect: Capybara PNG
+     CASE 3 – The Staring Capybara (placeholder title)   suspect: Capybara
      --------------------------------------------------------- */
   {
     id: "staring-capybara",
     title: "The Staring Capybara",
-    suspect: "Capybara PNG",
+    suspect: "Capybara",
     image: "",
     versions: {
       easy: {
         brief: [
-          "A group of children were waiting in the **hotel lobby** when Capybara PNG appeared **beside the front desk**. It stared at them with a stiff little smile. When the children moved **behind a sofa**, Capybara PNG slid sideways into view without moving its legs. The children got scared and ran to their parents.",
-          "Jane Maid saw the whole thing from the **front desk**. She said Capybara PNG kept smiling and never made a sound.",
+          "A group of children were waiting in the **hotel lobby** when Capybara appeared **beside the front desk**. It stared at them with a stiff little smile. When the children moved **behind a sofa**, Capybara slid sideways into view without moving its legs. The children got scared and ran to their parents.",
+          "Jane Maid saw the whole thing from the **front desk**. She said Capybara kept smiling and never made a sound.",
         ],
         assets: [
           { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
         ],
         dialogue: [
           { detective: "Where were you when the children saw you?" },
-          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara PNG appeared beside the front desk"] },
+          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara appeared beside the front desk"] },
           { say: "I smiled. I thought that would help.", proof: ["It stared at them with a stiff little smile"] },
           { say: "I didn't make a sound.", proof: ["never made a sound"] },
         ],
@@ -228,16 +228,16 @@ const LOGS = [
 
       medium: {
         brief: [
-          "Just after the evening check-in rush, a group of children came in through the hotel's front doors with their parents and sat down to wait in the lobby. Moments later, Capybara PNG popped up right next to the reception counter. It gazed at the children with a fixed, stiff little smile.",
-          "When the children crept behind a sofa to hide, Capybara PNG glided sideways until it could see them again, its legs perfectly still the whole time. The children shrieked and ran back to their parents.",
-          "Jane Maid had been standing behind the reception counter throughout. She said Capybara PNG never stopped smiling and never made a single sound.",
+          "Just after the evening check-in rush, a group of children came in through the hotel's front doors with their parents and sat down to wait in the lobby. Moments later, Capybara popped up right next to the reception counter. It gazed at the children with a fixed, stiff little smile.",
+          "When the children crept behind a sofa to hide, Capybara glided sideways until it could see them again, its legs perfectly still the whole time. The children shrieked and ran back to their parents.",
+          "Jane Maid had been standing behind the reception counter throughout. She said Capybara never stopped smiling and never made a single sound.",
         ],
         assets: [
           { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
         ],
         dialogue: [
           { detective: "Where were you when the children saw you?" },
-          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara PNG popped up right next to the reception counter"] },
+          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara popped up right next to the reception counter"] },
           { say: "I smiled. I thought that would help.", proof: ["gazed at the children with a fixed, stiff little smile"] },
           { detective: "What did you do when they moved behind the sofa?" },
           { say: "I stayed exactly where I was.", lie: true, proof: ["glided sideways until it could see them again"] },
@@ -251,14 +251,14 @@ const LOGS = [
       hard: {
         brief: [
           "The lobby was busy that evening. A coach of guests had just arrived, luggage trolleys were lined up by the front doors, and a group of children was waiting on the long sofa while their parents queued to check in. Jane Maid was covering the reception counter, because the usual receptionist was on a break.",
-          "According to Jane, Capybara PNG appeared without warning at the end of the reception counter, barely an arm's length from her, and fixed the children with a stiff little smile. When the children ducked behind the sofa, it drifted sideways across the tiles, its legs not moving at all, until it had them in view again. One parent later said she had heard a strange squeak near the luggage trolleys, but Jane insisted that Capybara PNG itself never made a sound.",
+          "According to Jane, Capybara appeared without warning at the end of the reception counter, barely an arm's length from her, and fixed the children with a stiff little smile. When the children ducked behind the sofa, it drifted sideways across the tiles, its legs not moving at all, until it had them in view again. One parent later said she had heard a strange squeak near the luggage trolleys, but Jane insisted that Capybara itself never made a sound.",
           "The children screamed and ran to their parents.",
         ],
         assets: [
           { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
           {
             id: "cam",
-            desc: "Lobby camera still: Capybara PNG standing at the end of a counter, smiling.",
+            desc: "Lobby camera still: Capybara standing at the end of a counter, smiling.",
             lines: ["Sign on the counter: RECEPTION", "LOBBY CAM 2 · 6:05 PM"],
             file: "",
           },
@@ -270,7 +270,7 @@ const LOGS = [
           { detective: "What did you do when they moved behind the sofa?" },
           // the key's proof spans two clauses; either part that shows it MOVED counts
           { say: "I stayed exactly where I was.", lie: true, proof: ["it drifted sideways across the tiles", "until it had them in view again"] },
-          { say: "I didn't make a sound.", proof: ["Jane insisted that Capybara PNG itself never made a sound"] },
+          { say: "I didn't make a sound.", proof: ["Jane insisted that Capybara itself never made a sound"] },
           { detective: "What else do you remember?" },
           { say: "The children were sitting on the long sofa.", proof: ["a group of children was waiting on the long sofa"] },
           { say: "There were suitcases everywhere by the doors.", proof: ["luggage trolleys were lined up by the front doors"] },

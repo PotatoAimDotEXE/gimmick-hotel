@@ -96,7 +96,7 @@ button:hover, button:focus-visible {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  align-items: end;
+  align-items: start; /* doors line up along the top */
 }
 
 .door {
@@ -252,7 +252,7 @@ button:hover, button:focus-visible {
 .lobby-floor {
   display: grid;
   grid-template-columns: 60px 1fr 60px;
-  align-items: end;
+  align-items: start; /* doors line up along the top */
   gap: 1rem;
   border-bottom: var(--border) solid var(--line); /* the floor line */
 }

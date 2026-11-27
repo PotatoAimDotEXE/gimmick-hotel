@@ -511,7 +511,7 @@
         return proofMatches(s, f.proof, r.difficulty) ? "🟩" : "🟨";
       })
       .join("");
-    const text = `Interrogation Room · Log #${r.logNumber} (${r.difficulty})\n${squares}\nScore: ${r.total}/${r.max}`;
+    const text = `Interrogation Station · Log #${r.logNumber} (${r.difficulty})\n${squares}\nScore: ${r.total}/${r.max}`;
     try {
       await navigator.clipboard.writeText(text);
       e.target.textContent = "Copied!";

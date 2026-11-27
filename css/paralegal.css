@@ -352,12 +352,12 @@
      paper.png              every page + the spare sheets
    ========================================================= */
 
-/* --H = page height. The open folder is centred on the screen, so the
-   pile sits right of centre and the flap opens to the left of it. */
+/* --H = page height. The pile (right half of the folder) is centred on
+   the screen; the flap opens to the left of it and fills the left side. */
 .pp-desk { --H: min(86cqh, 38cqw); }
 .pp-stack {
   height: var(--H);
-  left: calc(50% + var(--H) * 0.42);
+  left: 50%;
 }
 
 /* folder board + flap are bigger than a page: margins top/bottom,
@@ -366,16 +366,34 @@
 .pp-cover,
 .pp-closed-back { inset: -5.3% -12% -5.3% -6%; }
 
+/* back board = right half of the open folder. Its art also has the clutter
+   from the closed folder (back folder + a sheet) sticking out past the edges. */
 .pp-board {
   border: none;
   box-shadow: none;
+  background: none;
+}
+.pp-board::before {
+  content: "";
+  position: absolute;
+  /* line the art's right half up with the board */
+  left: -5.76%;
+  top: -6.86%;
+  width: 116.65%;
+  height: 112.27%;
   background: url("../assets/paralegal/folder-open-right.png") 0 0 / 100% 100% no-repeat;
   image-rendering: pixelated;
+  transition: opacity 0.15s 0.75s;           /* hide once the flap has landed */
 }
+/* while shut, the closed-folder art shows instead */
+.pp-stack:has(> .pp-cover.shut) .pp-board::before { opacity: 0; }
+.pp-stack:not(:has(> .pp-cover.shut)) .pp-board::before { transition: none; }
+#screen-desk.instant .pp-board::before { transition: none; }
 
 /* the arrows sit just outside the open folder */
-.pp-arrow.next { left: calc(50% + var(--H) * 0.885 + 14px); }
-.pp-arrow.prev { right: calc(50% + var(--H) * 0.885 + 14px); }
+.pp-arrow.next { left: calc(50% + var(--H) * 0.465 + 14px); }
+/* the back arrow sits on top of the read pages on the left, at their outer edge */
+.pp-arrow.prev { right: calc(50% + var(--H) * 1.215 - 60px); }
 
 /* ---------- pages on paper ---------- */
 .pp-page,
@@ -446,11 +464,177 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  left: -6.96%;
-  width: 106.96%;
+  left: -6.97%;
+  width: 106.97%;
   background: url("../assets/paralegal/folder-open-left.png") 0 0 / 100% 100% no-repeat;
   image-rendering: pixelated;
   z-index: -1;
 }
 .pp-face .pp-link { color: var(--fg); }
 #screen-desk.folded .pp-front:hover { box-shadow: none; filter: brightness(1.12); }
+
+/* ---------- CASE CLOSED stamp: assets/paralegal/case-closed-stamp.png ----------
+   thumps down onto the folder when the case is done */
+.pp-wax {
+  width: clamp(130px, 17vw, 210px);
+  border: none;
+  border-radius: 0;
+  background: url("../assets/paralegal/case-closed-stamp.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  font-size: 0;                              /* the art has the words */
+  color: transparent;
+  filter: drop-shadow(0 0 1px rgba(243, 230, 200, 0.55));   /* lifts the red off the dark cover */
+  animation: stamp-in 0.35s 0.1s cubic-bezier(0.5, 0, 0.7, 1.4) forwards;
+}
+@keyframes stamp-in {
+  from { transform: rotate(-6deg) scale(2.6); opacity: 0; }
+  to   { transform: rotate(-6deg) scale(1);   opacity: 1; }
+}
+
+/* ---------- page-turn arrows: assets/ui/arrow-button.png (flipped for "back") ---------- */
+.pp-arrow {
+  width: 72px;
+  height: 46px;
+  padding: 0;
+  border: none !important;
+  background: none !important;
+  font-size: 0;
+  color: transparent !important;
+}
+.pp-arrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/arrow-button.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  transition: transform 0.12s;
+}
+.pp-arrow.prev::before { transform: scaleX(-1); }
+.pp-arrow.next:hover:not(:disabled)::before { transform: translateX(4px); }
+.pp-arrow.prev:hover:not(:disabled)::before { transform: scaleX(-1) translateX(4px); }
+.pp-arrow:disabled { opacity: 0.25; }
+.pp-arrow:focus-visible { outline: 2px dashed var(--fg); outline-offset: 2px; }
+
+/* ---------- left half in shadow ----------
+   Once opened, the flap and the read pages on it are dimmed, so the eye goes
+   to the page on the right. (The back arrow is not dimmed.) */
+.pp-back { filter: brightness(0.6); }
+.pp-page { transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.25, 1), filter 0.6s; }
+.pp-page.off { filter: brightness(0.6) drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.3)); }
+/* stays dark even if the mouse is still over it after the click */
+.pp-page.off.clickable:hover { filter: brightness(0.6) drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.35)); }
+
+/* ---------- menu screen: the closed folder (same art as the desk) ---------- */
+#screen-cover { container-type: size; }      /* the folder sizes itself from the screen */
+.pp-folder {
+  position: relative;
+  isolation: isolate;                        /* keeps the art behind the content */
+  height: 92cqh;
+  aspect-ratio: 643 / 767;                   /* folder-cover.png */
+  border: none;
+  box-shadow: none;
+  /* the usable part of the cover is between the spine (left 10%) and the
+     narrower right edge + blue tab (right 14%), so the padding is uneven.
+     Folder width = 92cqh x 643/767 = 77.13cqh. */
+  padding: 1.4rem calc(77.13cqh * 0.14 + 8px) 1.4rem calc(77.13cqh * 0.10 + 12px);
+  background: url("../assets/paralegal/folder-cover.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  /* light text on the dark red cover */
+  --fg: #f3e6c8;
+  --line: #f3e6c8;
+  --muted: #cdb594;
+  --bg: #512831;
+  color: var(--fg);
+}
+/* the papers + back folder poking out (whole closed-folder art, lined up with the cover) */
+.pp-folder::before {
+  content: "";
+  position: absolute;
+  left: -14%;
+  top: -7.3%;
+  width: 122.08%;
+  height: 113.17%;
+  background: url("../assets/paralegal/folder-closed.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  z-index: -1;
+}
+.pp-circle { background: repeating-linear-gradient(45deg, transparent 0 6px, rgba(243, 230, 200, 0.1) 6px 8px); }
+@media (max-width: 800px) {
+  .pp-folder { height: auto; aspect-ratio: auto; }
+}
+.pp-folder .pp-cover-buttons button { font-size: 0.78rem; white-space: nowrap; }
+
+/* ---------- menu -> case folder: swept off, new one dropped in ---------- */
+/* the menu folder is shoved off to the left, spinning a little */
+.pp-folder.swept { animation: folder-sweep 0.45s cubic-bezier(0.55, 0, 0.9, 0.45) forwards; pointer-events: none; }
+@keyframes folder-sweep {
+  0%   { transform: translateX(0) rotate(0); }
+  15%  { transform: translateX(3%) rotate(1.5deg); }          /* the shove starts */
+  100% { transform: translateX(-140%) translateY(6%) rotate(-24deg); opacity: 0.9; }
+}
+/* hidden for the moment between the screens switching and the drop starting */
+#screen-desk.pre-drop .pp-stack,
+#screen-desk.pre-drop .pp-arrow,
+#screen-desk.pre-drop .pp-toolbar { visibility: hidden; }
+/* top-down camera: the case folder is dropped from where the camera is, so it
+   starts huge and dark (right in front of the lens) and shrinks onto the desk,
+   landing with a tiny bounce while the scene fades in from dark */
+#screen-desk.dropping .pp-stack { animation: folder-drop 0.65s cubic-bezier(0.35, 0, 0.5, 1) both; }
+@keyframes folder-drop {
+  0%   { transform: translate(-50%, -50%) scale(2.8) rotate(-7deg); filter: brightness(0.15) blur(3px); opacity: 0; }
+  20%  { opacity: 1; }
+  78%  { transform: translate(-50%, -50%) scale(0.97) rotate(0.6deg); filter: brightness(1) blur(0); }
+  90%  { transform: translate(-50%, -50%) scale(1.015) rotate(-0.2deg); }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(0); filter: none; opacity: 1; }
+}
+/* the whole desk starts dark and brightens as the folder lands */
+#screen-desk.dropping::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 500;
+  animation: desk-light 0.65s ease-out both;
+}
+@keyframes desk-light { 0% { opacity: 0.85; } 100% { opacity: 0; } }
+/* the arrows and toolbar wait until it has landed */
+#screen-desk.dropping .pp-arrow,
+#screen-desk.dropping .pp-toolbar { animation: fade-in-late 0.65s both; }
+@keyframes fade-in-late { 0%, 75% { opacity: 0; } 100% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pp-folder.swept, #screen-desk.dropping .pp-stack { animation: none; }
+  #screen-desk.dropping::after { display: none; }
+}
+
+/* ---------- John D'Brief: CRT switch on / off ----------
+   The room behind goes black like a TV tube; the picture opens out of a
+   bright horizontal line (on), or squashes into a line, then a dot (off). */
+.pp-debrief-stage { background: var(--bg); transform-origin: 50% 50%; }
+#screen-debrief.crt-on  { animation: tube-on 0.55s both; }
+#screen-debrief.crt-off { animation: tube-off 0.42s both; }
+#screen-debrief.crt-on  .pp-debrief-stage { animation: crt-on 0.55s ease-out both; }
+#screen-debrief.crt-off .pp-debrief-stage { animation: crt-off 0.42s ease-in both; }
+/* the buttons under the picture wait */
+#screen-debrief.crt-on .pp-row  { animation: fade-in-late 0.55s both; }
+#screen-debrief.crt-off .pp-row { visibility: hidden; }
+
+@keyframes crt-on {
+  0%   { transform: scale(0.03, 0.004); filter: brightness(8); }
+  30%  { transform: scale(1, 0.008);    filter: brightness(6); }
+  60%  { transform: scale(1, 1);        filter: brightness(1.8) contrast(1.2); }
+  100% { transform: scale(1, 1);        filter: none; }
+}
+@keyframes crt-off {
+  0%   { transform: scale(1, 1);        filter: none; }
+  45%  { transform: scale(1, 0.008);    filter: brightness(5); }
+  80%  { transform: scale(0.03, 0.004); filter: brightness(8); }
+  100% { transform: scale(0, 0);        filter: brightness(8); }
+}
+/* black "tube" behind the picture */
+@keyframes tube-on  { 0%, 60% { background: #000; } 100% { background: transparent; } }
+@keyframes tube-off { 0% { background: transparent; } 15%, 100% { background: #000; } }
+@media (prefers-reduced-motion: reduce) {
+  #screen-debrief.crt-on, #screen-debrief.crt-off,
+  #screen-debrief.crt-on .pp-debrief-stage, #screen-debrief.crt-off .pp-debrief-stage { animation: none; }
+}

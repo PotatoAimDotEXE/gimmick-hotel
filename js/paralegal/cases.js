@@ -262,18 +262,18 @@ const PARALEGAL_CASES = [
   {
     id: "lost-found-floating",
     name: "Lost, Found & Floating",
-    debrief: ["Today's case: Rosa found something unusual while sorting the lost-and-found."],
+    debrief: ["Today's case: Sue Pervisor found something unusual while sorting the lost-and-found."],
     versions: {
       easy: {
         report: [
-          "Rosa was sorting the hotel's lost-and-found. She found a yellow smiley-face plushie and an old music box. She put the plushie on the counter and turned the key on the music box.",
+          "Sue Pervisor was sorting the hotel's lost-and-found. She found a yellow smiley-face plushie and an old music box. She put the plushie on the counter and turned the key on the music box.",
           "[[When the music played]], the plushie [[floated up and sang]], “Hey, it's me, it's Verity! Ask me anything!” [[When the music stopped]], it [[went quiet and fell]] back onto the counter.",
-          "Rosa [[played the music again]]. The plushie [[floated up and sang the same line again]].",
+          "Sue Pervisor [[played the music again]]. The plushie [[floated up and sang the same line again]].",
         ],
         evidence: [
           { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
-            label: "B. Rosa's lost-and-found log",
+            label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",
             table: {
               head: ["Time", "Music box", "Verity"],
@@ -285,12 +285,12 @@ const PARALEGAL_CASES = [
             },
           },
         ],
-        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Rosa's second test suggests." },
+        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Sue Pervisor's second test suggests." },
         rubric: [
           { what: "Gives a short title about Verity floating and singing", field: "title", need: [["float", "sing", "sang", "song", "encore", "levitat", "hover", "fly", "flying"]] },
           { what: "Says Verity floated and sang when the music played", field: "summary", need: [["float", "rose", "fly", "flew", "hover", "lift", "levitat"], ["sing", "sang", "song"]] },
           { what: "Says Verity fell quiet when the music stopped", field: "summary", need: [["quiet", "silent", "stop", "dropped", "fell", "fall", "drop"]] },
-          { what: "Says Verity did the same thing when Rosa played the music again", field: "summary", need: [["again", "second", "same", "both", "twice", "repeat", "restart", "9:08"]] },
+          { what: "Says Verity did the same thing when Sue Pervisor played the music again", field: "summary", need: [["again", "second", "same", "both", "twice", "repeat", "restart", "9:08"]] },
           { what: "Says the music makes Verity float and sing", field: "summary", need: [["music", "tune", "song", "melody"], ["make", "made", "cause", "because", "so ", "suggest", "means"]] },
         ],
         sample: {
@@ -301,14 +301,14 @@ const PARALEGAL_CASES = [
 
       medium: {
         report: [
-          "While sorting the hotel's lost-and-found, Rosa found a yellow smiley-face plushie and an old music box. She set the plushie on the counter and wound the box to see if it still worked.",
-          "[[As soon as the music played]], the plushie [[floated up]] to eye level, turned to face Rosa, and [[sang]], “Hey, it's me, it's Verity! Ask me anything!” [[When the tune stopped]], it [[went quiet and dropped]] onto the counter, still smiling.",
-          "Rosa [[wound the music box again]]. The plushie [[rose and sang the same line]].",
+          "While sorting the hotel's lost-and-found, Sue Pervisor found a yellow smiley-face plushie and an old music box. She set the plushie on the counter and wound the box to see if it still worked.",
+          "[[As soon as the music played]], the plushie [[floated up]] to eye level, turned to face Sue Pervisor, and [[sang]], “Hey, it's me, it's Verity! Ask me anything!” [[When the tune stopped]], it [[went quiet and dropped]] onto the counter, still smiling.",
+          "Sue Pervisor [[wound the music box again]]. The plushie [[rose and sang the same line]].",
         ],
         evidence: [
           { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
-            label: "B. Rosa's lost-and-found log",
+            label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",
             table: {
               head: ["Time", "Music box", "Verity"],
@@ -320,30 +320,30 @@ const PARALEGAL_CASES = [
             },
           },
         ],
-        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Rosa's second test suggests." },
+        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Sue Pervisor's second test suggests." },
         rubric: [
           { what: "Gives the incident a short title that captures the main event", field: "title", need: [["float", "sing", "sang", "song", "encore", "levitat", "hover", "fly", "flying"]] },
           { what: "Says Verity floated and sang when the music started", field: "summary", need: [["float", "rose", "fly", "flew", "hover", "lift", "levitat"], ["sing", "sang", "song"]] },
           { what: "Says she went quiet and dropped when it stopped", field: "summary", need: [["quiet", "silent", "stop", "dropped", "fell", "fall", "drop"]] },
-          { what: "Mentions that Verity floated and sang again when Rosa restarted the music", field: "summary", need: [["again", "second", "same", "both", "twice", "repeat", "restart", "9:08"]] },
+          { what: "Mentions that Verity floated and sang again when Sue Pervisor restarted the music", field: "summary", need: [["again", "second", "same", "both", "twice", "repeat", "restart", "9:08"]] },
           { what: "Explains that the repeated pattern suggests the music made Verity float and sing", field: "summary", need: [["music", "tune", "song", "melody"], ["make", "made", "cause", "because", "so ", "suggest", "means"]] },
         ],
         sample: {
           title: "Verity's Floating Encore",
-          summary: "Verity floated up and sang when the music box played, then went quiet and dropped when it stopped. She did the same thing when Rosa restarted the tune, suggesting the music made her float and sing.",
+          summary: "Verity floated up and sang when the music box played, then went quiet and dropped when it stopped. She did the same thing when Sue Pervisor restarted the tune, suggesting the music made her float and sing.",
         },
       },
 
       hard: {
         report: [
-          "Shortly after nine, Rosa was working through the crate of unclaimed items in the hotel's lost-and-found, a job she had been putting off for weeks. Near the bottom she found a yellow smiley-face plushie and a scratched wooden music box. The room was stuffy, so she opened the window, set the plushie on the counter, and wound the music box to see whether it still worked.",
+          "Shortly after nine, Sue Pervisor was working through the crate of unclaimed items in the hotel's lost-and-found, a job she had been putting off for weeks. Near the bottom she found a yellow smiley-face plushie and a scratched wooden music box. The room was stuffy, so she opened the window, set the plushie on the counter, and wound the music box to see whether it still worked.",
           "The moment the tune began, the plushie lifted off the counter, rose to eye level, turned to face her, and sang, “Hey, it's me, it's Verity! Ask me anything!” It kept smiling as the melody played. When the last note faded, it fell silent and dropped back onto the counter.",
-          "Rosa stared at it for a long moment. Then, to be sure, she wound the music box a second time and watched closely.",
+          "Sue Pervisor stared at it for a long moment. Then, to be sure, she wound the music box a second time and watched closely.",
         ],
         evidence: [
           { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
-            label: "B. Rosa's lost-and-found log",
+            label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",
             table: {
               head: ["Time", "Window", "Music box", "Verity"],
@@ -356,7 +356,7 @@ const PARALEGAL_CASES = [
             },
           },
         ],
-        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Rosa's second test suggests." },
+        task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Verity did and explain what Sue Pervisor's second test suggests." },
         rubric: [
           { what: "Gives a short title that captures the main event: Verity floating and singing to the music (a title about only the music box or the lost-and-found earns 0)", field: "title", need: [["float", "sing", "sang", "song", "encore", "levitat", "hover", "fly", "flying"]] },
           { what: "Says Verity floated and sang when the music started", field: "summary", need: [["float", "rose", "fly", "flew", "hover", "lift", "levitat"], ["sing", "sang", "song"]] },
@@ -371,7 +371,7 @@ const PARALEGAL_CASES = [
         ],
         sample: {
           title: "Verity's Floating Encore",
-          summary: "Verity floated up and sang while Rosa's music box played, then fell silent and dropped when the tune ended. The log shows she did it again when the tune restarted at 9:08, and the window stayed open even when she dropped, so the music, not the breeze, seems to make her float and sing.",
+          summary: "Verity floated up and sang while Sue Pervisor's music box played, then fell silent and dropped when the tune ended. The log shows she did it again when the tune restarted at 9:08, and the window stayed open even when she dropped, so the music, not the breeze, seems to make her float and sing.",
         },
         traps: [
           { name: "The title trap", info: "A title about only the music box or the lost-and-found misses the main event: Verity floating and singing.", field: "title", titleMiss: true },

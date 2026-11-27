@@ -381,7 +381,7 @@ const CASES = [
       },
       {
         id: "rosa",
-        name: "Rosa",
+        name: "Sue Pervisor",
         role: "Night supervisor",
         q: "Did either of them call the front desk?",
         a: "I was at the desk the whole time. The first call I got was from Kit, after the vase had already broken.",

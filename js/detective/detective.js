@@ -376,7 +376,7 @@
     const r = getResult();
     if (!r) return;
     const text =
-      `Detective Lie Detector · Case #${r.caseNumber} (${capitalise(r.difficulty)})\n` +
+      `Effective Detective · Case #${r.caseNumber} (${capitalise(r.difficulty)})\n` +
       `Right person: ${r.suspectPts === MAX_PICK ? "✅" : "❌"}\n` +
       `Reasoning: ${r.reasoningPts === null ? "?" : r.reasoningPts}/${MAX_REASON}\n` +
       `Score: ${total(r)}/${MAX_TOTAL}`;

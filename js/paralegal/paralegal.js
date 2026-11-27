@@ -102,14 +102,26 @@
     })
   );
 
+  // the menu folder gets swept off the desk, then the next screen appears
+  const SWEEP = 450; // ms, matches .pp-folder.swept in paralegal.css
+  let sweeping = false;
   $("btn-daily").addEventListener("click", () => {
-    if (getResult() || draft.submitted) return openDesk();
-    if (!draft.started) {
-      draft.started = true;
-      saveDraft();
-    }
-    draft.debriefDone ? openDesk() : openDebrief();
+    if (sweeping) return;
+    sweeping = true;
+    const folder = document.querySelector("#screen-cover .pp-folder");
+    folder.classList.add("swept");
+    setTimeout(() => {
+      sweeping = false;
+      folder.classList.remove("swept");
+      if (getResult() || draft.submitted) return openDesk();
+      if (!draft.started) {
+        draft.started = true;
+        saveDraft();
+      }
+      draft.debriefDone ? openDesk(true) : openDebrief();
+    }, reducedMotion() ? 0 : SWEEP);
   });
+  const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   document.querySelectorAll("[data-soon]").forEach((b) =>
     b.addEventListener("click", () => ($("cover-note").textContent = b.dataset.soon + " is coming soon."))
@@ -121,12 +133,30 @@
   let typing = false;
   let typeTimer = null;
 
+  // CRT effect: the picture opens out of a bright line (on) / collapses to a line and a dot (off)
+  const CRT_ON = 550;  // ms, matches crt-on in paralegal.css
+  const CRT_OFF = 420; // ms, matches crt-off
+  const debriefScreen = $("screen-debrief");
+  let crtBusy = false;
+  let crtTimer = null;
+
   function openDebrief() {
     const pick = (l) => (typeof l === "string" ? l : hard() ? l.hard : l.normal);
     lines = [...PARALEGAL_INTRO, ...caseData.debrief].map(pick);
     lineIdx = 0;
+    $("debrief-line").textContent = "";
     showScreen("debrief");
-    typeLine();
+    if (reducedMotion()) return typeLine();
+    crtBusy = true;
+    debriefScreen.classList.remove("crt-on", "crt-off");
+    void debriefScreen.offsetWidth; // restart the animation
+    debriefScreen.classList.add("crt-on");
+    clearTimeout(crtTimer);
+    crtTimer = setTimeout(() => {
+      crtBusy = false;
+      debriefScreen.classList.remove("crt-on");
+      typeLine(); // John starts talking once the picture is up
+    }, CRT_ON);
   }
 
   // John D'Brief changes pose at most once per line: when a new line starts
@@ -170,18 +200,30 @@
   }
 
   function debriefNext() {
+    if (crtBusy) return;
     if (typing) return finishTyping();
     if (++lineIdx >= lines.length) return endDebrief();
     typeLine();
   }
 
   function endDebrief() {
+    if (crtBusy && debriefScreen.classList.contains("crt-off")) return; // already switching off
     clearInterval(typeTimer);
+    clearTimeout(crtTimer);
     typing = false;
     stopTalking();
     draft.debriefDone = true;
     saveDraft();
-    openDesk();
+    if (reducedMotion()) return openDesk(true);
+    crtBusy = true;
+    debriefScreen.classList.remove("crt-on");
+    void debriefScreen.offsetWidth;
+    debriefScreen.classList.add("crt-off");
+    crtTimer = setTimeout(() => {
+      crtBusy = false;
+      debriefScreen.classList.remove("crt-off");
+      openDesk(true);
+    }, CRT_OFF);
   }
 
   $("btn-debrief-next").addEventListener("click", (e) => { e.currentTarget.blur(); debriefNext(); });
@@ -338,8 +380,12 @@
   $("btn-prev").addEventListener("click", (e) => { e.currentTarget.blur(); setPage(draft.page - 1); });
   $("btn-next").addEventListener("click", (e) => { e.currentTarget.blur(); setPage(draft.page + 1); });
 
-  function openDesk() {
+  // dropIn = the case folder falls onto the desk from above
+  function openDesk(dropIn) {
     if (!built) buildStack();
+    // keep the folder out of sight until the drop starts (no flash at its resting spot)
+    const drop = dropIn && !reducedMotion();
+    if (drop) desk.classList.add("pre-drop");
     showScreen("desk");
     const r = getResult();
     if (r) return showClosed(r, true);
@@ -351,11 +397,26 @@
     cover.classList.remove("stamped");
     cover.classList.add("shut");
     cover.style.zIndex = 300;
-    setPage(draft.page, true);
-    requestAnimationFrame(() => requestAnimationFrame(() => desk.classList.remove("instant")));
+    // coming back to the desk: every page goes back onto the pile inside the folder
+    setPage(0, true);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        desk.classList.remove("instant");
+        if (drop) {
+          desk.classList.remove("dropping");
+          void desk.offsetWidth; // restart the animation
+          desk.classList.add("dropping");
+          desk.classList.remove("pre-drop");
+        }
+      })
+    );
 
     if (draft.submitted) return closeCase(); // page was refreshed while grading
   }
+
+  stack.addEventListener("animationend", (e) => {
+    if (e.animationName === "folder-drop") desk.classList.remove("dropping");
+  });
 
   // click the closed folder (or Enter / →) to open it
   function openFolder() {
