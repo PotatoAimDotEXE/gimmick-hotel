@@ -529,7 +529,7 @@
     if (!r) return;
     const v = caseData.versions[r.difficulty];
     const rows = r.checks
-      .map((c) => `<tr class="${c.got ? "" : "missed"}"><td>${c.field === "title" ? "Title" : "Summary"}</td><td>${escapeHtml(c.what)}</td><td>${c.got ? "✓ 1" : "✗ 0"}</td></tr>`)
+      .map((c) => `<tr class="${c.got ? "" : "missed"}"><td>${c.field === "title" ? "Title" : "Summary"}</td><td>${escapeHtml(c.what)}${c.feedback ? `<br /><em class="pp-check-note">${escapeHtml(c.feedback)}</em>` : ""}</td><td>${c.got ? "✓ 1" : "✗ 0"}</td></tr>`)
       .join("");
     const traps =
       r.difficulty === "hard"

@@ -7,19 +7,11 @@
    if the player blames a trap ("blame" words). It's only here so
    the game is playable until the AI judge is connected.
 
-   When the AI is ready, replace the body of gradeSummary() with a
-   call to your serverless function, sending the version's rubric
-   (the "what" lines), the sample answer and the player's answer:
-
-     const res = await fetch("https://YOUR-FUNCTION-URL/grade-summary", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ caseId: caseData.id, difficulty, title, summary }),
-     });
-     return await res.json();
-     // { checks: [{ what, got: true/false, feedback }], total, max, traps: [{ name, info }] }
-
-   The AI should accept simple English and small spelling mistakes.
+   When AI_GRADER_URL (main.js) is set and the [dev] AI switch on the
+   title screen is on, the AI judge (DeepSeek through
+   worker/grader-worker.js) grades each rubric line instead, with a
+   sentence of feedback per line. If it's not set or can't be reached,
+   this keyword check is used so the game still works.
    NEVER put an API key in this file – it is visible to players.
    ========================================================= */
 
@@ -45,7 +37,52 @@ function checkLine(line, answer) {
   return needOk && !blamed;
 }
 
+const plainText = (t) => String(t).replace(/\[\[(.+?)\]\]/g, "$1").replace(/\*\*(.+?)\*\*/g, "$1");
+
+// adds the team's accepted words ("need" groups in cases.js) to a rubric line, so the
+// AI follows the same rule: one idea from EACH group earns the point
+function withKeyWords(line) {
+  const groups = (line.need || []).filter((g) => g.length);
+  if (!groups.length) return line.what;
+  const words = groups.map((g) => g.join(" / ")).join("  AND ALSO one of: ");
+  return `${line.what}. [Guide: answers that earn this usually use one of: ${words} (word starts, so "drop" covers "dropped"; synonyms and own words count too). The idea itself must be clearly stated in a real sentence about what happened: key words on their own, or listed without meaning, earn nothing. If the line says "X and Y" but the guide accepts either word, one of them is enough.]`;
+}
+
+// the AI judge (DeepSeek through the Cloudflare Worker); null if it can't be used
+async function gradeSummaryAI({ version, title, summary }) {
+  if (!aiGradingOn()) return null;
+  const ev = (e) => [e.label, e.text, (e.rows || []).map((r) => (Array.isArray(r) ? r.join(" | ") : r)).join("; ")].filter(Boolean).map(plainText).join(": ");
+  try {
+    const out = await askAIGrader({
+      task: "paralegal",
+      case: {
+        report: version.report.map(plainText),
+        evidence: (version.evidence || []).map(ev),
+        task: version.task,
+        rubric: version.rubric.map((l) => ({ what: withKeyWords(l), field: l.field })),
+        traps: (version.traps || []).map((t) => ({ name: t.name, info: t.info, field: t.field, titleMiss: !!t.titleMiss })),
+        sample: version.sample,
+      },
+      answer: { title: title.trim(), summary: summary.trim() },
+    });
+    const checks = version.rubric.map((line, i) => ({
+      what: line.what,
+      field: line.field,
+      got: !!(out.checks[i] && out.checks[i].got),
+      feedback: (out.checks[i] && out.checks[i].feedback) || "",
+    }));
+    const traps = (out.traps || []).map((i) => version.traps[i]).filter(Boolean).map((t) => ({ name: t.name, info: t.info }));
+    return { checks, total: checks.filter((c) => c.got).length, max: checks.length, traps, feedback: out.feedback || "" };
+  } catch (err) {
+    console.warn("AI grader unavailable, using the keyword check:", err);
+    return null;
+  }
+}
+
 async function gradeSummary({ version, title, summary }) {
+  const ai = await gradeSummaryAI({ version, title, summary });
+  if (ai) return ai;
+
   await new Promise((r) => setTimeout(r, 600)); // pretend to think
 
   const answer = { title: title.trim(), summary: summary.trim() };

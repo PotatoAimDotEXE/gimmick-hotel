@@ -642,3 +642,6 @@
 /* the spare sheets disappear once you reach the last page */
 .pp-sheet { transition: opacity 0.3s; }
 .pp-stack.on-last .pp-sheet { opacity: 0; }
+
+/* AI grader: one sentence of feedback under each rubric line */
+.pp-check-note { display: block; margin-top: 0.15rem; font-size: 0.8rem; color: var(--muted); }

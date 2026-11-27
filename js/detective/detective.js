@@ -440,9 +440,10 @@
 
   async function finishGrading(result) {
     try {
-      const g = await gradeReasoning({ caseData: caseView(), suspectId: result.suspect, reasoning: result.reasoning });
-      result.reasoningPts = g.score === null ? null : Math.max(0, Math.min(MAX_REASON, Math.round(g.score)));
+      const g = await gradeReasoning({ caseData: caseView(), suspectId: result.suspect, reasoning: result.reasoning, context: gradingContext(result) });
+      result.reasoningPts = g.score === null || g.score === undefined ? null : Math.max(0, Math.min(MAX_REASON, Math.round(g.score)));
       result.feedback = g.feedback || "";
+      result.criteria = g.criteria || [];
     } catch {
       result.feedback = "Couldn't reach the grader. Reasoning not scored.";
     }
@@ -451,6 +452,26 @@
     Store.addScore("detective", total(result));
     if (!$("screen-result").hidden) showResult();
     else renderMenu();
+  }
+
+  // the case exactly as this player saw it, for the AI grader
+  function gradingContext(result) {
+    const cv = caseView();
+    const n = activeSuspects().length;
+    const plain = (t) => String(t).replace("{count}", NUMBER_WORDS[n] || n).replace(/\*\*(.+?)\*\*/g, "$1");
+    return {
+      title: caseData.title,
+      report: cv.report.map(plain),
+      evidence: cv.evidence.map((ev) => ({ label: ev.label, text: ev.text || "", lines: ev.lines || [], note: ev.note || "" })),
+      people: activeSuspects().map((p) => {
+        const s = personView(p);
+        return { name: s.name, role: s.role, question: s.q, answer: s.a + (draft.difficulty === "hard" && s.hardExtra ? " " + s.hardExtra : "") };
+      }),
+      question: cv.question,
+      instructions: cv.instructions,
+      culprit: nameOf(caseData.culprit),
+      chosen: nameOf(result.suspect),
+    };
   }
 
   const total = (r) => r.suspectPts + (r.reasoningPts || 0);
@@ -481,6 +502,16 @@
       </table>
       ${correct ? "" : `<p>The answer was <strong>${escapeHtml(nameOf(caseData.culprit))}</strong>.</p>`}
       ${r.feedback ? `<p class="muted">${escapeHtml(r.feedback)}</p>` : ""}
+      ${
+        r.criteria && r.criteria.length
+          ? `<details><summary>Reasoning breakdown</summary><ul class="dl-criteria">${r.criteria
+              .map((c, i) => {
+                const what = ((caseView().rubric || [])[i] || {}).criterion || "";
+                return `<li><strong>${c.points}/${c.max}</strong> ${escapeHtml(what)}${c.feedback ? `<br /><em>${escapeHtml(c.feedback)}</em>` : ""}</li>`;
+              })
+              .join("")}</ul></details>`
+          : ""
+      }
       <details><summary>Your reasoning</summary><p>${escapeHtml(r.reasoning)}</p></details>
     `;
 

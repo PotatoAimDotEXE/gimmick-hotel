@@ -64,12 +64,21 @@ const Store = {
     this.safeSet(this.KEY_MODE, mode === "party" ? "party" : "single");
   },
 
+  // [dev] AI grading switch (title screen). On by default.
+  KEY_AI: "er_ai_grading",
+  getAIGrading() {
+    return this.safeGet(this.KEY_AI, true) !== false;
+  },
+  setAIGrading(on) {
+    this.safeSet(this.KEY_AI, !!on);
+  },
+
   // [dev] wipe every saved value this game created (all keys start with "er_")
   resetAll() {
     try {
       Object.keys(localStorage)
-        // keep each room's "last case" so a reset always brings a different case
-        .filter((k) => k.startsWith("er_") && !k.endsWith("_last_case"))
+        // keep each room's "last case" (so a reset brings a different case) and the AI switch
+        .filter((k) => k.startsWith("er_") && !k.endsWith("_last_case") && k !== "er_ai_grading")
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* storage blocked */
@@ -189,4 +198,37 @@ function spriteMove(name) {
   const s = SPRITES[name];
   const o = s && typeof s === "object" ? s : {};
   return `--y: ${Number(o.y) || 0}; --tilt: ${Number(o.tilt) || 0}deg;`;
+}
+
+/* ---------------------------------------------------------
+   AI grader (DeepSeek, through your Cloudflare Worker).
+   Paste the Worker's address between the quotes, e.g.
+     const AI_GRADER_URL = "https://hotel-grader.yourname.workers.dev";
+   Leave it "" to keep using the built-in placeholder graders.
+   Setup steps: worker/README.md. Never put the API key here.
+   --------------------------------------------------------- */
+const AI_GRADER_URL = "https://hotel-grader.arthiprasertsuk.workers.dev";
+
+// true when the AI grader should be used: an address is set AND the
+// [dev] switch on the title screen is on
+function aiGradingOn() {
+  return !!AI_GRADER_URL && Store.getAIGrading();
+}
+
+async function askAIGrader(payload, timeoutMs = 30000) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    const res = await fetch(AI_GRADER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Grader error " + res.status);
+    return data;
+  } finally {
+    clearTimeout(timer);
+  }
 }

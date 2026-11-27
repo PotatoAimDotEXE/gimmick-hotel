@@ -71,6 +71,20 @@
     });
   });
 
+  // ---- [dev] AI grading on/off (saved in this browser; off = placeholder graders) ----
+  const aiBtn = $("btn-ai");
+  function renderAI() {
+    const on = Store.getAIGrading();
+    aiBtn.textContent = "[dev] AI grading: " + (on ? "on" : "off");
+    aiBtn.setAttribute("aria-pressed", on);
+    aiBtn.title = AI_GRADER_URL ? "" : "No grader address set in js/main.js, so the placeholder graders are used anyway";
+  }
+  aiBtn.addEventListener("click", () => {
+    Store.setAIGrading(!Store.getAIGrading());
+    renderAI();
+  });
+  renderAI();
+
   // ---- [dev] Reset all saved data (two clicks to confirm) ----
   const resetBtn = $("btn-reset");
   let resetArmed = false;

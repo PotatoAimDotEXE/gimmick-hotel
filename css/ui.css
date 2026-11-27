@@ -337,3 +337,8 @@ body.game-dark { background: #000; }
 body.game-dark .topbar { color: #fff; border-bottom-color: #fff; }
 body.game-dark .topbar .muted,
 body.game-dark .topbar .key-hint { color: #bbb; }
+
+/* AI grader: reasoning breakdown on the result card */
+.dl-criteria { margin: 0.4rem 0 0.2rem 1.1rem; text-align: left; }
+.dl-criteria li { margin-bottom: 0.5rem; line-height: 1.35; }
+.dl-criteria em { color: #5a4632; }

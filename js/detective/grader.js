@@ -1,5 +1,5 @@
 /* =========================================================
-   AI REASONING GRADER – PLACEHOLDER
+   AI REASONING GRADER
    ---------------------------------------------------------
    Score out of 10 (matches the team's rubrics):
      4 pts  choosing the right person  (checked in detective.js)
@@ -7,23 +7,33 @@
    The AI gets caseData.rubric (the three 2-point criteria) and
    caseData.sample (a full-marks answer) to grade against.
 
-   When the AI is ready, replace the body of gradeReasoning()
-   with a call to your serverless function, e.g.:
-
-     const res = await fetch("https://YOUR-FUNCTION-URL/grade", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ caseId: caseData.id, suspectId, reasoning }),
-     });
-     return await res.json();   // { score: 0-6, feedback: "..." }
+   When AI_GRADER_URL (main.js) is set and the [dev] AI switch on the
+   title screen is on, the case, rubric, sample
+   answer and the player's reasoning go to the Cloudflare Worker
+   (worker/grader-worker.js), which asks DeepSeek and returns
+   { score: 0-6, criteria: [{ points, max, feedback }], feedback }.
+   If it's not set, or can't be reached, the reasoning stays unscored.
 
    NEVER put an API key in this file – it is visible to players.
-   The function should look up the rubric + culprit itself.
    ========================================================= */
 
-async function gradeReasoning({ caseData, suspectId, reasoning }) {
-  await new Promise((r) => setTimeout(r, 900)); // fake "thinking" delay
+// context = the case as the player saw it (built in detective.js):
+//   { title, report, evidence, people, question, instructions, culprit, chosen }
+async function gradeReasoning({ caseData, suspectId, reasoning, context }) {
+  if (aiGradingOn() && context) {
+    try {
+      const out = await askAIGrader({
+        task: "detective",
+        case: { ...context, rubric: caseData.rubric, sample: caseData.sample },
+        answer: reasoning,
+      });
+      return { score: out.score, criteria: out.criteria || [], feedback: out.feedback || "" };
+    } catch (err) {
+      return { score: null, feedback: "The AI grader couldn't be reached (" + err.message + "). Your reasoning isn't scored yet." };
+    }
+  }
 
+  await new Promise((r) => setTimeout(r, 900)); // fake "thinking" delay
   return {
     score: null, // null = not graded yet
     feedback: "AI grading isn't connected yet. Your reasoning will be scored out of 6 here.",
