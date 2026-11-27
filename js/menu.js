@@ -1,4 +1,4 @@
-/* Title screen: guestbook name, single/party switch, Play -> zoom into the door -> hallway,
+/* Title screen: guestbook name, Play -> zoom into the door -> hallway,
    parallax, pop-ups, dev reset, bell easter egg. */
 
 (function () {
@@ -19,24 +19,9 @@
     }
   });
 
-  // ---- Single player / Party switch ----
-  const modeSwitch = $("mode-switch");
+  // Party mode now lives in each game's menu; the title screen is always solo
   const playBtn = $("btn-play");
-
-  function renderMode() {
-    const party = Store.getMode() === "party";
-    modeSwitch.setAttribute("aria-checked", party);
-    document.querySelectorAll(".mode-word").forEach((w) =>
-      w.classList.toggle("active", w.dataset.mode === Store.getMode())
-    );
-    playBtn.disabled = party; // Party mode isn't built yet
-    $("mode-note").textContent = party ? "Party mode is coming soon. Switch back to Solo to play." : "";
-  }
-
-  modeSwitch.addEventListener("click", () => {
-    Store.setMode(Store.getMode() === "party" ? "single" : "party");
-    renderMode();
-  });
+  Store.setMode("single");
 
   // ---- Play: zoom into the door, fade to the hallway ----
   let leaving = false;
@@ -116,5 +101,4 @@
     }
   });
 
-  renderMode();
 })();

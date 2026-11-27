@@ -16,29 +16,26 @@
   </header>
 
   <main class="game-stage">
-    <div class="dl-stage">
+    <div class="dl-stage dl-bg"><!-- background for every screen: assets/detective/effective-detective-background.png -->
 
       <!-- ============ 1. GAME MENU ============ -->
-      <section class="dl-screen" id="screen-menu">
-        <h1 class="dl-title">Effective Detective</h1>
-        <div class="dl-art">[ art: detective office / evidence board ]</div>
+      <section class="dl-screen dl-home" id="screen-menu">
+        <h1 class="dl-title dl-home-title">Effective Detective</h1>
 
-        <div class="dl-menu">
-          <div class="dl-menu-buttons">
-            <button class="menu-btn primary" id="btn-daily">Case of the Day</button>
-            <button class="menu-btn" data-soon="Detective's Backlog">
-              Detective's Backlog<br /><small>(Unlimited)</small>
-            </button>
-            <p class="dl-note" id="menu-note" aria-live="polite"></p>
+        <div class="dl-home-buttons">
+          <button class="menu-btn primary" id="btn-daily">Case of the Day</button>
+          <div class="dl-home-side">
+            <button class="menu-btn" data-soon="Detective's Backlog">Detective's Backlog</button>
+            <button class="menu-btn" data-soon="Party mode">Party Mode</button>
           </div>
-
-          <aside class="dl-side">
-            <h2>Top Detectives</h2>
-            <ol id="dl-leaderboard"></ol>
-            <h2>Fun fact</h2>
-            <p id="dl-fact" class="muted"></p>
-          </aside>
         </div>
+        <p class="dl-note" id="menu-note" aria-live="polite"></p>
+
+        <!-- not shown in this layout, kept so the scores/fact code still has somewhere to write -->
+        <aside class="dl-side" hidden>
+          <ol id="dl-leaderboard"></ol>
+          <p id="dl-fact"></p>
+        </aside>
       </section>
 
       <!-- ============ 2. CLASSIFIED FOLDER + DIFFICULTY ============ -->

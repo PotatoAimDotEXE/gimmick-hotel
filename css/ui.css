@@ -117,3 +117,96 @@ body.game button:disabled { opacity: 0.4; }
 .dl-report .dl-title { font-size: clamp(1.4rem, 2.4vw, 2rem); }
 .dl-report .dl-result { max-width: none; }
 .dl-report .actions { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+
+/* ---------- Game menu (title + 3 buttons over the evidence-board photo) ---------- */
+/* the evidence-board photo sits behind every screen of this game */
+.dl-stage.dl-bg {
+  background: #000 url("../assets/detective/effective-detective-background.png") center / cover no-repeat;
+}
+#screen-menu.dl-home { padding: 0; }
+/* the title sits on a plain card (not the button frame) */
+.dl-home-title {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: clamp(1.6rem, 3.7vw, 3rem);
+  line-height: 1.15;
+  padding: 0.15em 0.7em;
+  background: #e3cd94;
+  color: #1b120c;
+  border: 2px solid #1b120c;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.45);
+}
+/* buttons along the bottom: one big one on the left, two stacked on the right */
+.dl-home-buttons {
+  position: absolute;
+  left: 6.5%;
+  right: 7%;
+  bottom: 4.5%;
+  display: grid;
+  grid-template-columns: 1.13fr 1fr;
+  gap: 1.6%;
+}
+.dl-home-side { display: flex; flex-direction: column; gap: 0.7rem; }
+.dl-home .menu-btn {
+  font-size: clamp(0.95rem, 1.9vw, 1.5rem);
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.2rem;
+}
+.dl-home .menu-btn.primary {
+  height: 100%;
+  font-size: clamp(1.2rem, 2.6vw, 2.1rem);
+  font-weight: normal;
+}
+.dl-home .dl-note {
+  position: absolute;
+  left: 6.5%;
+  right: 7%;
+  bottom: calc(4.5% + clamp(6rem, 13vw, 8.5rem));
+  text-align: center;
+  color: #f3e6c8;
+  text-shadow: 0 1px 3px #000;
+}
+
+/* ---------- readable on top of the photo ----------
+   Text that used to sit on white gets a cream card (like the title)
+   or light text with a shadow. */
+.dl-bg .dl-question {
+  background: #e3cd94;
+  color: #1b120c;
+  border: 2px solid #1b120c;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.45);
+}
+/* People of interest: no box, the cards sit straight on the board */
+.dl-bg .dl-board { border: none; outline: none; }
+.dl-bg .dl-board-title {
+  background: #e3cd94;
+  color: #1b120c;
+  border: 2px solid #1b120c;
+  padding: 0.15em 0.7em;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.45);
+}
+.dl-bg .dl-board-label,
+.dl-bg .key-hint {
+  color: #f3e6c8;
+  text-shadow: 0 1px 3px #000, 0 0 6px #000;
+}
+/* difficulty picker beside the classified folder */
+.dl-bg .dl-difficulty {
+  background: #e3cd94;
+  color: #1b120c;
+  border: 2px solid #1b120c;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.45);
+  --muted: #5a4632;
+  --fg: #1b120c;
+}
+.dl-bg .dl-difficulty legend {
+  background: #e3cd94;
+  border: 2px solid #1b120c;
+  padding: 0.05rem 0.5rem;
+}
