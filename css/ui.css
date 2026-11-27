@@ -311,3 +311,29 @@ body.game button:disabled { opacity: 0.4; }
 /* the spare sheets disappear once you reach the last page */
 .df-sheet { transition: opacity 0.3s; }
 .df-stack.on-last .df-sheet { opacity: 0; }
+
+/* ---------- the game area always fits the window ----------
+   The 16:9 stage is sized from whichever runs out first, the width or the
+   height left under the top bar; the margins around it take up the rest. */
+@media (min-width: 801px) {
+  body.game { height: 100vh; height: 100dvh; overflow: hidden; }
+  body.game .game-stage {
+    min-height: 0;
+    max-width: none;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    container-type: size;
+  }
+  body.game .dl-stage {
+    width: min(100cqw, 100cqh * 16 / 9, 1280px);
+    flex: none;
+  }
+}
+
+/* ---------- Effective Detective: black surround, white top bar ---------- */
+body.game-dark { background: #000; }
+body.game-dark .topbar { color: #fff; border-bottom-color: #fff; }
+body.game-dark .topbar .muted,
+body.game-dark .topbar .key-hint { color: #bbb; }
