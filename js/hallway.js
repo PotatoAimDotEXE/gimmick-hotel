@@ -1,4 +1,4 @@
-/* Hallway page: player name, best scores on each door, leaderboard. */
+/* Hallway page: player name, best score on each door. */
 
 (function () {
   const nameInput = document.getElementById("player-name");
@@ -15,20 +15,6 @@
     document.querySelectorAll("[data-best]").forEach((el) => {
       const best = Store.bestFor(el.dataset.best);
       el.textContent = "Best: " + (best === null ? "–" : best);
-    });
-
-    // leaderboard
-    const list = document.getElementById("leaderboard-list");
-    const top = Store.topScores();
-    list.innerHTML = "";
-    if (!top.length) {
-      list.innerHTML = '<li class="muted">No scores yet. Pick a door!</li>';
-      return;
-    }
-    top.forEach((s) => {
-      const li = document.createElement("li");
-      li.textContent = `${s.name} – ${s.score} (${GAME_LABELS[s.game] || s.game})`;
-      list.appendChild(li);
     });
   }
 

@@ -64,6 +64,7 @@
 
   function showView(name) {
     ["file", "suspects", "suspect"].forEach((v) => ($("view-" + v).hidden = v !== name));
+    if (name === "file" && fileDirty) paginateFile(); // the folder stays on the same page
     document.querySelectorAll(".dl-tabs [data-view]").forEach((t) => {
       const active = t.dataset.view === name || (name === "suspect" && t.dataset.view === "suspects");
       t.classList.toggle("active", active);
@@ -143,6 +144,124 @@
   });
 
   /* ---------------- 3. Investigation ---------------- */
+
+  /* Case file folder (works like the paralegal folder):
+     unread sheets are piled on the right, read ones lie on the dimmed left flap.
+     Click the top sheet / ▶ / → to turn, click the left pile / ◀ / ← to go back. */
+  const fileStack = $("file-stack");
+  const FILE_TILT = [-1.2, 0.8, -0.5, 1.1, -0.9, 0.6, -0.3];
+  const FILE_SLIDE = 600; // ms, matches .df-page transition
+  let fileBlocks = null;
+  let filePages = [];
+  let filePage = 0;
+  let fileDirty = true;
+
+  // pour the report, then the evidence, onto sheets; a sheet that's full starts a new one
+  function paginateFile() {
+    if (!fileBlocks || $("screen-investigate").hidden || $("view-file").hidden) return;
+    filePages.forEach((p) => p.remove());
+    filePages = [];
+    const newSheet = (head) => {
+      const el = document.createElement("article");
+      el.className = "df-page measuring";
+      el.innerHTML = `<p class="df-page-no">Page 00 of 00</p>${head}`; // real number filled in after, same height
+      fileStack.appendChild(el);
+      filePages.push(el);
+      return el;
+    };
+    const fits = (el) => el.scrollHeight <= el.clientHeight + 1;
+    const splitLongEvidence = (sheet, contHead) => {
+      const ev = sheet.lastElementChild;
+      const list = ev && ev.querySelector("ul");
+      if (!list || list.children.length < 2) return sheet; // nothing to split: this sheet scrolls
+      const moved = [];
+      const note = ev.querySelector(".dl-ev-note");
+      let noteHtml = "";
+      while (!fits(sheet) && list.children.length > 1) {
+        moved.unshift(list.lastElementChild.outerHTML);
+        list.lastElementChild.remove();
+        if (note && !noteHtml) { noteHtml = note.outerHTML; note.remove(); } // the note follows the end of the list
+      }
+      if (!moved.length) return sheet;
+      const title = ev.querySelector("h3").textContent;
+      const next = newSheet(contHead);
+      next.insertAdjacentHTML(
+        "beforeend",
+        `<div class="dl-evidence"><h3>${escapeHtml(title)} <small>(continued)</small></h3><ul>${moved.join("")}</ul>${noteHtml}</div>`
+      );
+      return fits(next) ? next : splitLongEvidence(next, contHead);
+    };
+    const pour = (head, contHead, blocks) => {
+      let sheet = newSheet(head);
+      let count = 0;
+      blocks.forEach((html) => {
+        sheet.insertAdjacentHTML("beforeend", html);
+        if (!fits(sheet) && count > 0) {
+          sheet.lastElementChild.remove();
+          sheet = newSheet(contHead);
+          sheet.insertAdjacentHTML("beforeend", html);
+          count = 0;
+        }
+        // one piece of evidence longer than a whole sheet: carry its list on to the next sheet
+        if (!fits(sheet)) sheet = splitLongEvidence(sheet, contHead);
+        count++;
+      });
+    };
+    pour(
+      `<p class="dl-file-title">${escapeHtml(caseData.title)}</p><h2>Case Report</h2>`,
+      "<h2>Case Report <small>(continued)</small></h2>",
+      fileBlocks.report
+    );
+    pour("<h2>Evidence</h2>", "<h2>Evidence <small>(continued)</small></h2>", fileBlocks.evidence);
+
+    filePages.forEach((el, i) => {
+      el.classList.remove("measuring");
+      el.querySelector(".df-page-no").textContent = `Page ${i + 1} of ${filePages.length}`;
+      el.style.setProperty("--tilt", FILE_TILT[i % FILE_TILT.length] + "deg");
+      el.addEventListener("click", (e) => {
+        if (e.target.closest("a, button")) return;
+        if (el.classList.contains("off")) setFilePage(filePage - 1);
+        else if (i === filePage) setFilePage(filePage + 1);
+      });
+    });
+    fileDirty = false;
+    setFilePage(filePage, true);
+  }
+
+  function setFilePage(n, instant) {
+    if (!filePages.length) return;
+    filePage = Math.max(0, Math.min(filePages.length - 1, n));
+    fileStack.classList.toggle("on-last", filePage === filePages.length - 1); // no spare sheets under the last page
+    filePages.forEach((el, i) => {
+      const off = i < filePage;
+      const comingBack = !instant && el.classList.contains("off") && !off;
+      el.classList.toggle("off", off);
+      el.classList.toggle("clickable", (off && i === filePage - 1) || (!off && i === filePage && i < filePages.length - 1));
+      const z = off ? 100 + i : 50 - i;
+      if (comingBack) {
+        el.style.zIndex = 250; // stays on top while it slides back
+        setTimeout(() => (el.style.zIndex = el.classList.contains("off") ? 100 + i : 50 - i), FILE_SLIDE);
+      } else el.style.zIndex = z;
+      if (instant) {
+        el.style.transition = "none";
+        requestAnimationFrame(() => requestAnimationFrame(() => (el.style.transition = "")));
+      }
+    });
+    $("file-prev").disabled = filePage === 0;
+    $("file-next").disabled = filePage === filePages.length - 1;
+  }
+  $("file-prev").addEventListener("click", () => setFilePage(filePage - 1));
+  $("file-next").addEventListener("click", () => setFilePage(filePage + 1));
+
+  // new screen size = new page breaks (keeps roughly the same place)
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      fileDirty = true;
+      paginateFile();
+    }, 200);
+  });
   // A case (or a person in it) can have a different version per difficulty:
   // versions: { easy: {...}, medium: {...}, hard: {...} } overrides the normal fields.
   const caseView = () => ({ ...caseData, ...((caseData.versions || {})[draft.difficulty] || {}) });
@@ -186,23 +305,20 @@
     const cv = caseView();
     $("case-question").textContent = cv.question;
 
-    const left = $("file-left");
-    left.innerHTML =
-      `<p class="dl-file-title">${escapeHtml(caseData.title)}</p><h2>Case Report</h2>` +
-      cv.report.map((t) => `<p>${fillText(t)}</p>`).join("");
-
-    const right = $("file-right");
-    right.innerHTML =
-      "<h2>Evidence</h2>" +
-      cv.evidence
-        .map((ev) => {
-          const body = ev.lines
-            ? `<ul>${ev.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`
-            : `<p>${escapeHtml(ev.text)}</p>`;
-          const note = ev.note ? `<p class="dl-ev-note">${escapeHtml(ev.note)}</p>` : "";
-          return `<div class="dl-evidence"><h3>${escapeHtml(ev.label)}</h3>${body}${note}</div>`;
-        })
-        .join("");
+    // case file: report and evidence as blocks; paginateFile() pours them onto sheets
+    fileBlocks = {
+      report: cv.report.map((t) => `<p>${fillText(t)}</p>`),
+      evidence: cv.evidence.map((ev) => {
+        const body = ev.lines
+          ? `<ul>${ev.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`
+          : `<p>${escapeHtml(ev.text)}</p>`;
+        const note = ev.note ? `<p class="dl-ev-note">${escapeHtml(ev.note)}</p>` : "";
+        return `<div class="dl-evidence"><h3>${escapeHtml(ev.label)}</h3>${body}${note}</div>`;
+      }),
+    };
+    filePage = 0;
+    fileDirty = true;
+    paginateFile();
 
     const list = $("suspect-list");
     list.innerHTML = "";
@@ -409,9 +525,14 @@
     showScreen("menu");
   });
 
-  // Left / right arrows = previous / next suspect while a suspect file is open
+  // Left / right arrows = turn the case file's pages / previous / next suspect
   document.addEventListener("keydown", (e) => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (!$("screen-investigate").hidden && !$("view-file").hidden && !document.querySelector("dialog[open]")) {
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      return setFilePage(filePage + (e.key === "ArrowRight" ? 1 : -1));
+    }
     if ($("view-suspect").hidden || $("screen-investigate").hidden || !currentSuspect) return;
     if (document.querySelector("dialog[open]")) return;
     const list = activeSuspects();

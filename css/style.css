@@ -428,3 +428,69 @@ button:hover, button:focus-visible {
    (the door is the same colour as the hallway background) */
 .hallway-page > * { animation: page-in 0.6s ease-out both; }
 @keyframes page-in { from { opacity: 0; } }
+
+/* ---------- Hallway scene ----------
+   The wall picture (assets/hallway/hallway-background.png) fills everything
+   under the top bar. It's stretched (not cropped) so its three panels always
+   line up with the grid's three columns: each door stands in the middle of a
+   panel with its name on the panel above it. */
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.hallway-page { height: 100vh; overflow: hidden; }
+.hallway-page .stage {
+  position: relative;
+  max-width: none;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+.hallway-page .room { flex: 1; border: none; padding: 0; aspect-ratio: auto; }
+.hallway-page .doors {
+  height: 100%;
+  background: url("../assets/hallway/hallway-background.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  container-type: size;
+  gap: 0;
+  align-items: end;
+}
+.hallway-page .door {
+  height: 100%;
+  justify-content: flex-end;
+  gap: 1.5cqh;
+  padding-bottom: 4.3cqh;          /* doors stand on the floor line */
+}
+.hallway-page .door-label { display: flex; flex-direction: column; align-items: center; gap: 0.4cqh; padding: 0 2cqw; }
+.hallway-page .door h2 { font-size: min(1.9cqw, 3.4cqh); margin: 0; }
+.hallway-page .door p { font-size: min(1.15cqw, 2.1cqh); }
+.hallway-page .best { font-size: min(1.1cqw, 2cqh); }
+.hallway-page .door-label * { text-shadow: 0 1px 2px #000, 0 0 6px rgba(0, 0, 0, 0.8); }
+.hallway-page .door-frame {
+  height: 68cqh;                   /* about 2/3 of the wall */
+  width: auto;
+  max-width: none;
+  aspect-ratio: 530 / 1080;
+}
+.hallway-page .door-number { font-size: min(1.3cqw, 2.3cqh); }
+/* the footer floats faintly over the bottom of the wall */
+.hallway-page .footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.7rem;
+  opacity: 0.6;
+  pointer-events: none;
+  text-shadow: 0 1px 2px #000;
+}
+.hallway-page .footer .easter-egg { pointer-events: auto; background: none; }
+@media (max-width: 800px) {
+  .hallway-page { height: auto; overflow: auto; }
+  .hallway-page .doors { height: auto; container-type: normal; background-size: cover; padding: 1rem 0; gap: 2rem; }
+  .hallway-page .door { padding-bottom: 0; }
+  .hallway-page .door-frame { height: auto; width: 40%; }
+  .hallway-page .door h2 { font-size: 1.2rem; }
+  .hallway-page .door p, .hallway-page .best { font-size: 0.85rem; }
+  .hallway-page .footer { position: static; }
+}

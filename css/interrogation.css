@@ -109,6 +109,10 @@
 }
 .ir-menu-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 .ir-menu-buttons small { font-size: 0.75rem; }
+/* all rows the same height, so Party Mode matches the two above */
+.ir-menu-buttons { grid-auto-rows: 1fr; }
+/* Party Mode: centred on its own row under the other two */
+.ir-menu-buttons .ir-party { grid-column: 1 / -1; justify-self: center; width: calc(50% - 0.6rem); }
 
 /* ---------- 3. Interrogation ---------- */
 .ir-room { gap: 0.7rem; }

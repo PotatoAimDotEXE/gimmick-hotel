@@ -12,7 +12,7 @@
    Buttons that aren't "buttons" to the player are left alone:
    the detective folder, the TV, suspect cards, tap-to-prove text,
    text links, the [dev] reset and the paralegal page arrows. */
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow) {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow) {
   border: 3px solid transparent;
   border-image: url("../assets/ui/button.png") 40 40 30 40 fill / 14px 14px 10px 14px stretch;
   background: none !important;
@@ -22,16 +22,16 @@ body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .
   box-shadow: none;
   transition: transform 0.08s;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):hover:not(:disabled),
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):hover:not(:disabled),
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):focus-visible {
   border-image-source: url("../assets/ui/button-hover.png");
   outline: none;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):focus-visible {
   outline: 2px dashed #2b1d14;
   outline-offset: 3px;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow):active:not(:disabled) {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):active:not(:disabled) {
   transform: translateY(2px);
 }
 
@@ -210,3 +210,104 @@ body.game button:disabled { opacity: 0.4; }
   border: 2px solid #1b120c;
   padding: 0.05rem 0.5rem;
 }
+
+/* ---------- Case file folder (same art as the paralegal folder) ----------
+   assets/paralegal/folder-open-left.png  = the flap (dimmed: read pages)
+   assets/paralegal/folder-open-right.png = the board the unread pile sits on
+   assets/paralegal/paper.png             = every sheet
+   --H = page height; the pile is centred, the flap opens to its left. */
+.df-desk { position: relative; flex: 1; min-height: 0; container-type: size; --H: min(86cqh, 38cqw); }
+.df-stack {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: var(--H);
+  aspect-ratio: 3 / 4;
+  transform: translate(-50%, -50%);
+}
+.df-board, .df-flap { position: absolute; inset: -5.3% -12% -5.3% -6%; pointer-events: none; }
+.df-board::before {
+  content: "";
+  position: absolute;
+  left: -5.76%;
+  top: -6.86%;
+  width: 116.65%;
+  height: 112.27%;
+  background: url("../assets/paralegal/folder-open-right.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+.df-flap { transform: translateX(-100%); z-index: 1; filter: brightness(0.6); }
+.df-flap::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -6.97%;
+  width: 106.97%;
+  background: url("../assets/paralegal/folder-open-left.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+.df-page, .df-sheet {
+  position: absolute;
+  inset: 0;
+  background: url("../assets/paralegal/paper.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  transform: rotate(var(--tilt, 0deg));
+  filter: drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.3));
+}
+.df-sheet { pointer-events: none; }
+.df-page {
+  padding: 1.3rem 1.5rem;
+  overflow: auto;
+  color: #1b120c;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.25, 1), filter 0.6s;
+}
+.df-page.measuring { overflow: hidden; transition: none; }
+.df-page.clickable { cursor: pointer; }
+.df-page.clickable:hover { filter: drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.35)); }
+/* read sheets land on the left flap and go dim */
+.df-page.off { transform: translateX(-112%) rotate(calc(var(--tilt, 0deg) * -1.6)); filter: brightness(0.6) drop-shadow(2px 3px 0 rgba(0, 0, 0, 0.3)); }
+.df-page.off.clickable:hover { filter: brightness(0.6) drop-shadow(5px 6px 0 rgba(0, 0, 0, 0.35)); }
+.df-page-no { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #6b5a48; margin-bottom: 0.3rem; }
+.df-page h2 { font-size: 1rem; margin-bottom: 0.5rem; text-decoration: underline; }
+.df-page h2 small { font-size: 0.7rem; font-weight: normal; text-decoration: none; }
+.df-page h3 { font-size: 0.88rem; margin: 0.7rem 0 0.25rem; }
+.df-page p { margin-bottom: 0.6rem; }
+.df-page ul { margin-left: 1.1rem; }
+.df-page li { margin-bottom: 0.4rem; }
+.df-page .dl-evidence:first-of-type h3 { margin-top: 0.2rem; }
+/* page-turn arrows: assets/ui/arrow-button.png; ◀ sits on the read pile */
+.df-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 400;
+  width: 72px;
+  height: 46px;
+  padding: 0;
+  border: none !important;
+  background: none !important;
+  font-size: 0;
+  color: transparent !important;
+}
+.df-arrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/arrow-button.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  transition: transform 0.12s;
+}
+.df-arrow.next { left: calc(50% + var(--H) * 0.465 + 14px); }
+.df-arrow.prev { right: calc(50% + var(--H) * 1.215 - 60px); }
+.df-arrow.prev::before { transform: scaleX(-1); }
+.df-arrow.next:hover:not(:disabled)::before { transform: translateX(4px); }
+.df-arrow.prev:hover:not(:disabled)::before { transform: scaleX(-1) translateX(4px); }
+.df-arrow:disabled { opacity: 0.25; cursor: default; }
+.df-arrow:focus-visible { outline: 2px dashed #f3e6c8; outline-offset: 2px; }
+
+/* the spare sheets disappear once you reach the last page */
+.df-sheet { transition: opacity 0.3s; }
+.df-stack.on-last .df-sheet { opacity: 0; }

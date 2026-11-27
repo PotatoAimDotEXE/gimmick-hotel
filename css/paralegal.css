@@ -638,3 +638,7 @@
   #screen-debrief.crt-on, #screen-debrief.crt-off,
   #screen-debrief.crt-on .pp-debrief-stage, #screen-debrief.crt-off .pp-debrief-stage { animation: none; }
 }
+
+/* the spare sheets disappear once you reach the last page */
+.pp-sheet { transition: opacity 0.3s; }
+.pp-stack.on-last .pp-sheet { opacity: 0; }

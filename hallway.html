@@ -17,11 +17,16 @@
 
   <main class="stage">
     <section class="room hallway">
-      <h1>The Hallway</h1>
-      <p class="subtitle">Choose a door. Each room trains a different reading skill.</p>
+      <h1 class="visually-hidden">The Hallway</h1>
 
+      <!-- the wall (assets/hallway/hallway-background.png); one door stands in front of each panel -->
       <div class="doors">
         <a class="door" href="games/detective.html" data-game="detective">
+          <div class="door-label">
+            <h2>Effective Detective</h2>
+            <p>Read the case file and catch the culprit.</p>
+            <span class="best" data-best="detective">Best: –</span>
+          </div>
           <div class="door-frame">
             <img class="door-img" src="assets/hallway/door-open.png" alt="" />
             <div class="door-panes">
@@ -30,12 +35,14 @@
             </div>
             <span class="door-number">01</span>
           </div>
-          <h2>Effective Detective</h2>
-          <p>Read the case file and catch the culprit.</p>
-          <span class="best" data-best="detective">Best: –</span>
         </a>
 
         <a class="door" href="games/interrogation.html" data-game="interrogation">
+          <div class="door-label">
+            <h2>Interrogation Station</h2>
+            <p>Listen closely and catch the lie.</p>
+            <span class="best" data-best="interrogation">Best: –</span>
+          </div>
           <div class="door-frame">
             <img class="door-img" src="assets/hallway/door-open.png" alt="" />
             <div class="door-panes">
@@ -44,12 +51,14 @@
             </div>
             <span class="door-number">02</span>
           </div>
-          <h2>Interrogation Station</h2>
-          <p>Listen closely and catch the lie.</p>
-          <span class="best" data-best="interrogation">Best: –</span>
         </a>
 
         <a class="door" href="games/paralegal.html" data-game="paralegal">
+          <div class="door-label">
+            <h2>Paranormal Paralegal</h2>
+            <p>Read the case file and sum it up.</p>
+            <span class="best" data-best="paralegal">Best: –</span>
+          </div>
           <div class="door-frame">
             <img class="door-img" src="assets/hallway/door-open.png" alt="" />
             <div class="door-panes">
@@ -58,17 +67,8 @@
             </div>
             <span class="door-number">03</span>
           </div>
-          <h2>Paranormal Paralegal</h2>
-          <p>Read the case file and sum it up.</p>
-          <span class="best" data-best="paralegal">Best: –</span>
         </a>
       </div>
-    </section>
-
-    <section class="panel leaderboard">
-      <h2>Leaderboard</h2>
-      <p class="muted">Local scores only for now. Multiplayer goes here later.</p>
-      <ol id="leaderboard-list"></ol>
     </section>
   </main>
 

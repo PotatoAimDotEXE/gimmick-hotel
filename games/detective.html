@@ -78,9 +78,18 @@
 
         <!-- 3a. opened case file -->
         <div class="dl-view" id="view-file">
-          <div class="dl-book">
-            <article class="dl-page" id="file-left"></article>
-            <article class="dl-page" id="file-right"></article>
+          <!-- the case file is a folder like the paralegal one: report and evidence on
+               separate sheets, read sheets go onto the (dimmed) left flap -->
+          <div class="df-desk" id="file-desk">
+            <div class="df-stack" id="file-stack">
+              <div class="df-flap" aria-hidden="true"></div>
+              <div class="df-board" aria-hidden="true"></div>
+              <div class="df-sheet" style="--tilt: 2.2deg" aria-hidden="true"></div>
+              <div class="df-sheet" style="--tilt: -2.4deg" aria-hidden="true"></div>
+              <!-- pages are added here by detective.js -->
+            </div>
+            <button class="df-arrow prev" id="file-prev" aria-label="Previous page">◀</button>
+            <button class="df-arrow next" id="file-next" aria-label="Next page">▶</button>
           </div>
         </div>
 

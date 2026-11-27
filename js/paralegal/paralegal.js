@@ -346,6 +346,7 @@
     const prev = draft.page;
     draft.page = Math.max(0, Math.min(totalPages() - 1, n));
     saveDraft();
+    stack.classList.toggle("on-last", draft.page === totalPages() - 1); // no spare sheets under the last page
     pageEls.forEach((el, i) => {
       const off = i < draft.page;
       const comingBack = !instant && el.classList.contains("off") && !off;
