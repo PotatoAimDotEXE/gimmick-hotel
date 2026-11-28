@@ -46,6 +46,7 @@
       room.style.transformOrigin = `${d.left + d.width / 2 - r.left}px ${d.top + d.height / 2 - r.top}px`;
       door.classList.add("opening");
       document.body.classList.add("hall-zooming");
+      Sound.fadeOut(400);
       setTimeout(() => (location.href = href), 420);
     })
   );
@@ -55,8 +56,13 @@
     document.querySelectorAll(".door.opening").forEach((d) => d.classList.remove("opening"));
   });
 
+  Sound.music("hallway-music.m4a", 0.2);
+
   // Esc = back to the lobby
-  onEscape(() => (location.href = "index.html"));
+  onEscape(() => {
+    Sound.fadeOut(350);
+    setTimeout(() => (location.href = "index.html"), 350);
+  });
 
   render();
 })();

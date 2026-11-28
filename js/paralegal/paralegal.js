@@ -10,6 +10,8 @@
    ========================================================= */
 
 (function () {
+  Sound.music("paralegal-bg.mp3", 0.4); // background music for this game
+
   /* ---------------- Today's case ---------------- */
   const START_DATE = new Date(2026, 10, 1); // 1 Nov 2026 = case #101 (change freely)
   const caseNumber = 101 + Daily.daysSince(START_DATE);
@@ -111,6 +113,7 @@
     sweeping = true;
     const folder = document.querySelector("#screen-cover .pp-folder");
     folder.classList.add("swept");
+    Sound.sfx("swoosh.m4a");
     setTimeout(() => {
       sweeping = false;
       folder.classList.remove("swept");
@@ -346,6 +349,7 @@
   function setPage(n, instant) {
     const prev = draft.page;
     draft.page = Math.max(0, Math.min(totalPages() - 1, n));
+    if (!instant && draft.page !== prev) Sound.flip();
     saveDraft();
     stack.classList.toggle("on-last", draft.page === totalPages() - 1); // no spare sheets under the last page
     pageEls.forEach((el, i) => {
@@ -591,7 +595,7 @@
       confirmBox.hidden = true; // Esc first cancels the "submit?" box
       return;
     }
-    if (!$("screen-cover").hidden) return (location.href = "../hallway.html");
+    if (!$("screen-cover").hidden) return leavePage("../hallway.html");
     clearInterval(typeTimer);
     typing = false;
     showScreen("cover");

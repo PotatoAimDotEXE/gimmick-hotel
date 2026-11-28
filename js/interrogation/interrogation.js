@@ -11,6 +11,8 @@
    ========================================================= */
 
 (function () {
+  Sound.music("interrogation-bg.m4a", 0.19); // background music for this game
+
   /* ---------------- Today's case (random, kept for the day) ---------------- */
   const START_DATE = new Date(2026, 10, 1); // 1 Nov 2026 = log #101
   const logNumber = 101 + Daily.daysSince(START_DATE);
@@ -737,7 +739,7 @@
   /* ---------------- Keyboard ---------------- */
   // Esc = back: interrogation/briefing -> room menu -> hallway (pop-ups close first)
   onEscape(() => {
-    if (!$("screen-menu").hidden) return (location.href = "../hallway.html");
+    if (!$("screen-menu").hidden) return leavePage("../hallway.html");
     clearInterval(typeTimer);
     typing = false;
     showScreen("menu");

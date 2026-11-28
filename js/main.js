@@ -278,3 +278,94 @@ function devCasePicker({ where, cases, currentId, pickKey, clearKeys = [] }) {
   box.appendChild(sel);
   where.appendChild(box);
 }
+
+/* ---------------------------------------------------------
+   Sound (assets/audio/)
+     Sound.music("hallway-music.m4a")  looping background music
+     Sound.sfx("swoosh.m4a")           one-off sound effect
+     Sound.flip()                      a random paper-flip sound
+   Pages inside games/ are one folder down, so paths are worked
+   out from where main.js was loaded. Browsers block sound until
+   the player clicks or presses a key, so music waits for that.
+   --------------------------------------------------------- */
+const Sound = (() => {
+  const base = (document.currentScript && document.currentScript.src.replace(/js\/main\.js.*$/, "")) || "";
+  const url = (f) => base + "assets/audio/" + f;
+  const FLIPS = ["paper-flip-1.m4a", "paper-flip-2.m4a", "paper-flip-3.m4a"];
+  let lastFlip = -1;
+  let current = null; // the page's music
+  // smooth volume change (setInterval so it keeps going while the page is busy)
+  const fadeTo = (a, target, ms) => {
+    clearInterval(a._fade);
+    const from = a.volume;
+    const t0 = performance.now();
+    a._fade = setInterval(() => {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      a.volume = Math.max(0, Math.min(1, from + (target - from) * k));
+      if (k >= 1) clearInterval(a._fade);
+    }, 30);
+  };
+  const sfx = (file, volume = 0.7) => {
+    try {
+      const a = new Audio(url(file));
+      a.volume = volume;
+      a.play().catch(() => {});
+    } catch {
+      /* no audio */
+    }
+  };
+  return {
+    sfx,
+    flip() {
+      let i = Math.floor(Math.random() * FLIPS.length);
+      if (i === lastFlip) i = (i + 1) % FLIPS.length; // never the same one twice in a row
+      lastFlip = i;
+      sfx(FLIPS[i], 0.6);
+    },
+    // music fades in when it starts, and fades out before the page changes
+    music(file, volume = 0.17) {
+      const a = new Audio(url(file));
+      a.loop = true;
+      a.volume = 0;
+      current = a;
+      const start = () =>
+        a.play().then(() => {
+          ["pointerdown", "keydown"].forEach((ev) => document.removeEventListener(ev, start, true));
+          fadeTo(a, volume, 1200);
+        }).catch(() => {});
+      ["pointerdown", "keydown"].forEach((ev) => document.addEventListener(ev, start, true));
+      start();
+      // back-button return: fade back in
+      window.addEventListener("pageshow", (e) => {
+        if (!e.persisted) return;
+        a.volume = 0;
+        a.paused ? start() : fadeTo(a, volume, 800);
+      });
+      return a;
+    },
+    // fade the music out (call before leaving the page)
+    fadeOut(ms = 400) {
+      if (current && !current.paused) fadeTo(current, 0, ms);
+    },
+  };
+})();
+
+/* Any ordinary link: fade the music out first, then go */
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("a[href]");
+  if (!link || e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || link.target === "_blank") return;
+  if (link.origin !== location.origin || link.getAttribute("href").startsWith("#")) return;
+  e.preventDefault();
+  Sound.fadeOut(350);
+  document.documentElement.classList.add("page-leaving"); // screen fades to black too
+  setTimeout(() => (location.href = link.href), 350);
+});
+// back-button return: undo the fade
+window.addEventListener("pageshow", () => document.documentElement.classList.remove("page-leaving"));
+
+/* go to another page with the music and screen fading out first */
+function leavePage(href) {
+  Sound.fadeOut(350);
+  document.documentElement.classList.add("page-leaving");
+  setTimeout(() => (location.href = href), 350);
+}

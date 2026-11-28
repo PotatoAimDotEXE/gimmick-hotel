@@ -8,6 +8,8 @@
    ========================================================= */
 
 (function () {
+  Sound.music("detective-bg.mp3", 0.23); // background music for this game
+
   /* ---------------- Today's case ---------------- */
   const START_DATE = new Date(2026, 10, 1); // 1 Nov 2026 = case #101 (change freely)
   const now = new Date();
@@ -378,7 +380,9 @@
 
   function setFilePage(n, instant) {
     if (!filePages.length) return;
+    const before = filePage;
     filePage = Math.max(0, Math.min(filePages.length - 1, n));
+    if (!instant && filePage !== before) Sound.flip();
     fileStack.classList.toggle("on-last", filePage === filePages.length - 1); // no spare sheets under the last page
     layStack(filePages, filePage, instant);
     $("file-prev").disabled = filePage === 0;
@@ -570,7 +574,9 @@
 
   function setPerson(n, instant) {
     if (!peopleSheets.length) return;
+    const before = personIdx;
     personIdx = Math.max(0, Math.min(peopleSheets.length - 1, n));
+    if (!instant && personIdx !== before) Sound.flip();
     currentSuspect = activeSuspects()[personIdx];
     layStack(peopleSheets, personIdx, instant);
     $("people-prev").disabled = personIdx === 0;
@@ -804,7 +810,7 @@
   onEscape(() => {
     if (!$("screen-debrief").hidden) return endDebrief(); // Esc = skip the debrief
     if (!$("screen-investigate").hidden && !$("view-suspect").hidden) return showView("suspects");
-    if (!$("screen-menu").hidden) return (location.href = "../hallway.html");
+    if (!$("screen-menu").hidden) return leavePage("../hallway.html");
     showScreen("menu");
   });
 

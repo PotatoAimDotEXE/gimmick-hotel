@@ -2,6 +2,8 @@
    parallax, pop-ups, dev reset, bell easter egg. */
 
 (function () {
+  Sound.music("main-menu.mp3", 0.12);
+
   const $ = (id) => document.getElementById(id);
   const stage = $("stage");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -31,6 +33,7 @@
     if (nameInput.value.trim()) Store.setName(nameInput.value);
     if (reducedMotion) return (location.href = "hallway.html");
     stage.classList.add("entering");
+    Sound.fadeOut(1400);
     setTimeout(() => (location.href = "hallway.html"), 1500);
   }
   playBtn.addEventListener("click", play);
