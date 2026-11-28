@@ -477,6 +477,26 @@
     return [ev.text || ""];
   }
 
+  // click an evidence picture to see it big (the floor plan's labels are small on the sheet)
+  const picDialog = document.createElement("dialog");
+  picDialog.className = "modal ev-zoom";
+  picDialog.innerHTML = `<img alt="" /><p class="ev-zoom-cap"></p><form method="dialog"><button>Close (Esc)</button></form>`;
+  document.body.appendChild(picDialog);
+  picDialog.addEventListener("click", (e) => e.target === picDialog && picDialog.close());
+  document.addEventListener(
+    "click",
+    (e) => {
+      const img = e.target.closest(".df-page .ev-img");
+      if (!img || img.closest(".df-page.off")) return;
+      e.stopPropagation();
+      picDialog.querySelector("img").src = img.src;
+      picDialog.querySelector("img").alt = img.alt;
+      picDialog.querySelector(".ev-zoom-cap").textContent = img.closest(".dl-evidence").querySelector("h3").textContent;
+      picDialog.showModal();
+    },
+    true
+  );
+
   function renderInvestigation() {
     const cv = caseView();
     $("case-question").textContent = cv.question;

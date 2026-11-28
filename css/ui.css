@@ -1114,3 +1114,52 @@ body.game button.ir-gal-dot:hover { opacity: 1; }
 .ir-logo-title img { height: clamp(80px, 21cqh, 180px); width: auto; filter: brightness(0) invert(1) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.85)); }   /* white */
 .pp-logo-title { margin-top: 0; }
 .pp-logo-title img { height: clamp(80px, 27cqh, 200px); width: auto; max-width: none; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)); }
+
+/* ---------- Interrogation: the proof picker is shown on the TV too ----------
+   Same TV art (9-slice) as the briefing; black glass with scanlines inside. */
+.ir-game #proof-dialog {
+  padding: 1.6rem 2rem 1.2rem;
+  border-style: solid;
+  border-color: transparent;
+  border-width: 30px 38px 61px 34px;
+  border-image: url("../assets/interrogation/tv-frame.png") 38 47 76 43 stretch;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 50% 40%, #1a1a1a, #050505 80%);
+  background-clip: padding-box;
+  color: #ececec;
+  box-shadow: none;
+}
+.ir-game #proof-dialog .ir-step,
+.ir-game #proof-dialog .ir-picked,
+.ir-game #proof-dialog .ir-brief-title { color: #9a9a9a; }
+.ir-game #proof-dialog .ir-brief { border: 1px solid rgba(255, 255, 255, 0.25); background: rgba(0, 0, 0, 0.35); }
+.ir-game #proof-dialog .ir-clause { border-bottom-color: rgba(255, 255, 255, 0.4); }
+.ir-game #proof-dialog .ir-clause:hover,
+.ir-game #proof-dialog .ir-clause:focus-visible { background: rgba(255, 255, 255, 0.12); color: #fff; outline-color: #ddd; }
+.ir-game #proof-dialog .ir-clause.picked,
+.ir-game #proof-dialog .ir-clause.picked:hover { background: #ececec; color: #000; border-bottom-color: #ececec; }
+.ir-game #proof-dialog .ir-asset { background: #000; color: #ececec; border-color: rgba(255, 255, 255, 0.5); }
+.ir-game #proof-dialog button.ir-asset:hover,
+.ir-game #proof-dialog button.ir-asset:focus-visible { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.ir-game #proof-dialog .ir-asset.picked { background: #ececec; color: #000; outline: 3px solid #ececec; }
+.ir-game #proof-dialog::backdrop { background: rgba(0, 0, 0, 0.7); }
+
+/* ---------- Paranormal Paralegal: "Submit your summary?" on the score report card ---------- */
+.pp-confirm {
+  inset: 16% 3%;
+  padding: 1rem 1.6rem 4.6rem;
+  border: 3px solid transparent;
+  border-image: url("../assets/ui/score-report.png") 44 64 268 64 fill / 14px 20px 84px 20px stretch;
+  background: transparent;
+  box-shadow: none;
+  color: #2b1d14;
+  text-align: center;
+}
+.pp-confirm .muted { color: #6b5a48; }
+.pp-confirm .pp-row { justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+/* evidence pictures open big when clicked */
+.df-page .ev-img { cursor: zoom-in; }
+.modal.ev-zoom { width: fit-content; max-width: 94vw; padding: 1rem; text-align: center; background: #111; color: #eee; border: 2px solid #e6e6e6; }
+.modal.ev-zoom img { display: block; margin: 0 auto; width: min(76vh, 88vw); height: auto; image-rendering: pixelated; }
+.ev-zoom-cap { margin: 0.6rem 0; font-size: 0.85rem; letter-spacing: 0.05em; }

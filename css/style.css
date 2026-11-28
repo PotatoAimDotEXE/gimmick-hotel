@@ -510,3 +510,21 @@ button:hover, button:focus-visible {
 /* games 1 and 2 sit a little higher than the round stamp */
 .hallway-page .logo-effective-detective { margin-bottom: 1.2cqh; }
 .hallway-page .logo-interrogation-station { margin-bottom: 2.5cqh; }
+
+/* ---------- picking a door: very fast zoom into the doorway, then black ---------- */
+.hallway-page .room.hallway { transition: transform 0.42s cubic-bezier(0.45, 0, 0.9, 0.6); will-change: transform; }
+body.hall-zooming .room.hallway { transform: scale(7); }
+.door.opening .pane-left { transform: translateX(-100%); transition-duration: 0.15s; }
+.door.opening .pane-right { transform: translateX(100%); transition-duration: 0.15s; }
+.hall-fade {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: none !important;
+}
+body.hall-zooming .hall-fade { animation: hall-fade 0.42s linear forwards; }
+@keyframes hall-fade { 0%, 65% { opacity: 0; } 100% { opacity: 1; } }
+body.hall-zooming { overflow: hidden; }

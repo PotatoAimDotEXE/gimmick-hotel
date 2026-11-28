@@ -76,6 +76,7 @@ const CASES = [
       {
         label: "B. Hotel floor plan, ground floor",
         picture: "Floor plan of the ground floor",
+        image: "../assets/detective/evidence/missing-mallet-floor-plan.png",
         caption: "The pool terrace is at the back of the hotel, opposite the lobby. The display room's only door opens onto the ballroom hallway. A solid wall blocks the view of that door from the pool terrace.",
       },
       {
@@ -161,6 +162,7 @@ const CASES = [
           {
             label: "A. Security footage, 8:20 p.m.",
             picture: "Second-floor camera still, 20:20",
+            image: "../assets/detective/evidence/false-alarm-cam.png",
             caption: "The second-floor camera shows Jack O'Lantern walking down the hall at 8:20 p.m. You can see his face.",
             note: "Recorded by Sue Pervisor, the night supervisor.",
           },
@@ -188,6 +190,7 @@ const CASES = [
           {
             label: "A. Security footage review, 8:20 p.m.",
             picture: "Second-floor hallway camera still, 20:20",
+            image: "../assets/detective/evidence/false-alarm-cam.png",
             caption: "The second-floor hallway camera shows Jack O'Lantern walking past the reading room toward the stairwell at 8:20 p.m. His face is clearly visible when he looks behind him.",
             note: "Recorded by Sue Pervisor, the night supervisor.",
           },
@@ -394,6 +397,7 @@ const CASES = [
       {
         label: "C. Photo attached to a guest complaint, 7:15 p.m.",
         picture: "Guest's photo: Jane holding the cart handle, pieces of the vase on the floor",
+        image: "../assets/detective/evidence/shattered-vase-photo.png",
         caption: "Guest's caption: “The maid broke the vase. She was still holding the cart when I took this.”",
       },
     ],
