@@ -12,7 +12,7 @@
    Buttons that aren't "buttons" to the player are left alone:
    the detective folder, the TV, suspect cards, tap-to-prove text,
    text links, the [dev] reset and the paralegal page arrows. */
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow) {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow, .ir-gal-dot) {
   border: 3px solid transparent;
   border-image: url("../assets/ui/button.png") 40 40 30 40 fill / 14px 14px 10px 14px stretch;
   background: none !important;
@@ -22,16 +22,16 @@ body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .
   box-shadow: none;
   transition: transform 0.08s;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):hover:not(:disabled),
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow, .ir-gal-dot):hover:not(:disabled),
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow, .ir-gal-dot):focus-visible {
   border-image-source: url("../assets/ui/button-hover.png");
   outline: none;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):focus-visible {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow, .ir-gal-dot):focus-visible {
   outline: 2px dashed #2b1d14;
   outline-offset: 3px;
 }
-body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow):active:not(:disabled) {
+body.game button:not(.dl-folder, .crt, .ir-clause, .dl-suspect-card, .pp-link, .dl-dev, .pp-arrow, .df-arrow, .ir-gal-dot):active:not(:disabled) {
   transform: translateY(2px);
 }
 
@@ -725,3 +725,392 @@ body.game-dark .topbar .key-hint { color: #bbb; }
 .df-page .ev-pic-slot span { font-size: 0.68rem; letter-spacing: 0.12em; color: rgba(0, 0, 0, 0.55); }
 .df-page .ev-pic-slot p { margin: 0 !important; font-size: 0.78rem; font-style: italic; color: rgba(0, 0, 0, 0.7); }
 .df-page .ev-picture figcaption { margin-top: 0.35rem; font-size: 0.8rem; line-height: 1.4; }
+
+/* ---------- Interrogation Station: briefing on a big CRT (photo-gallery style) ----------
+   The TV sits in the middle of the screen; the arrows either side flip through
+   instructions -> case brief -> pictures. Dots and a counter along the bottom. */
+#screen-brief { gap: 0.8rem; }
+.ir-gallery {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+}
+.ir-gal-tv {
+  height: 100%;
+  aspect-ratio: 6 / 5;
+  max-width: calc(100% - 200px);
+  padding: 18px 18px 34px;
+  border-radius: 16px 16px 6px 6px;
+}
+.ir-gal-tv::after { right: 22px; bottom: 11px; }
+.ir-gal-screen {
+  position: relative;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 28px / 20px;
+  text-align: left;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.75), inset 0 0 8px rgba(0, 0, 0, 0.6);
+}
+/* scanlines + glass glare over everything on the screen */
+.ir-gal-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 30% 18%, rgba(255, 255, 255, 0.07), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.18) 0 1px, transparent 1px 3px);
+}
+.ir-gal-slides { position: relative; flex: 1; min-height: 0; container-type: size; }
+.ir-gal-slide {
+  position: absolute;
+  inset: 0;
+  padding: 1.1rem 1.7rem 0.4rem;
+  overflow: auto;
+  visibility: hidden;
+  opacity: 0;
+  font-size: clamp(0.86rem, 4.2cqh, 1.1rem);   /* smaller screens: smaller text, so a screen still fits */
+  line-height: 1.55;
+}
+.ir-gal-slide.on { visibility: visible; opacity: 1; }
+.ir-gal-slide.measuring { overflow: hidden; visibility: hidden; }
+.ir-gal-slide h2 { font-size: 1.15rem; letter-spacing: 0.12em; text-transform: uppercase; margin: 0 0 0.7rem; }
+.ir-gal-slide p { margin: 0 0 0.65rem; }
+.ir-gal-slide .ir-brief-title { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.75; margin-bottom: 0.5rem; }
+.ir-gal-muted { opacity: 0.6; font-size: 0.82rem; }
+/* picture screens: the photo fills the glass */
+.ir-gal-picture { padding: 0.9rem 1.1rem 0.4rem; display: flex; }
+.ir-gal-photo { flex: 1; min-height: 0; margin: 0; display: flex; align-items: center; justify-content: center; }
+.ir-gal-photo img {
+  width: 100%;
+  height: 100%;                 /* every picture fills the same space, small files are scaled up */
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.ir-gal-ph {
+  width: min(100%, 22rem);
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px dashed currentColor;
+  text-align: center;
+  opacity: 0.85;
+}
+.ir-gal-ph span { font-size: 0.7rem; letter-spacing: 0.15em; opacity: 0.7; }
+.ir-gal-ph p { margin: 0; font-style: italic; font-size: 0.85rem; }
+.ir-gal-ph .ir-gal-ph-text { font-style: normal; font-weight: bold; border: 2px solid currentColor; padding: 0.3rem 0.5rem; }
+/* bottom bar: what you're looking at, dots, counter */
+.ir-gal-bar {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.45rem 1.4rem 0.7rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+.ir-gal-count { text-align: right; opacity: 0.7; }
+.ir-gal-dots { display: flex; gap: 0.45rem; }
+body.game button.ir-gal-dot {
+  width: 10px;
+  height: 10px;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid currentColor;
+  border-image: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+}
+body.game button.ir-gal-dot.pic { border-radius: 2px; }
+body.game button.ir-gal-dot.on { background: currentColor; opacity: 1; }
+body.game button.ir-gal-dot:hover { opacity: 1; }
+/* channel-change flicker */
+.ir-gal-screen.switching .ir-gal-slides { animation: gal-switch 0.32s ease-out; }
+@keyframes gal-switch {
+  0%   { filter: brightness(2.2) contrast(1.4); transform: scaleY(0.96); opacity: 0.4; }
+  35%  { filter: brightness(1.4); transform: scaleY(1.01); opacity: 1; }
+  100% { filter: none; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ir-gal-screen.switching .ir-gal-slides { animation: none; } }
+/* the arrows (assets/ui/arrow-button.png), beside the TV */
+.ir-gallery .pp-arrow {
+  position: relative;
+  flex: none;
+  width: 72px;
+  height: 46px;
+  padding: 0;
+  border: none !important;
+  border-image: none !important;
+  background: none !important;
+  font-size: 0;
+  color: transparent !important;
+  cursor: pointer;
+}
+.ir-gallery .pp-arrow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("../assets/ui/arrow-button.png") center / contain no-repeat;
+  image-rendering: pixelated;
+  transition: transform 0.12s;
+}
+.ir-gallery .pp-arrow.prev::before { transform: scaleX(-1); }
+.ir-gallery .pp-arrow.next:hover:not(:disabled)::before { transform: translateX(4px); }
+.ir-gallery .pp-arrow.prev:hover:not(:disabled)::before { transform: scaleX(-1) translateX(4px); }
+.ir-gallery .pp-arrow:disabled { opacity: 0.25; cursor: default; }
+
+/* file-viewer bits on the TV: a path bar along the top, the file name along the bottom,
+   and the [PRESS ENTER TO CONTINUE] prompt while a text file is still being written */
+.ir-gal-top {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.6rem 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.ir-gal-path { overflow: hidden; text-overflow: ellipsis; }
+.ir-gal-path::before { content: "▣ "; }
+.ir-gal-meta { opacity: 0.6; }
+.ir-gal-bar { border-top: 1px solid rgba(255, 255, 255, 0.18); }
+.ir-gal-label { text-transform: none; letter-spacing: 0.06em; }
+.ir-gal-label::before { content: "> "; opacity: 0.6; }
+.ir-gal-para > :last-child { margin-bottom: 0.65rem; }
+.ir-gal-continue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2.6rem;
+  z-index: 4;
+  margin: 0;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  animation: gal-blink 1.1s steps(1) infinite;
+  pointer-events: none;
+}
+@keyframes gal-blink { 50% { opacity: 0; } }
+.ir-gal-screen { cursor: default; }
+.ir-gal-slide.ir-gal-text { padding-bottom: 2.2rem; }    /* room for the prompt */
+
+/* the same TV in a pop-up during the interrogation (click the TV on the table, or press C) */
+.ir-tv-modal { width: min(1100px, 94vw); height: min(88vh, 820px); max-height: none; gap: 0.8rem; }
+.ir-tv-slot { flex: 1; min-height: 0; display: flex; }
+.ir-tv-slot .ir-gallery { flex: 1; }
+.ir-gal-screen:focus { outline: none; }
+
+/* ---------- Interrogation room: visual-novel layout (like John's debrief) ----------
+   The scene fills the stage; the suspect stands behind a black, outlined dialogue box
+   along the bottom (it replaces the table). Your question pops up in a smaller box on
+   top of it. FLAG / NEXT sit inside the box, in the bottom corners. */
+#screen-room { padding: 0; }
+#screen-room .ir-room-scene {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 1.2rem 1.5rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  grid-template-rows: 54%;
+  align-items: start;
+  gap: 1rem;
+}
+#screen-room .crt-small { height: 100%; }
+#screen-room .ir-suspect { bottom: 24%; height: 70%; clip-path: inset(-60% -60% 0 -60%); }   /* nothing pokes out under the dialogue box */
+
+#screen-room .ir-dialogue {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 4%;
+  height: 30%;
+  min-height: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 1.9rem 2.4rem 3.6rem;
+  background: #000;
+  color: #ececec;
+  border: 2px solid #e6e6e6;
+  text-align: left;
+}
+#screen-room .ir-speaker {
+  position: absolute;
+  left: 4%;
+  top: 0;
+  transform: translateY(-55%);
+  margin: 0;
+  padding: 0.35rem 1.3rem;
+  background: #000;
+  color: #ececec;
+  border: 2px solid #e6e6e6;
+  font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+  letter-spacing: 0.12em;
+  opacity: 1;
+  white-space: nowrap;
+}
+#screen-room .ir-speaker::before { content: "["; }
+#screen-room .ir-speaker::after { content: "]"; }
+#screen-room .ir-line {
+  flex: 1;
+  margin: 0;
+  padding: 0 4%;
+  font-size: clamp(1rem, 1.55vw, 1.3rem);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+#screen-room .ir-dialogue > .ir-more { left: 50%; right: auto; bottom: 1.1rem; transform: translateX(-50%); }
+#screen-room .ir-dialogue.waiting { opacity: 1; }
+#screen-room .ir-dialogue.waiting .ir-line { opacity: 0.4; }
+#screen-room .ir-dlg-buttons {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 0.8rem;
+}
+#screen-room .ir-flag,
+#screen-room .ir-next { min-width: 0; padding: 0.45rem 1rem; }
+
+/* your question: smaller box overlapping the top edge of the suspect's box */
+#screen-room .ir-detective-box {
+  position: absolute;
+  right: 7%;
+  bottom: calc(34% - 1rem);
+  width: min(46%, 560px);
+  margin: 0;
+  z-index: 4;
+  padding: 1.1rem 1.4rem 0.9rem;
+  background: #000;
+  color: #ececec;
+  border: 2px solid #e6e6e6;
+  box-shadow: none;
+  opacity: 1;                      /* solid, so the suspect never shows through */
+  transform: scale(0.96);
+  transform-origin: 100% 100%;
+  transition: opacity 0.2s, transform 0.2s;
+}
+/* after you've asked, the question stays up but greys out */
+#screen-room .ir-detective-box:not(.active) { color: #8a8a8a; border-color: #777; }
+#screen-room .ir-detective-box:not(.active) .ir-detective-tag { border-color: #777; }
+#screen-room .ir-detective-box.active { opacity: 1; transform: none; animation: det-pop 0.22s cubic-bezier(0.3, 1.4, 0.6, 1); }
+@keyframes det-pop {
+  from { opacity: 0; transform: translateY(14px) scale(0.9); }
+  to   { opacity: 1; transform: none; }
+}
+#screen-room .ir-detective-tag {
+  position: absolute;
+  left: 1rem;
+  top: 0;
+  transform: translateY(-55%);
+  padding: 0.15rem 0.8rem;
+  background: #000;
+  border: 2px solid #e6e6e6;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+}
+#screen-room .ir-detective-tag::before { content: "["; }
+#screen-room .ir-detective-tag::after { content: "]"; }
+#screen-room .ir-detective-line { margin: 0; font-size: clamp(0.92rem, 1.35vw, 1.1rem); line-height: 1.5; }
+#screen-room .ir-detective-box .ir-more { right: 0.7rem; bottom: 0.35rem; }
+@media (prefers-reduced-motion: reduce) { #screen-room .ir-detective-box.active { animation: none; } }
+
+/* ---------- Interrogation Station: brick wall + the real TV ----------
+   Brick wall behind every screen (assets/interrogation/interrogation-background.png);
+   every CRT wears the TV art (assets/interrogation/tv-frame.png) as a 9-slice frame,
+   so the bezel keeps its thickness and only the middle stretches to fit. */
+/* same treatment as the table: zoomed in, edges fading into black */
+.ir-game .dl-stage {
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 85%, #000 100%),
+    linear-gradient(to right, #000 0%, transparent 9%, transparent 91%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 11%, transparent 89%, #000 100%),
+    #000 url("../assets/interrogation/interrogation-background.png") center / 125% auto no-repeat;
+}
+/* the suspect while you're asking: darker and greyer, but never see-through */
+.ir-game .ir-suspect { transition: filter 0.25s, transform 0.25s; }
+.ir-game .ir-suspect.dimmed { opacity: 1; filter: saturate(0.35) brightness(0.55); transform: scale(0.98); }
+.ir-game .dl-title { color: #f1ece2; text-shadow: 0 2px 4px #000; }
+.ir-game .ir-art { color: #ddd; border-color: rgba(255, 255, 255, 0.5); }
+.ir-game .dl-note { color: #ddd; }
+.ir-game .crt {
+  --tv: 0.5;                                   /* bezel scale */
+  padding: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-radius: 0;
+  border-width: calc(38px * var(--tv)) calc(47px * var(--tv)) calc(76px * var(--tv)) calc(43px * var(--tv));
+  border-image: url("../assets/interrogation/tv-frame.png") 38 47 76 43 stretch;
+  background: transparent;
+  box-shadow: none;
+}
+.ir-game .crt::after { display: none; }        /* the art has its own knobs */
+.ir-game .crt-screen { border: 0; border-radius: 4px; }
+.ir-game .ir-gal-tv { --tv: 0.62; padding: 0; border-radius: 0; }
+.ir-game .ir-gal-screen { border-radius: 4px; }
+.ir-game .crt-small { --tv: 0.42; padding: 0; }
+.ir-game .crt-small:hover,
+.ir-game .crt-small:focus-visible { background: transparent; filter: brightness(1.15); }
+.ir-game .ir-scene .crt { --tv: 0.5; }
+.ir-game .ir-status { background: #000; color: #ececec; border: 2px solid #e6e6e6; }
+.ir-gal-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* ---------- Interrogation Station menu: the observation room (assets/interrogation/menu-background.png) ----------
+   The menu and the first briefing; the interrogation (and its TV pop-up) use the brick wall.
+   The photo has its own table, so the drawn table stripe and the art placeholder go. */
+/* the menu and the briefing before you start: the observation room, zoomed a little,
+   edges fading into black like the table and the brick wall */
+.ir-game .dl-stage:has(#screen-menu:not([hidden])),
+.ir-game .dl-stage:has(#screen-brief:not([hidden])) {
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 85%, #000 100%),
+    linear-gradient(to right, #000 0%, transparent 9%, transparent 91%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 11%, transparent 89%, #000 100%),
+    #000 url("../assets/interrogation/menu-background.png") center / 112% auto no-repeat;
+}
+.ir-game #screen-menu .ir-art,
+.ir-game #screen-menu .table-top { visibility: hidden; }
+.ir-game #screen-menu .ir-scene { margin-bottom: -2.4rem; }   /* the TV stands on the photo's table */
+/* the TV pop-up during the interrogation sits on the brick wall */
+.ir-game .ir-tv-modal {
+  border: 2px solid #e6e6e6;
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 85%, #000 100%),
+    linear-gradient(to right, #000 0%, transparent 9%, transparent 91%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 11%, transparent 89%, #000 100%),
+    #000 url("../assets/interrogation/interrogation-background.png") center / 125% auto no-repeat;
+}
+
+/* ---------- game logos as the menu titles (assets/hallway/logo-*.png) ---------- */
+.dl-home-title.dl-logo-title {
+  top: 6%;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  line-height: 0;
+}
+.dl-logo-title img { height: 24cqh; width: auto; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.85)); }
+.ir-logo-title { margin: 0; line-height: 0; }
+.ir-logo-title img { height: clamp(80px, 21cqh, 180px); width: auto; filter: brightness(0) invert(1) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.85)); }   /* white */
+.pp-logo-title { margin-top: 0; }
+.pp-logo-title img { height: clamp(80px, 27cqh, 200px); width: auto; max-width: none; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6)); }

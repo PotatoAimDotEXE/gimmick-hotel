@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../css/interrogation.css" />
   <link rel="stylesheet" href="../css/ui.css" />
 </head>
-<body class="game">
+<body class="game game-dark ir-game">
   <header class="topbar">
     <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
     <span>Room 02 · Interrogation Station</span>
@@ -22,7 +22,7 @@
 
       <!-- ============ 1. ROOM MENU: CRT on the table ============ -->
       <section class="dl-screen" id="screen-menu">
-        <h1 class="dl-title">Interrogation Station</h1>
+        <h1 class="dl-title ir-logo-title"><img src="../assets/hallway/logo-interrogation-station.png" alt="Interrogation Station" /></h1>
 
         <div class="ir-scene">
           <div class="crt">
@@ -52,10 +52,27 @@
       </section>
 
       <!-- ============ 2. INSTRUCTIONS + CASE BRIEF ============ -->
+      <!-- a big CRT in the middle; the arrows flip through it like a photo gallery:
+           instructions, then the case brief, then each picture -->
       <section class="dl-screen" id="screen-brief" hidden>
-        <div class="dl-book">
-          <article class="dl-page" id="brief-left"></article>
-          <article class="dl-page" id="brief-right"></article>
+        <div class="ir-gallery">
+          <button class="pp-arrow prev" id="gal-prev" aria-label="Previous screen">◀</button>
+          <div class="crt ir-gal-tv">
+            <div class="crt-screen ir-gal-screen" id="gal-screen" tabindex="-1">
+              <div class="ir-gal-top">
+                <span class="ir-gal-path" id="gal-path"></span>
+                <span class="ir-gal-meta" id="gal-meta"></span>
+              </div>
+              <div class="ir-gal-slides" id="gal-slides"></div>
+              <p class="ir-gal-continue" id="gal-continue" hidden>[PRESS ENTER TO CONTINUE]</p>
+              <div class="ir-gal-bar">
+                <span class="ir-gal-label" id="gal-label"></span>
+                <span class="ir-gal-dots" id="gal-dots"></span>
+                <span class="ir-gal-count" id="gal-count"></span>
+              </div>
+            </div>
+          </div>
+          <button class="pp-arrow next" id="gal-next" aria-label="Next screen">▶</button>
         </div>
         <div class="ir-row">
           <button data-go="menu">&larr; Back</button>
@@ -81,35 +98,34 @@
             <div>Flags left: <strong id="flags-left">1</strong></div>
           </div>
         </div>
-        <div class="table-top" aria-hidden="true"></div>
 
-        <!-- the detective's (player's) questions: separate box above the suspect's -->
-        <div class="ir-detective-box" id="detective-box" hidden>
-          <span class="ir-detective-tag">Detective (you)</span>
-          <p class="ir-detective-line" id="detective-line"></p>
-          <span class="ir-more" id="det-more" aria-hidden="true">▼</span>
-        </div>
-
-        <!-- the suspect's answers -->
+        <!-- visual-novel box like John's debrief: the suspect's answers, name tag on the top edge,
+             FLAG / NEXT inside. It sits where the table was. -->
         <div class="ir-dialogue" id="dialogue">
           <div class="ir-speaker" id="speaker"></div>
           <p class="ir-line" id="line" aria-live="polite"></p>
           <span class="ir-more" id="more" aria-hidden="true">▼</span>
           <span class="ir-stamp" id="stamp" hidden>FLAGGED</span>
+          <div class="ir-row ir-dlg-buttons">
+            <button class="ir-flag" id="btn-flag">⚑ FLAG AS LIE <small>(F)</small></button>
+            <button class="ir-next" id="btn-next">NEXT → <small>(Enter)</small></button>
+          </div>
         </div>
 
-        <div class="ir-row">
-          <button class="ir-flag" id="btn-flag">⚑ FLAG AS LIE <small>(F)</small></button>
-          <button class="ir-next" id="btn-next">NEXT → <small>(Enter)</small></button>
+        <!-- your (the detective's) question: a smaller box that pops up on top of the suspect's box -->
+        <div class="ir-detective-box" id="detective-box" hidden>
+          <span class="ir-detective-tag">Detective (you)</span>
+          <p class="ir-detective-line" id="detective-line"></p>
+          <span class="ir-more" id="det-more" aria-hidden="true">▼</span>
         </div>
       </section>
     </div>
   </main>
 
   <!-- ============ CASE BRIEF (click the TV) – read only ============ -->
-  <dialog class="modal ir-brief-modal" id="tv-dialog">
-    <h2 class="ir-modal-title">Case Brief</h2>
-    <div class="ir-brief" id="tv-brief"></div>
+  <!-- the same TV as the briefing: the gallery is moved in here while it's open -->
+  <dialog class="modal ir-brief-modal ir-tv-modal" id="tv-dialog">
+    <div class="ir-tv-slot" id="tv-slot"></div>
     <form method="dialog" class="ir-row-center"><button>Close (Esc)</button></form>
   </dialog>
 

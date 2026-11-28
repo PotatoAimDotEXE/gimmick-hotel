@@ -16,6 +16,7 @@
        assets     pictures shown with the brief. Every picture can be
                   tapped as proof.
                     id     short name, used in proof as "img:<id>"
+                    name   file name shown on the briefing TV (e.g. "call_log.jpg")
                     desc   what the picture shows (placeholder text)
                     lines  text written inside the picture (optional)
                     file   path to the real image when it's drawn ("" = placeholder)
@@ -50,7 +51,7 @@ const LOGS = [
           "On the way, Jane Maid saw Tung stop the cart outside **Room 206** and lift the cover. At **7:40**, Tung handed the cart to the ballroom staff. When they lifted the cover, the crown was gone.",
         ],
         assets: [
-          { id: "scene", desc: "The ballroom staff lifting the clear cover, with an empty spot on top of the cake where the crown was.", file: "" },
+          { id: "scene", name: "missing_crown.jpg", desc: "The ballroom staff lifting the clear cover, with an empty spot on top of the cake where the crown was.", file: "../assets/interrogation/evidence/missing-crown-scene.png" },
         ],
         dialogue: [
           { detective: "Walk me through the delivery." },
@@ -67,7 +68,7 @@ const LOGS = [
           "At 7:40, Tung passed the cart to the ballroom staff. When they took off the dome, the crown had disappeared.",
         ],
         assets: [
-          { id: "scene", desc: "The ballroom staff lifting the dome, with an empty spot on top of the cake.", file: "" },
+          { id: "scene", name: "missing_crown.jpg", desc: "The ballroom staff lifting the dome, with an empty spot on top of the cake.", file: "../assets/interrogation/evidence/missing-crown-scene.png" },
         ],
         dialogue: [
           { detective: "Walk me through the delivery." },
@@ -90,12 +91,12 @@ const LOGS = [
           "At 7:40, the ballroom staff signed for the cart. When they removed the dome, the crown was missing.",
         ],
         assets: [
-          { id: "scene", desc: "The ballroom staff lifting the dome, with an empty spot on top of the cake.", file: "" },
+          { id: "scene", name: "missing_crown.jpg", desc: "The ballroom staff lifting the dome, with an empty spot on top of the cake.", file: "../assets/interrogation/evidence/missing-crown-scene.png" },
           {
-            id: "cam",
+            id: "cam", name: "2F_corridor_cam3.jpg",
             desc: "Corridor camera still: the cart standing still beside a door, with Tung's back to the camera.",
             lines: ["Door: 206", "2F CORRIDOR · CAM 3 · 7:34 PM"],
-            file: "",
+            file: "../assets/interrogation/evidence/missing-crown-cam.png",
           },
         ],
         dialogue: [
@@ -133,7 +134,7 @@ const LOGS = [
           "Atten called the **front desk** while Jane stayed by the cart to warn guests about the broken glass.",
         ],
         assets: [
-          { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
+          { id: "scene", name: "lobby_broken_bottle.jpg", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "../assets/interrogation/evidence/broken-bottle-scene.png" },
         ],
         dialogue: [
           { detective: "Walk me through what happened." },
@@ -151,7 +152,7 @@ const LOGS = [
           "Atten picked up the lobby phone and rang the front desk, while Jane stayed beside the cart, warning guests to keep away from the broken glass.",
         ],
         assets: [
-          { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
+          { id: "scene", name: "lobby_broken_bottle.jpg", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "../assets/interrogation/evidence/broken-bottle-scene.png" },
         ],
         dialogue: [
           { detective: "Walk me through what happened." },
@@ -173,16 +174,16 @@ const LOGS = [
           "Within a minute, Atten had dialled the front desk from the lobby phone. Jane, meanwhile, stood guard beside the cart and waved guests away from the broken glass until a cleaner arrived at 6:28.",
         ],
         assets: [
-          { id: "scene", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "" },
+          { id: "scene", name: "lobby_broken_bottle.jpg", desc: "Broken glass and spilled wine on the lobby floor beside the cart, with Jane holding her hands out to keep guests back.", file: "../assets/interrogation/evidence/broken-bottle-scene.png" },
           {
-            id: "calllog",
+            id: "calllog", name: "front_desk_call_log.jpg",
             desc: "Front desk call log on a clipboard.",
             lines: [
               "FRONT DESK · INCOMING CALLS",
               "6:21 PM · Lobby phone (Ext. 101) · Caller: A. Dan · Broken bottle, lobby",
               "6:24 PM · Room 312 · Caller: Guest · Extra towels",
             ],
-            file: "",
+            file: "../assets/interrogation/evidence/broken-bottle-calllog.png",
           },
         ],
         dialogue: [
@@ -212,67 +213,68 @@ const LOGS = [
     versions: {
       easy: {
         brief: [
-          "A group of children were waiting in the **hotel lobby** when Capybara appeared **beside the front desk**. It stared at them with a stiff little smile. When the children moved **behind a sofa**, Capybara slid sideways into view without moving its legs. The children got scared and ran to their parents.",
+          "A young boy was waiting in the **hotel lobby** when Capybara appeared **beside the front desk**. It stared at him with a stiff little smile. When the boy hid **behind a sofa**, Capybara slid sideways into view without moving its legs. The boy got scared and ran to his parents.",
           "Jane Maid saw the whole thing from the **front desk**. She said Capybara kept smiling and never made a sound.",
         ],
         assets: [
-          { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
+          { id: "scene", name: "lobby_boy_running.jpg", desc: "A boy running across the lobby, looking scared, with Capybara peeking out from behind the reception counter.", file: "../assets/interrogation/evidence/staring-capybara-scene.png" },
         ],
         dialogue: [
-          { detective: "Where were you when the children saw you?" },
-          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara appeared beside the front desk"] },
-          { say: "I smiled. I thought that would help.", proof: ["It stared at them with a stiff little smile"] },
+          { detective: "Where were you when the boy saw you?" },
+          // the scene picture shows Capybara peeking out from behind the RECEPTION desk, so it proves this too
+          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara appeared beside the front desk", "img:scene"] },
+          { say: "I smiled. I thought that would help.", proof: ["It stared at him with a stiff little smile"] },
           { say: "I didn't make a sound.", proof: ["never made a sound"] },
         ],
       },
 
       medium: {
         brief: [
-          "Just after the evening check-in rush, a group of children came in through the hotel's front doors with their parents and sat down to wait in the lobby. Moments later, Capybara popped up right next to the reception counter. It gazed at the children with a fixed, stiff little smile.",
-          "When the children crept behind a sofa to hide, Capybara glided sideways until it could see them again, its legs perfectly still the whole time. The children shrieked and ran back to their parents.",
+          "Just after the evening check-in rush, a young boy came in through the hotel's front doors with his parents and sat down to wait in the lobby. Moments later, Capybara popped up right next to the reception counter. It gazed at the boy with a fixed, stiff little smile.",
+          "When the boy crept behind a sofa to hide, Capybara glided sideways until it could see him again, its legs perfectly still the whole time. The boy shrieked and ran back to his parents.",
           "Jane Maid had been standing behind the reception counter throughout. She said Capybara never stopped smiling and never made a single sound.",
         ],
         assets: [
-          { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
+          { id: "scene", name: "lobby_boy_running.jpg", desc: "A boy running across the lobby, looking scared, with Capybara peeking out from behind the reception counter.", file: "../assets/interrogation/evidence/staring-capybara-scene.png" },
         ],
         dialogue: [
-          { detective: "Where were you when the children saw you?" },
-          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara popped up right next to the reception counter"] },
-          { say: "I smiled. I thought that would help.", proof: ["gazed at the children with a fixed, stiff little smile"] },
-          { detective: "What did you do when they moved behind the sofa?" },
-          { say: "I stayed exactly where I was.", lie: true, proof: ["glided sideways until it could see them again"] },
+          { detective: "Where were you when the boy saw you?" },
+          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["Capybara popped up right next to the reception counter", "img:scene"] },
+          { say: "I smiled. I thought that would help.", proof: ["gazed at the boy with a fixed, stiff little smile"] },
+          { detective: "What did you do when he hid behind the sofa?" },
+          { say: "I stayed exactly where I was.", lie: true, proof: ["glided sideways until it could see him again"] },
           { say: "I didn't make a sound.", proof: ["never made a single sound"] },
           { detective: "Anything else?" },
-          { say: "The children had only just come in through the front doors.", proof: ["came in through the hotel's front doors"] },
+          { say: "The boy had only just come in through the front doors.", proof: ["came in through the hotel's front doors"] },
           { say: "I think I'm just bad at smiling.", uncheckable: true },
         ],
       },
 
       hard: {
         brief: [
-          "The lobby was busy that evening. A coach of guests had just arrived, luggage trolleys were lined up by the front doors, and a group of children was waiting on the long sofa while their parents queued to check in. Jane Maid was covering the reception counter, because the usual receptionist was on a break.",
-          "According to Jane, Capybara appeared without warning at the end of the reception counter, barely an arm's length from her, and fixed the children with a stiff little smile. When the children ducked behind the sofa, it drifted sideways across the tiles, its legs not moving at all, until it had them in view again. One parent later said she had heard a strange squeak near the luggage trolleys, but Jane insisted that Capybara itself never made a sound.",
-          "The children screamed and ran to their parents.",
+          "The lobby was busy that evening. A coach of guests had just arrived, luggage trolleys were lined up by the front doors, and a young boy was waiting on the long sofa while his parents queued to check in. Jane Maid was covering the reception counter, because the usual receptionist was on a break.",
+          "According to Jane, Capybara appeared without warning at the end of the reception counter, barely an arm's length from her, and fixed the boy with a stiff little smile. When the boy ducked behind the sofa, it drifted sideways across the tiles, its legs not moving at all, until it had him in view again. One parent later said she had heard a strange squeak near the luggage trolleys, but Jane insisted that Capybara itself never made a sound.",
+          "The boy screamed and ran to his parents.",
         ],
         assets: [
-          { id: "scene", desc: "The children running across the lobby to their parents, looking scared.", file: "" },
+          { id: "scene", name: "lobby_boy_running.jpg", desc: "A boy running across the lobby, looking scared, with Capybara peeking out from behind the reception counter.", file: "../assets/interrogation/evidence/staring-capybara-scene.png" },
           {
-            id: "cam",
+            id: "cam", name: "lobby_cam2.jpg",
             desc: "Lobby camera still: Capybara standing at the end of a counter, smiling.",
             lines: ["Sign on the counter: RECEPTION", "LOBBY CAM 2 · 6:05 PM"],
-            file: "",
+            file: "../assets/interrogation/evidence/staring-capybara-cam.png",
           },
         ],
         dialogue: [
-          { detective: "Where were you when the children saw you?" },
-          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["appeared without warning at the end of the reception counter", "img:cam"] },
-          { say: "I smiled. I thought that would help.", proof: ["fixed the children with a stiff little smile"] },
-          { detective: "What did you do when they moved behind the sofa?" },
+          { detective: "Where were you when the boy saw you?" },
+          { say: "Over by the front doors. I never went near the desk.", lie: true, proof: ["appeared without warning at the end of the reception counter", "img:cam", "img:scene"] },
+          { say: "I smiled. I thought that would help.", proof: ["fixed the boy with a stiff little smile"] },
+          { detective: "What did you do when he hid behind the sofa?" },
           // the key's proof spans two clauses; either part that shows it MOVED counts
-          { say: "I stayed exactly where I was.", lie: true, proof: ["it drifted sideways across the tiles", "until it had them in view again"] },
+          { say: "I stayed exactly where I was.", lie: true, proof: ["it drifted sideways across the tiles", "until it had him in view again"] },
           { say: "I didn't make a sound.", proof: ["Jane insisted that Capybara itself never made a sound"] },
           { detective: "What else do you remember?" },
-          { say: "The children were sitting on the long sofa.", proof: ["a group of children was waiting on the long sofa"] },
+          { say: "The boy was sitting on the long sofa.", proof: ["a young boy was waiting on the long sofa"] },
           { say: "There were suitcases everywhere by the doors.", proof: ["luggage trolleys were lined up by the front doors"] },
           { say: "The usual receptionist wasn't there.", proof: ["the usual receptionist was on a break"] },
           { say: "I think I'm just bad at smiling.", uncheckable: true },

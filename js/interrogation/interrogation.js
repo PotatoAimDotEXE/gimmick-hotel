@@ -155,30 +155,219 @@
   $("btn-daily").addEventListener("click", () => {
     if (getResult()) return showResult();
     if (draft.started) return enterRoom();
+    showScreen("brief"); // visible first, so the brief can be measured onto screens
     renderBriefing();
-    showScreen("brief");
   });
 
   document.querySelectorAll("[data-soon]").forEach((b) =>
     b.addEventListener("click", () => ($("menu-note").textContent = b.dataset.soon + " is coming soon."))
   );
 
-  /* ---------------- 2. Instructions + brief ---------------- */
-  function renderBriefing() {
+  /* ---------------- 2. Instructions + brief: the gallery TV ----------------
+     One "file" at a time on the big CRT: instructions.txt, case_brief.txt
+     (split over more files if it doesn't fit), then each picture.
+     Text files type themselves out one paragraph at a time; Enter shows the next. */
+  const GAL_TYPE = 6; // ms per letter (much faster than John's debrief)
+  let galSlides = []; // [{ kind, file, meta, html, paras, shown }]
+  let galIndex = 0;
+  let galTimer = null;
+  let galTyping = false;
+
+  function instructionsParas() {
     const n = statements().length;
     const lies = liesIn();
-    $("brief-left").innerHTML = `
-      <h2>Instructions</h2>
-      <p>Welcome to the interrogation room. Read the case brief carefully: it tells you what really happened.</p>
-      <p>You will question <strong>${escapeHtml(log.suspect)}</strong>. They will make ${n} statements, one at a time. ${
+    return [
+      `<h2>Instructions</h2><p>Welcome to the interrogation room. Read the case brief carefully: it tells you what really happened.</p>`,
+      `<p>You will question <strong>${escapeHtml(log.suspect)}</strong>. They will make ${n} statements, one at a time. ${
         lies === 1 ? "One of them is a lie." : lies + " of them are lies."
-      }</p>
-      <p>When you hear a lie, press <strong>FLAG AS LIE</strong>, then tap the part of the brief that proves it, and confirm. Otherwise press <strong>NEXT</strong>.</p>
-      <p>You have ${lies} flag${lies === 1 ? "" : "s"}. Each lie you catch = 1 point. The right proof = 1 more point.</p>
-      <p><strong>⚠ WARNING: there is no going back to a previous statement.</strong></p>
-      <p class="muted">You can click the TV during the interrogation to read the brief again.</p>`;
-    renderBrief($("brief-right"), false);
+      }</p>`,
+      `<p>When you hear a lie, press <strong>FLAG AS LIE</strong>, then tap the part of the brief that proves it, and confirm. Otherwise press <strong>NEXT</strong>.</p>`,
+      `<p>You have ${lies} flag${lies === 1 ? "" : "s"}. Each lie you catch = 1 point. The right proof = 1 more point.</p>`,
+      `<p><strong>⚠ WARNING: there is no going back to a previous statement.</strong></p>`,
+      `<p class="ir-gal-muted">Use the arrows (or ← →) to open the case brief and the pictures. You can click the TV during the interrogation to read the brief again.</p>`,
+    ];
   }
+
+  const words = (html) => html.replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length;
+
+  function renderBriefing() {
+    const v = version();
+    const slidesEl = $("gal-slides");
+    galSlides = [{ kind: "text", file: "instructions.txt", paras: instructionsParas() }];
+
+    // pour the brief's paragraphs into as many files as it needs
+    const head = `<p class="ir-brief-title">${escapeHtml(log.title)}</p>`;
+    const paras = v.brief.map((para, i) => (i === 0 ? head : "") + `<p>${bold(para)}</p>`);
+    slidesEl.innerHTML = "";
+    const probe = document.createElement("div");
+    probe.className = "ir-gal-slide on measuring";
+    slidesEl.appendChild(probe);
+    const fits = () => probe.scrollHeight <= probe.clientHeight + 1;
+    const briefs = [];
+    let page = [];
+    paras.forEach((p) => {
+      probe.innerHTML = page.concat(p).join("");
+      if (!fits() && page.length) {
+        briefs.push(page);
+        page = [p];
+      } else page.push(p);
+    });
+    if (page.length) briefs.push(page);
+    probe.remove();
+    briefs.forEach((b, i) =>
+      galSlides.push({ kind: "text", file: briefs.length > 1 ? `case_brief_${i + 1}.txt` : "case_brief.txt", paras: b })
+    );
+
+    // one file per picture
+    v.assets.forEach((a) => {
+      const pic = a.file
+        ? `<img src="${a.file}" alt="${escapeHtml(a.desc)}" />`
+        : `<div class="ir-gal-ph"><span>[ picture ]</span><p>${escapeHtml(a.desc)}</p>${
+            a.lines ? `<p class="ir-gal-ph-text">${a.lines.map(escapeHtml).join("<br />")}</p>` : ""
+          }</div>`;
+      galSlides.push({ kind: "picture", file: a.name || a.id + ".jpg", html: `<figure class="ir-gal-photo">${pic}</figure>` });
+    });
+
+    galSlides.forEach((g) => {
+      if (g.kind === "text") {
+        g.shown = 0; // paragraphs fully written so far
+        g.meta = `${g.paras.reduce((n, p) => n + words(p), 0)} words`;
+      } else {
+        g.meta = "IMAGE · read only";
+      }
+    });
+
+    slidesEl.innerHTML = galSlides
+      .map((g, i) => `<div class="ir-gal-slide ir-gal-${g.kind}" data-i="${i}" aria-hidden="true">${g.kind === "picture" ? g.html : ""}</div>`)
+      .join("");
+    $("gal-dots").innerHTML = galSlides
+      .map((g, i) => `<button class="ir-gal-dot${g.kind === "picture" ? " pic" : ""}" data-i="${i}" aria-label="${g.file}"></button>`)
+      .join("");
+    $("gal-dots").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => setSlide(+b.dataset.i)));
+    galIndex = 0;
+    setSlide(0, true);
+  }
+
+  const slideEl = (i) => $("gal-slides").querySelector(`[data-i="${i}"]`);
+
+  // write the next paragraph of a text file, letter by letter (tags appear whole)
+  function typeNextPara() {
+    const g = galSlides[galIndex];
+    if (!g || g.kind !== "text" || g.shown >= g.paras.length) return updateContinue();
+    const el = slideEl(galIndex);
+    const html = g.paras[g.shown];
+    const holder = document.createElement("div");
+    holder.className = "ir-gal-para";
+    el.appendChild(holder);
+    const tokens = html.match(/<[^>]+>|&[a-z#0-9]+;|[\s\S]/gi) || [];
+    let k = 0;
+    galTyping = true;
+    updateContinue();
+    clearInterval(galTimer);
+    galTimer = setInterval(() => {
+      // a few letters per tick keeps it quick even on slow timers
+      for (let n = 0; n < 3 && k < tokens.length; n++) {
+        k++;
+        while (k < tokens.length && tokens[k - 1].startsWith("<")) k++; // tags don't take a tick
+      }
+      holder.innerHTML = tokens.slice(0, k).join("");
+      el.scrollTop = el.scrollHeight;
+      if (k >= tokens.length) finishPara();
+    }, GAL_TYPE * 3);
+    holder.dataset.full = html;
+  }
+  function finishPara() {
+    const g = galSlides[galIndex];
+    clearInterval(galTimer);
+    if (!galTyping) return;
+    galTyping = false;
+    const el = slideEl(galIndex);
+    const last = el.lastElementChild;
+    if (last && last.dataset.full) last.innerHTML = last.dataset.full;
+    g.shown++;
+    updateContinue();
+  }
+  function updateContinue() {
+    const g = galSlides[galIndex];
+    $("gal-continue").hidden = !(g && g.kind === "text" && !galTyping && g.shown < g.paras.length);
+  }
+  // Enter / click on the screen: finish the paragraph being written, or start the next one
+  function galAdvance() {
+    const g = galSlides[galIndex];
+    if (!g || g.kind !== "text") return false;
+    if (galTyping) {
+      finishPara();
+      return true;
+    }
+    if (g.shown < g.paras.length) {
+      typeNextPara();
+      return true;
+    }
+    return false;
+  }
+
+  function setSlide(i, instant) {
+    if (!galSlides.length) return;
+    i = Math.max(0, Math.min(galSlides.length - 1, i));
+    if (galTyping) finishPara(); // leaving mid-paragraph keeps it written
+    const changed = i !== galIndex;
+    galIndex = i;
+    const g = galSlides[i];
+    $("gal-slides").querySelectorAll(".ir-gal-slide").forEach((el, k) => {
+      el.classList.toggle("on", k === i);
+      el.setAttribute("aria-hidden", k !== i);
+    });
+    // text file: show what was already read, then write the first paragraph if nothing yet
+    if (g.kind === "text") {
+      const el = slideEl(i);
+      el.innerHTML = g.paras.slice(0, g.shown).map((p) => `<div class="ir-gal-para">${p}</div>`).join("");
+      if (g.shown === 0) typeNextPara();
+    }
+    $("gal-dots").querySelectorAll("button").forEach((b, k) => b.classList.toggle("on", k === i));
+    $("gal-path").textContent = `C:\\CASES\\LOG_${logNumber}\\${g.file}`;
+    $("gal-meta").textContent = g.meta;
+    $("gal-label").textContent = g.file;
+    $("gal-count").textContent = `FILE ${i + 1} / ${galSlides.length}`;
+    $("gal-prev").disabled = i === 0;
+    $("gal-next").disabled = i === galSlides.length - 1;
+    updateContinue();
+    // a quick flicker, like changing the channel
+    if (changed && !instant) {
+      const scr = $("gal-screen");
+      scr.classList.remove("switching");
+      void scr.offsetWidth;
+      scr.classList.add("switching");
+    }
+  }
+  $("gal-prev").addEventListener("click", () => setSlide(galIndex - 1));
+  $("gal-next").addEventListener("click", () => setSlide(galIndex + 1));
+  $("gal-screen").addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    galAdvance();
+  });
+  // rebuild the screens (new window size, or moved into the pop-up) but keep what was read
+  function rebuildGallery() {
+    const keepFile = galSlides[galIndex] && galSlides[galIndex].file;
+    const read = galSlides.map((g) => [g.file, g.shown]);
+    clearInterval(galTimer);
+    galTyping = false;
+    renderBriefing();
+    clearInterval(galTimer); // renderBriefing starts writing file 1: stop that, we restore below
+    galTyping = false;
+    galSlides.forEach((g) => {
+      const r = read.find((x) => x[0] === g.file);
+      if (r && g.kind === "text") g.shown = Math.min(r[1], g.paras.length);
+    });
+    const at = galSlides.findIndex((g) => g.file === keepFile);
+    setSlide(at < 0 ? 0 : at, true);
+  }
+  let galResize = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(galResize);
+    galResize = setTimeout(() => {
+      if (!$("screen-brief").hidden || $("tv-dialog").open) rebuildGallery();
+    }, 200);
+  });
 
   $("btn-start").addEventListener("click", () => {
     draft.started = true;
@@ -205,7 +394,6 @@
   function setupRoom() {
     $("tv-title").textContent = log.title;
     $("suspect-figure").innerHTML = portrait();
-    renderBrief($("tv-brief"), false);
     showScreen("room");
   }
 
@@ -301,8 +489,22 @@
   $("detective-box").addEventListener("click", () => typing && finishTyping());
 
   // TV = read the brief again
+  // the TV on the table opens the same gallery TV as the briefing, in a pop-up
   const tvDialog = $("tv-dialog");
-  $("btn-tv").addEventListener("click", (e) => { e.currentTarget.blur(); tvDialog.showModal(); });
+  const gallery = document.querySelector(".ir-gallery");
+  function openTV() {
+    tvDialog.showModal();
+    $("tv-slot").appendChild(gallery);
+    rebuildGallery();
+    $("gal-screen").focus(); // not the Close button
+
+  }
+  tvDialog.addEventListener("close", () => {
+    clearInterval(galTimer);
+    if (galTyping) finishPara();
+    $("screen-brief").insertBefore(gallery, $("screen-brief").querySelector(".ir-row"));
+  });
+  $("btn-tv").addEventListener("click", (e) => { e.currentTarget.blur(); openTV(); });
   tvDialog.addEventListener("click", (e) => e.target === tvDialog && tvDialog.close());
 
   /* ---------------- Flag -> select proof -> confirm ---------------- */
@@ -550,6 +752,16 @@
       }
       return;
     }
+    if (tvDialog.open) {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        setSlide(galIndex + (e.key === "ArrowRight" ? 1 : -1));
+      } else if (e.key === "Enter") {
+        e.preventDefault(); // Enter always means "continue", never Close (Esc or the button closes)
+        galAdvance();
+      }
+      return;
+    }
     if (document.querySelector("dialog[open]")) return;
 
     if (!$("screen-menu").hidden && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
@@ -557,6 +769,17 @@
       const order = ["easy", "medium", "hard"];
       const i = order.indexOf(draft.difficulty) + (e.key === "ArrowDown" ? 1 : -1);
       if (i >= 0 && i < order.length) setDifficulty(order[i]);
+      return;
+    }
+
+    if (!$("screen-brief").hidden) {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        setSlide(galIndex + (e.key === "ArrowRight" ? 1 : -1));
+      } else if (e.key === "Enter" && !e.target.closest("#btn-start, [data-go]")) {
+        e.preventDefault();
+        galAdvance();
+      }
       return;
     }
 
@@ -569,7 +792,7 @@
       e.preventDefault();
       if (!typing) openProof();
     } else if (k === "c") {
-      tvDialog.showModal();
+      openTV();
     }
   });
 
