@@ -66,6 +66,7 @@
   }
 
   function showView(name) {
+    if (name === "suspects" || name === "suspect") nudgePeople(false);
     ["file", "suspects", "suspect"].forEach((v) => ($("view-" + v).hidden = v !== name));
     if (name === "file" && fileDirty) paginateFile(); // the folder stays on the same page
     document.querySelectorAll(".dl-tabs [data-view]").forEach((t) => {
@@ -387,6 +388,17 @@
     layStack(filePages, filePage, instant);
     $("file-prev").disabled = filePage === 0;
     $("file-next").disabled = filePage === filePages.length - 1;
+    // first time reaching the last page of evidence: point at People of interest
+    if (filePage === filePages.length - 1 && filePages.length > 1 && !draft.seenAllEvidence) {
+      draft.seenAllEvidence = true;
+      saveDraft();
+      nudgePeople(true);
+    }
+  }
+  // flashing highlight on the People of interest tab until it's opened
+  function nudgePeople(on) {
+    const tab = document.querySelector('.dl-tabs [data-view="suspects"]');
+    if (tab) tab.classList.toggle("nudge", on);
   }
   $("file-prev").addEventListener("click", () => setFilePage(filePage - 1));
   $("file-next").addEventListener("click", () => setFilePage(filePage + 1));

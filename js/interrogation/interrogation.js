@@ -291,18 +291,26 @@
   }
   function updateContinue() {
     const g = galSlides[galIndex];
-    $("gal-continue").hidden = !(g && g.kind === "text" && !galTyping && g.shown < g.paras.length);
+    const more = g && g.kind === "text" && g.shown < g.paras.length; // paragraphs still to show
+    const nextFile = g && !more && galIndex < galSlides.length - 1; // done here, another file follows
+    $("gal-continue").textContent = more ? "[PRESS ENTER TO CONTINUE]" : "[PRESS ENTER FOR NEXT FILE]";
+    $("gal-continue").hidden = galTyping || !(more || nextFile);
   }
   // Enter / click on the screen: finish the paragraph being written, or start the next one
+  // ...and once a file is fully read (or it's a picture), Enter opens the next file
   function galAdvance() {
     const g = galSlides[galIndex];
-    if (!g || g.kind !== "text") return false;
-    if (galTyping) {
+    if (!g) return false;
+    if (g.kind === "text" && galTyping) {
       finishPara();
       return true;
     }
-    if (g.shown < g.paras.length) {
+    if (g.kind === "text" && g.shown < g.paras.length) {
       typeNextPara();
+      return true;
+    }
+    if (galIndex < galSlides.length - 1) {
+      setSlide(galIndex + 1);
       return true;
     }
     return false;

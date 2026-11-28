@@ -64,10 +64,10 @@ const Store = {
     this.safeSet(this.KEY_MODE, mode === "party" ? "party" : "single");
   },
 
-  // [dev] AI grading switch (title screen). On by default.
+  // [dev] AI grading switch (title screen). Off by default.
   KEY_AI: "er_ai_grading",
   getAIGrading() {
-    return this.safeGet(this.KEY_AI, true) !== false;
+    return this.safeGet(this.KEY_AI, false) === true;
   },
   setAIGrading(on) {
     this.safeSet(this.KEY_AI, !!on);
@@ -326,14 +326,23 @@ const Sound = (() => {
     music(file, volume = 0.17) {
       const a = new Audio(url(file));
       a.loop = true;
+      a.preload = "auto";
       a.volume = 0;
       current = a;
-      const start = () =>
-        a.play().then(() => {
-          ["pointerdown", "keydown"].forEach((ev) => document.removeEventListener(ev, start, true));
-          fadeTo(a, volume, 1200);
-        }).catch(() => {});
-      ["pointerdown", "keydown"].forEach((ev) => document.addEventListener(ev, start, true));
+      // every kind of first interaction a browser accepts as "the player wants sound"
+      const GESTURES = ["pointerdown", "mousedown", "touchend", "click", "keydown"];
+      const stopListening = () => GESTURES.forEach((ev) => document.removeEventListener(ev, start, true));
+      function start() {
+        if (!a.paused) return stopListening();
+        if (a.error) a.load(); // the file failed to download (e.g. a hiccup on the host): try again
+        const p = a.play();
+        if (p && p.then)
+          p.then(() => {
+            stopListening();
+            fadeTo(a, volume, 1200);
+          }).catch(() => {}); // blocked until the player interacts: the listeners stay on
+      }
+      GESTURES.forEach((ev) => document.addEventListener(ev, start, true));
       start();
       // back-button return: fade back in
       window.addEventListener("pageshow", (e) => {
