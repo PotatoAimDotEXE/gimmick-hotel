@@ -32,6 +32,7 @@
     return pick;
   }
   const caseData = pickCase();
+  devCasePicker({ where: document.getElementById("screen-cover"), cases: PARALEGAL_CASES, currentId: caseData.id, pickKey: KEY_PICK, clearKeys: [KEY_RESULT, KEY_DRAFT] });
 
   let draft = Store.safeGet(KEY_DRAFT, null) || {
     difficulty: "easy",
@@ -264,7 +265,7 @@
       if (pg.kind === "report") {
         html += `<h2>${escapeHtml(pg.heading)}</h2>` + pg.body.map((t) => `<p>${rich(t)}</p>`).join("");
       } else {
-        // evidence: picture placeholder (until the art is drawn), log table or note
+        // evidence: picture (art + caption, or a placeholder until the art is drawn), log table or note
         html += `<p class="pp-ev-tag">Evidence</p><h2>${escapeHtml(pg.label)}</h2>`;
         if (pg.kind === "table") {
           const head = pg.table.head.map((h) => `<th>${escapeHtml(h)}</th>`).join("");
@@ -272,7 +273,7 @@
           html += `<table class="pp-log"><tr>${head}</tr>${rows}</table>`;
         } else if (pg.kind === "picture") {
           html += pg.image
-            ? `<img class="pp-img" src="${pg.image}" alt="${escapeHtml(pg.text || "")}" />`
+            ? `<figure class="pp-photo"><img class="pp-img" src="${pg.image}" alt="" /><figcaption>${rich(pg.text)}</figcaption></figure>`
             : `<div class="pp-picture"><span class="pp-picture-tag">[ picture ]</span><p>${rich(pg.text)}</p></div>`;
         } else {
           html += `<div class="pp-note"><p>${rich(pg.text)}</p></div>`;

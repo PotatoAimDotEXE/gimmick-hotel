@@ -73,12 +73,21 @@ const Store = {
     this.safeSet(this.KEY_AI, !!on);
   },
 
+  // [dev] case picker switch (title screen): shows "[dev] case" on each game's menu. On by default.
+  KEY_DEV_CASES: "er_dev_cases",
+  getDevCases() {
+    return this.safeGet(this.KEY_DEV_CASES, true) !== false;
+  },
+  setDevCases(on) {
+    this.safeSet(this.KEY_DEV_CASES, !!on);
+  },
+
   // [dev] wipe every saved value this game created (all keys start with "er_")
   resetAll() {
     try {
       Object.keys(localStorage)
-        // keep each room's "last case" (so a reset brings a different case) and the AI switch
-        .filter((k) => k.startsWith("er_") && !k.endsWith("_last_case") && k !== "er_ai_grading")
+        // keep each room's "last case" (so a reset brings a different case) and the dev switches
+        .filter((k) => k.startsWith("er_") && !k.endsWith("_last_case") && k !== "er_ai_grading" && k !== "er_dev_cases")
         .forEach((k) => localStorage.removeItem(k));
     } catch {
       /* storage blocked */
@@ -231,4 +240,41 @@ async function askAIGrader(payload, timeoutMs = 30000) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+/* ---------------------------------------------------------
+   [dev] Case picker on a game's menu screen (temporary, for testing).
+   Shown only while "[dev] case picker" is on (title screen).
+   Picking a case makes it today's case for that game, clears today's
+   result and draft for it, and reloads so the run starts fresh.
+     where     – element to put the picker in (the menu screen)
+     cases     – [{ id, title }]
+     currentId – the case loaded now
+     pickKey   – storage key holding today's case id
+     clearKeys – storage keys to wipe (today's result / draft)
+   --------------------------------------------------------- */
+function devCasePicker({ where, cases, currentId, pickKey, clearKeys = [] }) {
+  if (!where || !Store.getDevCases()) return;
+  const box = document.createElement("label");
+  box.className = "dev-case";
+  box.innerHTML = "<span>[dev] case</span>";
+  const sel = document.createElement("select");
+  cases.forEach((c) => {
+    const o = document.createElement("option");
+    o.value = c.id;
+    o.textContent = c.title || c.name || c.id;
+    o.selected = c.id === currentId;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", () => {
+    try {
+      clearKeys.forEach((k) => localStorage.removeItem(k));
+    } catch {
+      /* storage blocked */
+    }
+    Store.safeSet(pickKey, sel.value);
+    location.reload();
+  });
+  box.appendChild(sel);
+  where.appendChild(box);
 }

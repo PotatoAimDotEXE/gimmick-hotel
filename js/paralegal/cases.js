@@ -172,63 +172,63 @@ const PARALEGAL_CASES = [
     versions: {
       easy: {
         report: [
-          "Jane Maid was cleaning a hallway in the hotel. She saw a painting of a garden with a little black cat on a stone bench. She left her cleaning cart near the painting and went to get more spray.",
-          "When Jane came back, [[the cat was gone from the painting]]. [[Wet paw prints]] went from the wall under the painting [[to her cart]]. The [[blue-striped towel]] she had left on the cart [[was gone]].",
+          "Jane Maid was cleaning a hallway in the hotel. She saw a painting of a garden with a little black cat on a stone bench. She was using a brass luggage trolley to carry clean towels. She left the trolley near the painting and went to get more spray.",
+          "When Jane came back, [[the cat was gone from the painting]]. [[Wet paw prints]] went from the wall under the painting [[to her trolley]]. The [[blue-striped towel]] she had left on the trolley [[was gone]].",
           "Then Jane looked at the painting again. [[The cat was back]], curled up on a [[blue-striped towel]].",
         ],
         evidence: [
-          { label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a [[bare stone bench]]." },
-          { label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints cross the carpet between the wall under the painting and Jane's cleaning cart." },
+          { image: "../assets/paralegal/evidence/painted-cat-a.png", label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a stone bench next to a clay pot. [[There is no towel on the bench]]." },
+          { image: "../assets/paralegal/evidence/painted-cat-b.png", label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints on the carpet go right up to a wheel of Jane's luggage trolley." },
         ],
         task: { title: "Give the incident a short title.", summary: "In one or two sentences, explain what happened to the cat and how the paw prints and towel help explain it." },
         rubric: [
           { what: "Gives a short title about the cat leaving the painting", field: "title", need: [["cat", "kitty", "kitten", "feline"]] },
           { what: "Says the cat disappeared from the painting", field: "summary", need: [["gone", "disappear", "vanish", "left", "leave", "out of", "escape", "missing", "stepped out", "walked out"]] },
           { what: "Says the cat came back", field: "summary", need: [["back", "return", "reappear", "again"]] },
-          { what: "Says the paw prints show the cat walked from the painting to the cart", field: "summary", need: [["paw", "print", "footprint", "track"], ["cart"]] },
-          { what: "Says the cat took Jane's towel, because the towel in the painting matches the one missing from the cart", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
+          { what: "Says the paw prints show the cat walked from the painting to the trolley", field: "summary", need: [["paw", "print", "footprint", "track"], ["trolley", "cart"]] },
+          { what: "Says the cat took Jane's towel, because the towel in the painting matches the one missing from the trolley", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
         ],
         sample: {
           title: "The Cat That Left Its Painting",
-          summary: "The cat walked out of the painting and left wet paw prints to Jane's cart. It took her blue-striped towel and came back to sleep on it in the painting.",
+          summary: "The cat walked out of the painting and left wet paw prints to Jane's trolley. It took her blue-striped towel and came back to sleep on it in the painting.",
         },
       },
 
       medium: {
         report: [
-          "Jane Maid was cleaning the hotel's third-floor hallway. As she passed a painting of the hotel garden, she noticed the little black cat painted on a stone bench. She parked her cleaning cart nearby and went to refill her spray bottle.",
-          "When Jane came back, [[the bench in the painting was empty]]. A trail of [[wet paw prints]] led from the wall below the frame [[to her cart]], and the [[blue-striped hand towel]] she'd left on the top shelf [[was gone]].",
+          "Jane Maid was cleaning the hotel's third-floor hallway. As she passed a painting of the hotel garden, she noticed the little black cat painted on a stone bench. She parked the brass luggage trolley she used for carrying towels nearby and went to refill her spray bottle.",
+          "When Jane came back, [[the bench in the painting was empty]]. A trail of [[wet paw prints]] led from the wall below the frame [[to her trolley]], and the [[blue-striped hand towel]] she'd left on top of the towel pile [[was gone]].",
           "Jane looked back at the painting. [[The cat was on the bench again]], curled up on a [[blue-striped towel]].",
         ],
         evidence: [
-          { label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a [[bare stone bench]]." },
-          { label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints cross the carpet between the wall beneath the painting and Jane's cleaning cart." },
-          { label: "C. Jane's cleaning cart, item description", kind: "picture", text: "The top shelf holds a stack of plain white towels. Jane says she left a single [[blue-striped towel]] on top of the stack before she went to refill her bottle." },
+          { image: "../assets/paralegal/evidence/painted-cat-a.png", label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a stone bench next to a clay pot. [[There is no towel on the bench]]." },
+          { image: "../assets/paralegal/evidence/painted-cat-b.png", label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints cross the carpet from the wall beneath the painting and stop at a wheel of Jane's luggage trolley." },
+          { image: "../assets/paralegal/evidence/painted-cat-c.png", label: "C. Jane's luggage trolley, hallway photo", kind: "picture", text: "Paw prints lead across the carpet to the trolley. Its base holds a pile of plain folded towels. Jane says she left a single [[blue-striped towel]] on top of the pile before she went to refill her bottle." },
         ],
         task: { title: "Give the incident a short title.", summary: "In one or two sentences, explain what happened to the cat and how the paw prints and towel help explain it." },
         rubric: [
           { what: "Gives the incident a short title that captures the main event (the cat)", field: "title", need: [["cat", "kitty", "kitten", "feline"]] },
           { what: "Says the cat disappeared from the painting", field: "summary", need: [["gone", "disappear", "vanish", "left", "leave", "out of", "escape", "missing", "stepped out", "walked out", "empty"]] },
           { what: "Says the cat reappeared", field: "summary", need: [["back", "return", "reappear", "again"]] },
-          { what: "Explains how the paw prints suggest the cat stepped out of the painting and went to the cart", field: "summary", need: [["paw", "print", "footprint", "track"], ["cart"]] },
-          { what: "Connects the towel missing from the cart with the towel that appeared in the painting", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
+          { what: "Explains how the paw prints suggest the cat stepped out of the painting and went to the trolley", field: "summary", need: [["paw", "print", "footprint", "track"], ["trolley", "cart"]] },
+          { what: "Connects the towel missing from the trolley with the towel that appeared in the painting", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
         ],
         sample: {
           title: "The Cat That Left Its Painting",
-          summary: "The painted cat disappeared, and wet paw prints led from its frame to Jane's cart. It reappeared in the painting curled up on a towel that matched the one missing from her cart, suggesting it had stepped out to take it.",
+          summary: "The painted cat disappeared, and wet paw prints led from its frame to Jane's trolley. It reappeared in the painting curled up on a towel that matched the one missing from her trolley, suggesting it had stepped out to take it.",
         },
       },
 
       hard: {
         report: [
-          "Late in the afternoon, Jane Maid was cleaning the third-floor hallway, where a large painting of the hotel garden hangs between Rooms 304 and 306. As she passed it, she noticed the little black cat painted on a stone bench and smiled; she had always liked that detail. She parked her cleaning cart a few steps away and went down the hall to refill her spray bottle.",
+          "Late in the afternoon, Jane Maid was cleaning the third-floor hallway, where a large painting of the hotel garden hangs between Rooms 304 and 306. As she passed it, she noticed the little black cat painted on a stone bench and smiled; she had always liked that detail. She had borrowed a brass luggage trolley from the front desk to carry fresh towels, and she parked it a few steps away before going down the hall to refill her spray bottle.",
           "When she returned, she stopped short. The stone bench in the painting was empty. She looked up and down the hallway, then down at the carpet, which was still damp from her mopping.",
           "By the time she looked back at the painting, the cat was on the bench once more, curled up on something blue and white.",
         ],
         evidence: [
-          { label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a bare stone bench." },
-          { label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints run across the damp carpet from the wall beneath the painting to Jane's cleaning cart, then turn and lead back to the wall." },
-          { label: "C. Jane's cleaning cart, item description", kind: "picture", text: "The top shelf holds a stack of plain white towels. Jane says she left a single blue-striped hand towel on top of the stack before she went to refill her bottle." },
+          { image: "../assets/paralegal/evidence/painted-cat-a.png", label: "A. Hotel inventory photo, garden painting", kind: "picture", text: "The photo shows a black cat sitting on a stone bench. The only other thing on the bench is a small clay pot." },
+          { image: "../assets/paralegal/evidence/painted-cat-b.png", label: "B. Wet paw prints, hallway photo", kind: "picture", text: "Small paw prints run across the damp carpet from the wall beneath the painting to a wheel of Jane's luggage trolley, then turn and lead back to the wall." },
+          { image: "../assets/paralegal/evidence/painted-cat-c.png", label: "C. Jane's luggage trolley, hallway photo", kind: "picture", text: "The trolley stands in the hallway with a pile of plain folded towels on its base. Jane says she left a single blue-striped hand towel on top of the pile before she went to refill her bottle." },
           { label: "D. Housekeeping notice board", kind: "note", text: "“Reminder: Mochi, the hotel's ginger cat, naps in the lobby every afternoon. Please don't let her upstairs.”" },
         ],
         task: { title: "Give the incident a short title.", summary: "In one or two sentences, explain what happened to the cat and how the paw prints and towel help explain it." },
@@ -237,16 +237,16 @@ const PARALEGAL_CASES = [
           { what: "Says the cat disappeared from the painting", field: "summary", need: [["gone", "disappear", "vanish", "left", "leave", "out of", "escape", "missing", "stepped out", "walked out", "empty"]] },
           { what: "Says the cat reappeared", field: "summary", need: [["back", "return", "reappear", "again", "once more"]] },
           {
-            what: "Explains that the paw prints run from the wall under the painting to the cart and back, so the cat left the painting and returned (blaming Mochi loses this point)",
+            what: "Explains that the paw prints run from the wall under the painting to the trolley and back, so the cat left the painting and returned (blaming Mochi loses this point)",
             field: "summary",
-            need: [["paw", "print", "footprint", "track"], ["cart"]],
+            need: [["paw", "print", "footprint", "track"], ["trolley", "cart"]],
             blame: ["mochi", "ginger"],
           },
-          { what: "Works out that the cat is lying on Jane's towel: her blue-striped towel is no longer on the cart, and the inventory photo shows the bench was bare before", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
+          { what: "Works out that the cat is lying on Jane's towel: her blue-striped towel is no longer on the trolley, and the inventory photo shows there was no towel on the bench before", field: "summary", need: [["towel"], ["took", "take", "stole", "jane's", "her", "match", "same", "missing"]] },
         ],
         sample: {
           title: "The Cat That Left Its Painting",
-          summary: "The painted cat vanished from its bench, and wet paw prints ran from the wall under the painting to Jane's cart and back. When it reappeared, it was curled on Jane's blue-striped towel, because that towel is missing from her cart and the inventory photo shows the bench used to be bare.",
+          summary: "The painted cat vanished from its bench, and wet paw prints ran from the wall under the painting to Jane's trolley and back. When it reappeared, it was curled on Jane's blue-striped towel, because that towel is missing from her trolley and the inventory photo shows no towel on the bench before.",
         },
         traps: [
           { name: "The title trap", info: "A title about only the towel or the paw prints misses the main event: the cat leaving the painting.", field: "title", titleMiss: true },

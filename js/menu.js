@@ -85,6 +85,19 @@
   });
   renderAI();
 
+  // ---- [dev] case picker on/off (shows a case list on each game's menu) ----
+  const casesBtn = $("btn-devcases");
+  function renderCases() {
+    const on = Store.getDevCases();
+    casesBtn.textContent = "[dev] case picker: " + (on ? "on" : "off");
+    casesBtn.setAttribute("aria-pressed", on);
+  }
+  casesBtn.addEventListener("click", () => {
+    Store.setDevCases(!Store.getDevCases());
+    renderCases();
+  });
+  renderCases();
+
   // ---- [dev] Reset all saved data (two clicks to confirm) ----
   const resetBtn = $("btn-reset");
   let resetArmed = false;

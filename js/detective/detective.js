@@ -35,6 +35,7 @@
     return pick;
   }
   const caseData = pickCase();
+  devCasePicker({ where: document.getElementById("screen-menu"), cases: CASES, currentId: caseData.id, pickKey: KEY_PICK, clearKeys: [KEY_RESULT, KEY_DRAFT] });
 
   const MAX_PICK = 4; // points for choosing the right person (automatic)
   const MAX_REASON = 6; // points for the reasoning (AI)

@@ -31,6 +31,7 @@
     return pick;
   }
   const log = pickCase();
+  devCasePicker({ where: document.getElementById("screen-menu"), cases: LOGS, currentId: log.id, pickKey: KEY_PICK, clearKeys: [KEY_RESULT, KEY_DRAFT] });
 
   const TYPE_SPEED = 26; // ms per letter
 

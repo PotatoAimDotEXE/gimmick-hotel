@@ -542,3 +542,45 @@ body.game-dark .topbar .key-hint { color: #bbb; }
   .crt-fx::after { display: none; }
   #screen-debrief .pp-john, .pp-game #screen-debrief .pp-debrief-stage::before { filter: none; }
 }
+
+/* ---------- Paranormal Paralegal: evidence photos ----------
+   The picture fills the rest of the sheet (pixel art kept crisp), with the
+   description and its key points underneath as a caption. */
+.pp-page:has(.pp-photo) { display: flex; flex-direction: column; }
+.pp-photo { flex: 1; min-height: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.pp-photo .pp-img {
+  flex: 1;
+  min-height: 9rem;          /* on short screens the sheet scrolls instead of the photo shrinking away */
+  max-height: none;
+  width: 100%;
+  margin: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.pp-photo figcaption { margin: 0; font-size: 0.82rem; line-height: 1.5; }
+
+/* ---------- [dev] case picker on each game's menu (temporary) ---------- */
+.dev-case {
+  position: absolute;
+  right: 0.8rem;
+  top: 0.7rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.5rem;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px dashed #bbb;
+  color: #ddd;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+.dev-case select {
+  width: auto;
+  margin: 0;
+  font: inherit;
+  padding: 0.15rem 0.3rem;
+  background: #111;
+  color: #eee;
+  border: 1px solid #777;
+}
