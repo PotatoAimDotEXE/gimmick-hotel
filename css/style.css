@@ -494,3 +494,19 @@ button:hover, button:focus-visible {
   .hallway-page .door p, .hallway-page .best { font-size: 0.85rem; }
   .hallway-page .footer { position: static; }
 }
+
+/* game logos above the doors (assets/hallway/logo-*.png), sized by height so they
+   sit in the gap between the panel's ornament and the door arch */
+.hallway-page .door-label { height: 14cqh; justify-content: flex-end; }
+.hallway-page .door-logo {
+  display: block;
+  width: auto;
+  max-width: 28cqw;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+}
+.hallway-page .logo-effective-detective { height: 12.5cqh; }
+.hallway-page .logo-interrogation-station { height: 10.5cqh; }
+.hallway-page .logo-paranormal-paralegal { height: 13.5cqh; }
+/* games 1 and 2 sit a little higher than the round stamp */
+.hallway-page .logo-effective-detective { margin-bottom: 1.2cqh; }
+.hallway-page .logo-interrogation-station { margin-bottom: 2.5cqh; }

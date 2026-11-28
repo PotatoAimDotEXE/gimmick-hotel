@@ -56,13 +56,13 @@ const PARALEGAL_CASES = [
     versions: {
       easy: {
         report: [
-          "Just after midnight, Tung Tung Tung Sahur was carrying a wooden bat across the hotel lobby. The bell at the empty coat-check desk rang, so he went to look. A yellow [[umbrella]] rose out of the stand, [[opened by itself]], and floated past him. [[Nobody was holding it]].",
+          "Just after midnight, Tung Tung Tung Sahur was carrying a wooden bat across the hotel lobby. The bell at the empty coat-check desk rang, so he went to look. A black [[umbrella]] rose out of the stand, [[opened by itself]], and floated past him. [[Nobody was holding it]].",
           "Tung jumped and [[dropped the bat]]. It [[chipped]] when it hit the floor. When he picked it up, a [[splinter cut his thumb]], and a little [[blood got on the bat]].",
           "The [[elevator]] doors opened. The umbrella [[floated inside]] and closed itself just before the doors shut.",
         ],
         evidence: [
-          { label: "A. Yellow umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
-          { label: "B. Chipped wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end. There is a [[small smear of blood]] on the edge of the chip." },
+          { image: "../assets/paralegal/evidence/floaty-breller-a.png", label: "A. Black umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
+          { image: "../assets/paralegal/evidence/floaty-breller-b.png", label: "B. Chipped wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end. There is a [[small smear of blood]] on the edge of the chip." },
         ],
         task: { title: "Give the incident a short title.", summary: "In one or two sentences, describe what Tung saw and explain how blood got on the bat." },
         rubric: [
@@ -74,18 +74,18 @@ const PARALEGAL_CASES = [
         ],
         sample: {
           title: "The Umbrella That Took the Elevator",
-          summary: "Tung saw a yellow umbrella float by itself into the elevator. He dropped his bat in surprise and it chipped, and then a splinter cut his thumb when he picked it up.",
+          summary: "Tung saw a black umbrella float by itself into the elevator. He dropped his bat in surprise and it chipped, and then a splinter cut his thumb when he picked it up.",
         },
       },
 
       medium: {
         report: [
-          "Just after midnight, Tung Tung Tung Sahur was returning a wooden bat to the hotel storeroom when the bell at the empty coat-check desk rang. He went over to check. A yellow [[umbrella]] rose out of the stand, [[snapped open]], and floated past him. [[Nobody was holding it]].",
+          "Just after midnight, Tung Tung Tung Sahur was returning a wooden bat to the hotel storeroom when the bell at the empty coat-check desk rang. He went over to check. A black [[umbrella]] rose out of the stand, [[snapped open]], and floated past him. [[Nobody was holding it]].",
           "Tung jumped back and [[dropped the bat]]. It [[chipped when it hit the tile]], and a [[splinter nicked his thumb]] when he picked it up. Across the lobby, the [[elevator]] doors opened. The umbrella [[drifted inside]] and folded itself just before the doors closed.",
         ],
         evidence: [
-          { label: "A. Yellow umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
-          { label: "B. Chipped and bloodied wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end. A [[small smear of blood]] marks the edge of the chip." },
+          { image: "../assets/paralegal/evidence/floaty-breller-a.png", label: "A. Black umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
+          { image: "../assets/paralegal/evidence/floaty-breller-b.png", label: "B. Chipped and bloodied wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end. A [[small smear of blood]] marks the edge of the chip." },
           {
             label: "C. Front desk incident log",
             kind: "table",
@@ -109,20 +109,20 @@ const PARALEGAL_CASES = [
         ],
         sample: {
           title: "The Umbrella That Took the Elevator",
-          summary: "Tung heard the coat-check bell and saw a yellow umbrella float into the elevator on its own. He dropped his bat in surprise and it chipped, then he nicked his thumb on a splinter when he picked it up.",
+          summary: "Tung heard the coat-check bell and saw a black umbrella float into the elevator on its own. He dropped his bat in surprise and it chipped, then he nicked his thumb on a splinter when he picked it up.",
         },
       },
 
       hard: {
         report: [
           "Just after midnight, the lobby was empty apart from Tung Tung Tung Sahur, who was carrying a wooden bat back toward the storeroom at the far end of the east corridor. Halfway across the lobby, he heard the bell at the coat-check desk ring, although no attendant had been on duty there since eleven. He went over to investigate.",
-          "As he reached the counter, a yellow umbrella rose out of the stand, snapped open, and floated past him at head height. There was no one holding it. Tung leapt backward, and the bat slipped from his grip and struck the tiled floor. He snatched it up again almost at once, wincing, and stared across the lobby.",
+          "As he reached the counter, a black umbrella rose out of the stand, snapped open, and floated past him at head height. There was no one holding it. Tung leapt backward, and the bat slipped from his grip and struck the tiled floor. He snatched it up again almost at once, wincing, and stared across the lobby.",
           // last sentence added so the loose nail (storeroom, 12:20) is clearly ruled out
           "The elevator doors had slid open. The umbrella drifted inside, folded itself neatly, and the doors closed behind it. Tung never made it to the storeroom that night.",
         ],
         evidence: [
-          { label: "A. Yellow umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
-          { label: "B. Chipped wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end, and a sharp splinter sticks out from the broken edge. A small smear of blood marks the edge of the chip." },
+          { image: "../assets/paralegal/evidence/floaty-breller-a.png", label: "A. Black umbrella, lobby camera still", kind: "picture", text: "The umbrella is open and floating above the elevator floor. Its handle hangs in midair." },
+          { image: "../assets/paralegal/evidence/floaty-breller-b.png", label: "B. Chipped wooden bat, item description", kind: "picture", text: "A piece of wood is missing from one end, leaving a sharp, broken edge. A small smear of blood marks the edge of the chip." },
           {
             label: "C. Front desk incident log",
             kind: "table",
@@ -144,19 +144,19 @@ const PARALEGAL_CASES = [
           { what: "Says the umbrella entered the elevator", field: "summary", need: [["elevator", "lift"]] },
           { what: "Explains that Tung dropped the bat in shock and it chipped on the tiles", field: "summary", need: [["drop", "fell", "slip", "let go"], ["chip", "broke", "broken", "crack", "damage"]] },
           {
-            what: "Works out that Tung cut his thumb on the splinter when he snatched the bat up, which left the blood at the chip (blaming the loose nail loses this point)",
+            what: "Works out that Tung cut his thumb on the sharp chipped edge when he snatched the bat up, which left the blood at the chip (blaming the loose nail loses this point)",
             field: "summary",
-            need: [["splinter"], ["thumb", "finger", "hand", "cut", "nick"]],
+            need: [["splinter", "sharp", "edge", "chip", "broken"], ["thumb", "finger", "hand", "cut", "nick"]],
             blame: ["nail"],
           },
         ],
         sample: {
           title: "The Umbrella That Took the Elevator",
-          summary: "Just after midnight, Tung saw a yellow umbrella open by itself, float across the lobby and fold itself inside the elevator. He dropped his bat in shock and chipped it, then cut his thumb on the splinter when he grabbed it again, which explains the blood at the chip and the bandage he got at 12:05.",
+          summary: "Just after midnight, Tung saw a black umbrella open by itself, float across the lobby and fold itself inside the elevator. He dropped his bat in shock and chipped it, then cut his thumb on the sharp chipped edge when he grabbed it again, which explains the blood at the chip and the bandage he got at 12:05.",
         },
         traps: [
           { name: "The title trap", info: "The bat and the blood are vivid, but the main event is the umbrella.", field: "title", titleMiss: true },
-          { name: "The loose nail", info: "The nail was reported on a storeroom shelf at 12:20. The splinter and blood on the bat explain the cut.", field: "summary", blame: ["nail"] },
+          { name: "The loose nail", info: "The nail was reported on a storeroom shelf at 12:20. The sharp chipped edge and the blood on the bat explain the cut.", field: "summary", blame: ["nail"] },
         ],
       },
     },
@@ -271,7 +271,7 @@ const PARALEGAL_CASES = [
           "Sue Pervisor [[played the music again]]. The plushie [[floated up and sang the same line again]].",
         ],
         evidence: [
-          { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
+          { image: "../assets/paralegal/evidence/verity-a.png", label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
             label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",
@@ -306,7 +306,7 @@ const PARALEGAL_CASES = [
           "Sue Pervisor [[wound the music box again]]. The plushie [[rose and sang the same line]].",
         ],
         evidence: [
-          { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
+          { image: "../assets/paralegal/evidence/verity-a.png", label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
             label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",
@@ -341,7 +341,7 @@ const PARALEGAL_CASES = [
           "Sue Pervisor stared at it for a long moment. Then, to be sure, she wound the music box a second time and watched closely.",
         ],
         evidence: [
-          { label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
+          { image: "../assets/paralegal/evidence/verity-a.png", label: "A. Verity, plushie tag", kind: "picture", text: "The name VERITY is stitched onto the back of the plushie." },
           {
             label: "B. Sue Pervisor's lost-and-found log",
             kind: "table",

@@ -292,9 +292,15 @@
       return el;
     };
     const fits = (el) => el.scrollHeight <= el.clientHeight + 1;
+    // the rows carried over keep their list / table (with its header row)
+    const wrapRows = (list, rows) => {
+      if (list.tagName !== "TBODY") return `<ul>${rows}</ul>`;
+      const table = list.closest("table");
+      return `<table class="${table.className}">${table.tHead ? table.tHead.outerHTML : ""}<tbody>${rows}</tbody></table>`;
+    };
     const splitLongEvidence = (sheet, contHead) => {
       const ev = sheet.lastElementChild;
-      const list = ev && ev.querySelector("ul");
+      const list = ev && (ev.querySelector("ul") || ev.querySelector("tbody")); // a list, or a table's rows
       if (!list || list.children.length < 2) return sheet; // nothing to split: this sheet scrolls
       const moved = [];
       const note = ev.querySelector(".dl-ev-note");
@@ -309,7 +315,7 @@
       const next = newSheet(contHead);
       next.insertAdjacentHTML(
         "beforeend",
-        `<div class="dl-evidence"><h3>${escapeHtml(title)} <small>(continued)</small></h3><ul>${moved.join("")}</ul>${noteHtml}</div>`
+        `<div class="dl-evidence"><h3>${escapeHtml(title)} <small>(continued)</small></h3>${wrapRows(list, moved.join(""))}${noteHtml}</div>`
       );
       return fits(next) ? next : splitLongEvidence(next, contHead);
     };
@@ -429,6 +435,48 @@
     return escapeHtml(t.replace("{count}", NUMBER_WORDS[n] || n)).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   }
 
+  // one piece of evidence: a quote, list, table, form, chat, receipt, sign or picture (see cases.js)
+  function evidenceBody(ev) {
+    const e = escapeHtml;
+    if (ev.table) {
+      const head = ev.table.head.map((h) => `<th>${e(h)}</th>`).join("");
+      const rows = ev.table.rows.map((r) => `<tr>${r.map((c) => `<td>${e(c)}</td>`).join("")}</tr>`).join("");
+      return `<table class="ev-table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    if (ev.form) {
+      return `<dl class="ev-form">${ev.form.map(([k, v]) => `<dt>${e(k)}</dt><dd>${e(v)}</dd>`).join("")}</dl>`;
+    }
+    if (ev.chat) {
+      return `<div class="ev-chat">${ev.chat
+        .map((m) => `<div class="ev-msg"><p class="ev-from">${e(m.from)}<span>${e(m.time || "")}</span></p><p class="ev-bubble">${e(m.text)}</p></div>`)
+        .join("")}</div>`;
+    }
+    if (ev.receipt) {
+      return `<div class="ev-receipt">${ev.receipt.map((l) => `<p>${e(l)}</p>`).join("")}</div>`;
+    }
+    if (ev.notice) return `<div class="ev-notice"><p>${e(ev.notice)}</p></div>`;
+    if (ev.picture) {
+      const pic = ev.image
+        ? `<img class="ev-img" src="${ev.image}" alt="${e(ev.picture)}" />`
+        : `<div class="ev-pic-slot"><span>[ picture ]</span><p>${e(ev.picture)}</p></div>`;
+      return `<figure class="ev-picture">${pic}${ev.caption ? `<figcaption>${e(ev.caption)}</figcaption>` : ""}</figure>`;
+    }
+    if (ev.lines) return `<ul>${ev.lines.map((l) => `<li>${e(l)}</li>`).join("")}</ul>`;
+    return `<p>${e(ev.text || "")}</p>`;
+  }
+
+  // the same evidence as plain text, for the AI grader
+  function evidencePlain(ev) {
+    if (ev.table) return ev.table.rows.map((r) => r.map((c, i) => `${ev.table.head[i]}: ${c}`).join("; "));
+    if (ev.form) return ev.form.map(([k, v]) => `${k}: ${v}`);
+    if (ev.chat) return ev.chat.map((m) => `${m.from} (${m.time}): “${m.text}”`);
+    if (ev.receipt) return [ev.receipt.join(" – ")];
+    if (ev.notice) return [`Sign: “${ev.notice}”`];
+    if (ev.picture) return [`Picture: ${ev.picture}.` + (ev.caption ? " " + ev.caption : "")];
+    if (ev.lines) return ev.lines;
+    return [ev.text || ""];
+  }
+
   function renderInvestigation() {
     const cv = caseView();
     $("case-question").textContent = cv.question;
@@ -437,9 +485,7 @@
     fileBlocks = {
       report: cv.report.map((t) => `<p>${fillText(t)}</p>`),
       evidence: cv.evidence.map((ev) => {
-        const body = ev.lines
-          ? `<ul>${ev.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}</ul>`
-          : `<p>${escapeHtml(ev.text)}</p>`;
+        const body = evidenceBody(ev);
         const note = ev.note ? `<p class="dl-ev-note">${escapeHtml(ev.note)}</p>` : "";
         return `<div class="dl-evidence"><h3>${escapeHtml(ev.label)}</h3>${body}${note}</div>`;
       }),
@@ -647,7 +693,7 @@
     return {
       title: caseData.title,
       report: cv.report.map(plain),
-      evidence: cv.evidence.map((ev) => ({ label: ev.label, text: ev.text || "", lines: ev.lines || [], note: ev.note || "" })),
+      evidence: cv.evidence.map((ev) => ({ label: ev.label, text: "", lines: evidencePlain(ev), note: ev.note || "" })),
       people: activeSuspects().map((p) => {
         const s = personView(p);
         return { name: s.name, role: s.role, question: s.q, answer: s.a + (draft.difficulty === "hard" && s.hardExtra ? " " + s.hardExtra : "") };

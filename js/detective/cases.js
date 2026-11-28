@@ -16,8 +16,18 @@
                      **text** -> bold
      evidence      evidence items (right page)
                      label  heading line
-                     text   a quote, OR lines: [...] for a list
                      note   small italic line under it (optional)
+                   plus ONE of these for the body:
+                     text     a quote
+                     lines    [...] a bullet list
+                     table    { head: [...], rows: [[...], ...] }
+                     form     [["Field", "value"], ...] (two columns)
+                     chat     [{ from, time, text }, ...] (phone chat bubbles)
+                     receipt  [...] lines, printed like a till receipt
+                     notice   text on a pinned sign
+                     picture  what the picture shows. A square frame with
+                              this inside until image: "path" is added.
+                              caption: text under the picture (optional)
      suspects      exactly 5 people of interest
                      q = the detective's question, a = their answer
                      hardExtra = extra sentence only on hard mode
@@ -51,17 +61,26 @@ const CASES = [
     ],
     evidence: [
       {
-        label: "A. Gala check-in log, 6:42 p.m.",
-        text: "“Tung Tung Tung Sahur signed in at the lobby desk while the five knocks were playing. I checked his name and handed him his volunteer badge.”",
-        note: "Signed by the front desk clerk.",
+        label: "A. Gala check-in log, lobby desk",
+        table: {
+          head: ["Time", "Name", "Given out"],
+          rows: [
+            ["6:31 p.m.", "Dana Whitlow", "Guest wristband"],
+            ["6:36 p.m.", "Mr. and Mrs. Okafor", "2 guest wristbands"],
+            ["6:42 p.m.", "Tung Tung Tung Sahur", "Volunteer badge"],
+            ["6:48 p.m.", "Priya Nand", "Guest wristband"],
+          ],
+        },
+        note: "Kept by the front desk clerk, who checked each name in person and handed over the badge or wristband.",
       },
       {
         label: "B. Hotel floor plan, ground floor",
-        text: "“The pool terrace is at the back of the hotel, opposite the lobby. The display room's only door opens onto the ballroom hallway. A solid wall blocks the view of that door from the pool terrace.”",
+        picture: "Floor plan of the ground floor",
+        caption: "The pool terrace is at the back of the hotel, opposite the lobby. The display room's only door opens onto the ballroom hallway. A solid wall blocks the view of that door from the pool terrace.",
       },
       {
         label: "C. Hotel guest group chat, 6:46 p.m.",
-        text: "“Pretty sure Tralalero took it. My cousin said one of the guests saw blue shoes near the ballroom.”",
+        chat: [{ from: "Room 214", time: "6:46 p.m.", text: "Pretty sure Tralalero took it. My cousin said one of the guests saw blue shoes near the ballroom." }],
       },
     ],
     suspects: [
@@ -141,12 +160,13 @@ const CASES = [
         evidence: [
           {
             label: "A. Security footage, 8:20 p.m.",
-            text: "“The second-floor camera shows Jack O'Lantern walking down the hall at 8:20 p.m. You can see his face.”",
+            picture: "Second-floor camera still, 20:20",
+            caption: "The second-floor camera shows Jack O'Lantern walking down the hall at 8:20 p.m. You can see his face.",
             note: "Recorded by Sue Pervisor, the night supervisor.",
           },
           {
             label: "B. Guest group chat, 8:35 p.m.",
-            text: "“Jane's cart was right next to the fire alarm. It must be her!”",
+            chat: [{ from: "Room 118", time: "8:35 p.m.", text: "Jane's cart was right next to the fire alarm. It must be her!" }],
           },
         ],
         rubric: [
@@ -167,16 +187,17 @@ const CASES = [
         evidence: [
           {
             label: "A. Security footage review, 8:20 p.m.",
-            text: "“The second-floor hallway camera shows Jack O'Lantern walking past the reading room toward the stairwell at 8:20 p.m. His face is clearly visible when he looks behind him.”",
+            picture: "Second-floor hallway camera still, 20:20",
+            caption: "The second-floor hallway camera shows Jack O'Lantern walking past the reading room toward the stairwell at 8:20 p.m. His face is clearly visible when he looks behind him.",
             note: "Recorded by Sue Pervisor, the night supervisor.",
           },
           {
             label: "B. Hotel guest directory",
-            text: "“The second floor, including the reading room, is open to all hotel guests until 10 p.m.”",
+            notice: "The second floor, including the reading room, is open to all hotel guests until 10 p.m.",
           },
           {
             label: "C. Hotel guest group chat, 8:40 p.m.",
-            text: "“My friend says Jane's cart was right next to the fire alarm. Only staff are allowed on the second floor at night, so it had to be her.”",
+            chat: [{ from: "Room 118", time: "8:40 p.m.", text: "My friend says Jane's cart was right next to the fire alarm. Only staff are allowed on the second floor at night, so it had to be her." }],
           },
         ],
         rubric: [
@@ -197,34 +218,42 @@ const CASES = [
         evidence: [
           {
             label: "A. Security footage log, second-floor corridor",
-            lines: [
-              "20:13:40 – Atten Dan enters the reading room carrying a tea tray.",
-              "20:14:55 – Atten Dan leaves the reading room.",
-              "20:15:10 – Jane Maid enters the reading room with a blanket.",
-              "20:16:02 – Jane Maid leaves toward the staff lift. Her cart stays in the corridor.",
-              "20:20:14 – Jack O'Lantern walks past the reading room toward the stairwell. His face is visible when he glances back.",
-            ],
+            table: {
+              head: ["Time", "Person", "What the camera shows"],
+              rows: [
+                ["20:13:40", "Atten Dan", "Enters the reading room carrying a tea tray."],
+                ["20:14:55", "Atten Dan", "Leaves the reading room."],
+                ["20:15:10", "Jane Maid", "Enters the reading room with a blanket."],
+                ["20:16:02", "Jane Maid", "Leaves toward the staff lift. Her cart stays in the corridor."],
+                ["20:20:14", "Jack O'Lantern", "Walks past the reading room toward the stairwell. His face is visible when he glances back."],
+              ],
+            },
             note: "Note: Pull station 2B, at the stairwell corner, is outside the camera's field of view. Logged by Sue Pervisor, night supervisor.",
           },
           {
             label: "B. Fire department incident note",
-            text: "“Alarm activated: 20:21. Location: manual pull station 2B, second floor, stairwell end. No fire, smoke or heat source found. Cause: deliberate false activation.”",
+            form: [
+              ["Alarm activated", "20:21"],
+              ["Location", "Manual pull station 2B, second floor, stairwell end"],
+              ["Finding", "No fire, smoke or heat source found"],
+              ["Cause", "Deliberate false activation"],
+            ],
           },
           {
             label: "C. Hotel guest directory",
-            text: "“The second-floor reading room is open to all hotel guests from 7 a.m. until 10 p.m. The door stays unlocked during opening hours.”",
+            notice: "The second-floor reading room is open to all hotel guests from 7 a.m. until 10 p.m. The door stays unlocked during opening hours.",
           },
           {
             label: "D. Staff notice board, second floor",
-            text: "“From 10 p.m., when the reading room closes, the second-floor corridor is restricted to staff and guests staying on that floor. Keycard required at the stairwell door.”",
+            notice: "From 10 p.m., when the reading room closes, the second-floor corridor is restricted to staff and guests staying on that floor. Keycard required at the stairwell door.",
           },
           {
             label: "E. Hotel guest group chat, 20:38",
-            text: "“My friend says Jane's cart was right next to the fire alarm. There's literally a sign saying only staff can go up there at night, so it had to be her.”",
+            chat: [{ from: "Room 118", time: "20:38", text: "My friend says Jane's cart was right next to the fire alarm. There's literally a sign saying only staff can go up there at night, so it had to be her." }],
           },
           {
             label: "F. Restaurant receipt",
-            text: "“Hotel Restaurant – Table 4 – Guest: Bea – 1 x set dinner, 1 x jasmine tea – Paid: 20:12”",
+            receipt: ["HOTEL RESTAURANT", "Table 4 · Guest: Bea", "1 x set dinner", "1 x jasmine tea", "PAID 20:12"],
           },
         ],
         rubric: [
@@ -348,20 +377,24 @@ const CASES = [
     evidence: [
       {
         label: "A. Lobby security footage review, 7:14 p.m.",
-        lines: [
-          "7:14:11 – Atten takes hold of the cart and pulls it away from the wall. Jane's hands are at her sides.",
-          "7:14:12 – Jane grabs the far handle. Atten takes another step backward, pulling the cart toward the display table.",
-          "7:14:13 – The cart hits the table. The vase falls.",
-        ],
+        table: {
+          head: ["Time", "What the camera shows"],
+          rows: [
+            ["7:14:11", "Atten takes hold of the cart and pulls it away from the wall. Jane's hands are at her sides."],
+            ["7:14:12", "Jane grabs the far handle. Atten takes another step backward, pulling the cart toward the display table."],
+            ["7:14:13", "The cart hits the table. The vase falls."],
+          ],
+        },
         note: "The camera shows the lobby clearly and records no sound.",
       },
       {
         label: "B. Staff notice at the ballroom doors",
-        text: "“If a cart needs to be moved while guests are in the hallway, call the front desk. Wait for someone to clear the area before moving it.”",
+        notice: "If a cart needs to be moved while guests are in the hallway, call the front desk. Wait for someone to clear the area before moving it.",
       },
       {
         label: "C. Photo attached to a guest complaint, 7:15 p.m.",
-        text: "The photo shows Jane holding the cart handle with pieces of the vase on the floor. The caption reads, “The maid broke the vase. She was still holding the cart when I took this.”",
+        picture: "Guest's photo: Jane holding the cart handle, pieces of the vase on the floor",
+        caption: "Guest's caption: “The maid broke the vase. She was still holding the cart when I took this.”",
       },
     ],
     suspects: [
