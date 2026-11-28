@@ -75,13 +75,18 @@ async function gradeSummaryAI({ version, title, summary }) {
     return { checks, total: checks.filter((c) => c.got).length, max: checks.length, traps, feedback: out.feedback || "" };
   } catch (err) {
     console.warn("AI grader unavailable, using the keyword check:", err);
-    return null;
+    return { error: err.message };
   }
 }
 
 async function gradeSummary({ version, title, summary }) {
   const ai = await gradeSummaryAI({ version, title, summary });
-  if (ai) return ai;
+  if (ai && !ai.error) return ai;
+  const why = ai && ai.error
+    ? "The AI grader couldn't be used (" + ai.error + "), so this was marked with the simple keyword check."
+    : !AI_GRADER_URL
+    ? "Marked with the simple keyword check (no AI grader address is set in js/main.js)."
+    : "Marked with the simple keyword check, because AI grading is off. Turn it on with the [dev] button on the title screen.";
 
   await new Promise((r) => setTimeout(r, 600)); // pretend to think
 
@@ -99,6 +104,6 @@ async function gradeSummary({ version, title, summary }) {
     total: checks.filter((c) => c.got).length,
     max: checks.length,
     traps,
-    feedback: "Placeholder grading (keyword check). The AI judge will replace this and explain each point.",
+    feedback: why,
   };
 }

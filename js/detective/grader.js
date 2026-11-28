@@ -29,13 +29,15 @@ async function gradeReasoning({ caseData, suspectId, reasoning, context }) {
       });
       return { score: out.score, criteria: out.criteria || [], feedback: out.feedback || "" };
     } catch (err) {
-      return { score: null, feedback: "The AI grader couldn't be reached (" + err.message + "). Your reasoning isn't scored yet." };
+      return { score: null, feedback: "The AI grader couldn't be used (" + err.message + "), so your reasoning isn't scored." };
     }
   }
 
   await new Promise((r) => setTimeout(r, 900)); // fake "thinking" delay
   return {
     score: null, // null = not graded yet
-    feedback: "AI grading isn't connected yet. Your reasoning will be scored out of 6 here.",
+    feedback: AI_GRADER_URL
+      ? "AI grading is off, so your reasoning isn't scored. Turn it on with the [dev] button on the title screen."
+      : "No AI grader address is set in js/main.js, so your reasoning isn't scored.",
   };
 }

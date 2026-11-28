@@ -15,12 +15,30 @@
    Protection against people burning your tokens:
      - only requests from your site's address are accepted
      - each request is size-capped and the reply is capped (max_tokens)
-     - a rough per-visitor limit: 20 gradings per 10 minutes
+     - a rough per-visitor limit: 50 gradings per 10 minutes
    ========================================================= */
 
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 const MAX_BODY = 15000;              // characters of case + answer we accept
-const LIMIT = 20;                    // gradings per visitor...
+// the AI's JSON, even if it's wrapped in ```json fences or has a line of text around it
+function readJSON(text) {
+  if (typeof text !== "string" || !text.trim()) return null;
+  const t = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  try {
+    return JSON.parse(t);
+  } catch {
+    const a = t.indexOf("{");
+    const b = t.lastIndexOf("}");
+    if (a < 0 || b <= a) return null;
+    try {
+      return JSON.parse(t.slice(a, b + 1));
+    } catch {
+      return null;
+    }
+  }
+}
+
+const LIMIT = 50;                    // gradings per visitor...
 const WINDOW = 10 * 60 * 1000;       // ...per 10 minutes (best effort)
 const hits = new Map();
 
@@ -75,7 +93,7 @@ export default {
           ],
           response_format: { type: "json_object" },
           temperature: 0,
-          max_tokens: 800,
+          max_tokens: 2000,                // room for a sentence of feedback on every line
           stream: false,
         }),
       });
@@ -85,11 +103,17 @@ export default {
     if (!res.ok) return reply({ error: `DeepSeek error ${res.status}` }, 502, cors);
 
     let out;
+    let why = "";
     try {
       const data = await res.json();
-      out = JSON.parse(data.choices[0].message.content);
+      const choice = (data.choices || [])[0] || {};
+      if (choice.finish_reason === "length") why = " (it ran out of room)";
+      out = readJSON((choice.message || {}).content);
     } catch {
-      return reply({ error: "The AI's reply wasn't readable." }, 502, cors);
+      out = null;
+    }
+    if (!out) {
+      return reply({ error: "The AI's reply wasn't readable" + why + "." }, 502, cors);
     }
     return reply(body.task === "detective" ? cleanDetective(out, body) : cleanParalegal(out, body), 200, cors);
   },

@@ -224,22 +224,33 @@ function aiGradingOn() {
   return !!AI_GRADER_URL && Store.getAIGrading();
 }
 
+// Tries twice: a dropped connection, a timeout or a server hiccup gets one retry.
+// The error message is written for the player (it's shown on the breakdown).
 async function askAIGrader(payload, timeoutMs = 30000) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const res = await fetch(AI_GRADER_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: ctrl.signal,
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || "Grader error " + res.status);
-    return data;
-  } finally {
-    clearTimeout(timer);
+  let lastErr;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(AI_GRADER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: ctrl.signal,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) return data;
+      if (res.status === 429) throw Object.assign(new Error("too many gradings from this network, wait a few minutes and try again"), { final: true });
+      if (res.status < 500) throw Object.assign(new Error(data.error || "the grader refused the request (" + res.status + ")"), { final: true });
+      lastErr = new Error(data.error || "the grader had a problem (" + res.status + ")");
+    } catch (err) {
+      if (err.final) throw err;
+      lastErr = err.name === "AbortError" ? new Error("it took too long to answer") : new Error("couldn't connect to it");
+    } finally {
+      clearTimeout(timer);
+    }
   }
+  throw lastErr;
 }
 
 /* ---------------------------------------------------------

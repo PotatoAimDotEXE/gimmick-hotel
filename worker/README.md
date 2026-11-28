@@ -37,7 +37,7 @@ Commit + push. Done. Leave it `""` to go back to the placeholder graders.
 ## What's protected
 - The key never leaves Cloudflare.
 - Only your site's address (and localhost, for testing) can use the Worker.
-- Each request and reply is size-capped, and each visitor gets at most 20 gradings
+- Each request and reply is size-capped, and each visitor gets at most 50 gradings
   per 10 minutes (rough limit), so nobody can drain your tokens by spamming it.
 - If the Worker or DeepSeek is down, the games still work: Detective shows the
   reasoning as unscored, Paralegal falls back to the keyword check.
