@@ -55,7 +55,7 @@
   $("topbar-case").textContent = "Case #" + caseNumber;
 
   /* ---------------- Screen switching ---------------- */
-  const screens = ["menu", "folder", "investigate", "result"];
+  const screens = ["menu", "folder", "debrief", "investigate", "result"];
 
   function showScreen(name) {
     screens.forEach((s) => ($("screen-" + s).hidden = s !== name));
@@ -103,8 +103,7 @@
   $("btn-daily").addEventListener("click", () => {
     if (getResult()) return showResult();
     if (draft.opened) {
-      showScreen("investigate");
-      showView("file");
+      draft.debriefDone ? goInvestigate() : openDebrief();
     } else {
       renderFolder();
       showScreen("folder");
@@ -139,8 +138,130 @@
     draft.opened = true;
     saveDraft();
     renderInvestigation();
+    draft.debriefDone ? goInvestigate() : openDebrief();
+  });
+
+  function goInvestigate() {
     showScreen("investigate");
     showView("file");
+  }
+
+  /* ---------------- 2b. Debrief: John D'Brief explains how to play ----------------
+     Same as the paralegal debrief: the picture switches on like an old TV,
+     he talks one line at a time (one pose change per line), Skip / Next / Enter,
+     then the picture switches off and the case file opens. */
+  const DEBRIEF_LINES = [
+    "Evening, detective. I'm John D'Brief. I usually carry bags, but tonight I'm briefing you.",
+    "Every case asks one question. You'll see it on the banner at the top of the file.",
+    "Start with the case file: read the report, then every piece of evidence. Use the arrows to turn the pages.",
+    "Next, open People of interest and read each interview. Check what people say against what the evidence shows.",
+    "When you're ready, press Answer. Pick a person, then explain why: quote what they said and name the evidence that proves your point.",
+    "You only get one try per case, so take your time. Good luck, detective.",
+  ];
+  const TYPE_SPEED = 22; // ms per letter
+  const CRT_ON = 550;    // ms, matches crt-on in paralegal.css
+  const CRT_OFF = 420;   // ms, matches crt-off
+  const debriefScreen = $("screen-debrief");
+  const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let lineIdx = 0;
+  let typing = false;
+  let typeTimer = null;
+  let crtBusy = false;
+  let crtTimer = null;
+
+  const poses = [...document.querySelectorAll("#john .pose")];
+  let pose = 0;
+  function showPose(i) {
+    pose = i;
+    poses.forEach((p, k) => p.classList.toggle("on", k === i));
+  }
+  function startTalking() {
+    if (lineIdx === 0) return showPose(0); // first line: hand-on-chest pose
+    let next = pose;
+    while (next === pose) next = Math.floor(Math.random() * poses.length); // a different pose
+    showPose(next);
+  }
+
+  function openDebrief() {
+    lineIdx = 0;
+    $("debrief-line").textContent = "";
+    showScreen("debrief");
+    if (reducedMotion()) return typeLine();
+    crtBusy = true;
+    debriefScreen.classList.remove("crt-on", "crt-off");
+    void debriefScreen.offsetWidth; // restart the animation
+    debriefScreen.classList.add("crt-on");
+    clearTimeout(crtTimer);
+    crtTimer = setTimeout(() => {
+      crtBusy = false;
+      debriefScreen.classList.remove("crt-on");
+      typeLine(); // he starts talking once the picture is up
+    }, CRT_ON);
+  }
+
+  function typeLine() {
+    const full = DEBRIEF_LINES[lineIdx];
+    startTalking();
+    const el = $("debrief-line");
+    $("debrief-progress").textContent = `${lineIdx + 1}/${DEBRIEF_LINES.length}`;
+    el.textContent = "";
+    typing = true;
+    let i = 0;
+    clearInterval(typeTimer);
+    typeTimer = setInterval(() => {
+      el.textContent = full.slice(0, ++i);
+      if (i >= full.length) finishTyping();
+    }, TYPE_SPEED);
+  }
+
+  function finishTyping() {
+    clearInterval(typeTimer);
+    $("debrief-line").textContent = DEBRIEF_LINES[lineIdx];
+    typing = false;
+  }
+
+  function debriefNext() {
+    if (crtBusy) return;
+    if (typing) return finishTyping();
+    if (++lineIdx >= DEBRIEF_LINES.length) return endDebrief();
+    typeLine();
+  }
+
+  function endDebrief() {
+    if (crtBusy && debriefScreen.classList.contains("crt-off")) return; // already switching off
+    clearInterval(typeTimer);
+    clearTimeout(crtTimer);
+    typing = false;
+    draft.debriefDone = true;
+    saveDraft();
+    if (reducedMotion()) return goInvestigate();
+    crtBusy = true;
+    debriefScreen.classList.remove("crt-on");
+    void debriefScreen.offsetWidth;
+    debriefScreen.classList.add("crt-off");
+    crtTimer = setTimeout(() => {
+      crtBusy = false;
+      debriefScreen.classList.remove("crt-off");
+      goInvestigate();
+    }, CRT_OFF);
+  }
+
+  $("btn-debrief-next").addEventListener("click", (e) => {
+    e.currentTarget.blur();
+    debriefNext();
+  });
+  $("btn-skip").addEventListener("click", endDebrief);
+  $("btn-replay").addEventListener("click", (e) => {
+    e.currentTarget.blur();
+    openDebrief(); // afterwards it comes back to the case file, on the same page
+  });
+  $("debrief-box").addEventListener("click", () => typing && finishTyping());
+  document.addEventListener("keydown", (e) => {
+    if (debriefScreen.hidden || document.querySelector("dialog[open]")) return;
+    if (["Enter", " ", "ArrowRight"].includes(e.key)) {
+      e.preventDefault();
+      debriefNext();
+    }
   });
 
   /* ---------------- 3. Investigation ---------------- */
@@ -228,15 +349,14 @@
     setFilePage(filePage, true);
   }
 
-  function setFilePage(n, instant) {
-    if (!filePages.length) return;
-    filePage = Math.max(0, Math.min(filePages.length - 1, n));
-    fileStack.classList.toggle("on-last", filePage === filePages.length - 1); // no spare sheets under the last page
-    filePages.forEach((el, i) => {
-      const off = i < filePage;
+  // lay a pile of sheets out: sheets before idx lie on the left flap (read),
+  // the rest are piled on the right with sheet idx on top
+  function layStack(sheets, idx, instant) {
+    sheets.forEach((el, i) => {
+      const off = i < idx;
       const comingBack = !instant && el.classList.contains("off") && !off;
       el.classList.toggle("off", off);
-      el.classList.toggle("clickable", (off && i === filePage - 1) || (!off && i === filePage && i < filePages.length - 1));
+      el.classList.toggle("clickable", (off && i === idx - 1) || (!off && i === idx && i < sheets.length - 1));
       const z = off ? 100 + i : 50 - i;
       if (comingBack) {
         el.style.zIndex = 250; // stays on top while it slides back
@@ -247,6 +367,13 @@
         requestAnimationFrame(() => requestAnimationFrame(() => (el.style.transition = "")));
       }
     });
+  }
+
+  function setFilePage(n, instant) {
+    if (!filePages.length) return;
+    filePage = Math.max(0, Math.min(filePages.length - 1, n));
+    fileStack.classList.toggle("on-last", filePage === filePages.length - 1); // no spare sheets under the last page
+    layStack(filePages, filePage, instant);
     $("file-prev").disabled = filePage === 0;
     $("file-next").disabled = filePage === filePages.length - 1;
   }
@@ -319,6 +446,7 @@
     filePage = 0;
     fileDirty = true;
     paginateFile();
+    peopleBuilt = false; // people sheets are rebuilt for this case / difficulty
 
     const list = $("suspect-list");
     list.innerHTML = "";
@@ -332,22 +460,78 @@
     });
   }
 
-  function openSuspect(person) {
-    currentSuspect = person;
-    const s = personView(person);
-    const left = $("suspect-left");
-    left.innerHTML = `<div class="dl-portrait big">${portrait(s)}</div><h2></h2><p class="muted"></p>`;
-    left.querySelector("h2").textContent = s.name;
-    left.querySelector(".muted").textContent = s.role;
+  /* People of interest folder: one sheet per person (interview at the top,
+     portrait + name at the bottom). The person in focus is on the pile. */
+  const peopleStack = $("people-stack");
+  let peopleSheets = [];
+  let personIdx = 0;
+  let peopleBuilt = false;
 
-    // interview log: the detective's question + their answer
-    const answer = s.a + (draft.difficulty === "hard" && s.hardExtra ? " " + s.hardExtra : "");
-    const firstName = s.name.split(" ")[0];
-    const right = $("suspect-right");
-    right.innerHTML = `<h2>Interview Log</h2>
-      <p class="dl-q"><strong>Detective:</strong> ${escapeHtml(s.q)}</p>
-      <p class="dl-a"><strong>${escapeHtml(firstName)}:</strong> ${escapeHtml(answer)}</p>`;
+  function buildPeopleSheets() {
+    peopleSheets.forEach((el) => el.remove());
+    peopleSheets = [];
+    const list = activeSuspects();
+    list.forEach((person, i) => {
+      const s = personView(person);
+      const answer = s.a + (draft.difficulty === "hard" && s.hardExtra ? " " + s.hardExtra : "");
+      const firstName = s.name.split(" ")[0];
+      const el = document.createElement("article");
+      el.className = "df-page dl-person-sheet";
+      el.innerHTML = `<p class="df-page-no">Person ${i + 1} of ${list.length}</p>
+        <h2>Interview Log</h2>
+        <div class="dl-interview">
+          <p class="dl-q"><strong>Detective:</strong> ${escapeHtml(s.q)}</p>
+          <p class="dl-a"><strong>${escapeHtml(firstName)}:</strong> ${escapeHtml(answer)}</p>
+        </div>
+        <div class="dl-person-foot">
+          <div class="dl-portrait big dl-portrait-sheet">${portrait(s)}</div>
+          <div class="dl-person-id"><h3></h3><p></p></div>
+        </div>`;
+      el.querySelector(".dl-person-id h3").textContent = s.name;
+      el.querySelector(".dl-person-id p").textContent = s.role;
+      el.style.setProperty("--tilt", FILE_TILT[(i + 2) % FILE_TILT.length] + "deg");
+      el.addEventListener("click", (e) => {
+        if (e.target.closest("a, button")) return;
+        if (el.classList.contains("off")) setPerson(personIdx - 1);
+        else if (i === personIdx) setPerson(personIdx + 1);
+      });
+      peopleStack.appendChild(el);
+      peopleSheets.push(el);
+    });
+    peopleBuilt = true;
+  }
+
+  function setPerson(n, instant) {
+    if (!peopleSheets.length) return;
+    personIdx = Math.max(0, Math.min(peopleSheets.length - 1, n));
+    currentSuspect = activeSuspects()[personIdx];
+    layStack(peopleSheets, personIdx, instant);
+    $("people-prev").disabled = personIdx === 0;
+    $("people-next").disabled = personIdx === peopleSheets.length - 1;
+  }
+  $("people-prev").addEventListener("click", () => setPerson(personIdx - 1));
+  $("people-next").addEventListener("click", () => setPerson(personIdx + 1));
+
+  // shrink a sheet's interview text step by step until it fits (no scrolling)
+  function fitPeopleSheets() {
+    peopleSheets.forEach((el) => {
+      const box = el.querySelector(".dl-interview");
+      let size = 0.82;
+      box.style.fontSize = size + "rem";
+      while (box.scrollHeight > box.clientHeight + 1 && size > 0.64) {
+        size = Math.round((size - 0.02) * 100) / 100;
+        box.style.fontSize = size + "rem";
+      }
+    });
+  }
+  window.addEventListener("resize", () => !$("view-suspect").hidden && fitPeopleSheets());
+
+  // from the People of interest board: open the folder at that person's sheet
+  function openSuspect(person) {
+    if (!peopleBuilt) buildPeopleSheets();
     showView("suspect");
+    fitPeopleSheets();
+    setPerson(activeSuspects().findIndex((s) => s.id === person.id), true);
   }
 
   /* ---------------- Answer pop-up ---------------- */
@@ -551,6 +735,7 @@
   /* ---------------- Keyboard ---------------- */
   // Esc = back one menu:  suspect file -> suspects -> game menu -> hallway
   onEscape(() => {
+    if (!$("screen-debrief").hidden) return endDebrief(); // Esc = skip the debrief
     if (!$("screen-investigate").hidden && !$("view-suspect").hidden) return showView("suspects");
     if (!$("screen-menu").hidden) return (location.href = "../hallway.html");
     showScreen("menu");
@@ -566,10 +751,7 @@
     }
     if ($("view-suspect").hidden || $("screen-investigate").hidden || !currentSuspect) return;
     if (document.querySelector("dialog[open]")) return;
-    const list = activeSuspects();
-    const i = list.findIndex((s) => s.id === currentSuspect.id);
-    const next = (i + (e.key === "ArrowRight" ? 1 : -1) + list.length) % list.length;
-    openSuspect(list[next]);
+    setPerson(personIdx + (e.key === "ArrowRight" ? 1 : -1));
   });
 
   /* ---------------- Helpers ---------------- */

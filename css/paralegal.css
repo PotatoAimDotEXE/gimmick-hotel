@@ -645,3 +645,61 @@
 
 /* AI grader: one sentence of feedback under each rubric line */
 .pp-check-note { display: block; margin-top: 0.15rem; font-size: 0.8rem; color: var(--muted); }
+
+/* ---------- debrief layout (both games) ----------
+   Visual-novel style text box: inset from the edges with a thin light outline,
+   the speaker's name in its own outlined tag across the top edge ("[JOHN D'BRIEF]").
+   Skip / Next sit inside the box at the bottom corners. */
+#screen-debrief { padding: 0; }
+#screen-debrief .pp-debrief-stage { position: absolute; inset: 0; }
+#screen-debrief .pp-dialogue {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 4%;
+  height: 29%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 2.4rem 3.6rem;          /* room for the name tag and the buttons */
+  background: #000;
+  color: #ececec;
+  border: 2px solid #e6e6e6;
+}
+#screen-debrief .pp-speaker {
+  position: absolute;
+  left: 4%;
+  top: 0;
+  transform: translateY(-55%);
+  margin: 0;
+  padding: 0.35rem 1.3rem;
+  background: #000;
+  color: #ececec;
+  border: 2px solid #e6e6e6;
+  font-size: clamp(0.95rem, 1.5vw, 1.25rem);
+  font-weight: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+#screen-debrief .pp-speaker::before { content: "["; }
+#screen-debrief .pp-speaker::after { content: "]"; }
+#screen-debrief .pp-line {
+  flex: 1;
+  margin: 0;
+  padding: 0 4%;
+  text-align: left;
+  font-style: normal;
+  font-size: clamp(1rem, 1.55vw, 1.3rem);
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+#screen-debrief .pp-progress { top: 0.6rem; right: 1rem; bottom: auto; color: #ececec; }
+#screen-debrief .pp-row {
+  position: absolute;
+  left: calc(4% + 1.1rem);
+  right: calc(4% + 1.1rem);
+  bottom: calc(4% + 0.8rem);
+  z-index: 3;
+}
+/* John: zoomed out a little and moved up so the box covers less of him */
+#screen-debrief .pp-john { top: -1%; height: 100%; clip-path: inset(0 0 6% 0); }   /* no legs peeking out under the box */

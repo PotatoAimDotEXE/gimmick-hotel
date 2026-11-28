@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../css/paralegal.css" />
   <link rel="stylesheet" href="../css/ui.css" />
 </head>
-<body class="game">
+<body class="game game-dark pp-game">
   <header class="topbar">
     <a class="logo" href="../hallway.html">&larr; HALLWAY</a>
     <span>Room 03 · Paranormal Paralegal</span>
@@ -59,6 +59,17 @@
             <img class="pose" src="../assets/characters/john-dbrief-3.png" alt="" />
           </div>
         </div>
+          <!-- CRT screen effects: scanlines, a slow rolling band, flicker (css/ui.css) -->
+          <div class="crt-fx" aria-hidden="true"></div>
+          <svg class="crt-defs" width="0" height="0" aria-hidden="true" focusable="false">
+            <filter id="crt-wave" x="-2%" y="0" width="104%" height="100%">
+              <!-- noise that only changes down the screen = rows nudged sideways (wavy lines) -->
+              <feTurbulence type="fractalNoise" baseFrequency="0.0004 0.035" numOctaves="1" seed="1" result="n">
+                <animate attributeName="seed" values="1;4;2;7;3;9;5;8" dur="1.2s" calcMode="discrete" repeatCount="indefinite" />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </svg>
         <div class="pp-dialogue" id="debrief-box">
           <div class="pp-speaker">John D'Brief</div>
           <p class="pp-line" id="debrief-line" aria-live="polite"></p>

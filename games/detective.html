@@ -6,6 +6,8 @@
   <title>Escape Room – Effective Detective</title>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/detective.css" />
+  <!-- John D'Brief's debrief screen reuses the paralegal styles -->
+  <link rel="stylesheet" href="../css/paralegal.css" />
   <link rel="stylesheet" href="../css/ui.css" />
 </head>
 <body class="game game-dark">
@@ -60,6 +62,40 @@
         <button class="dl-back" data-go="menu">&larr; Back to menu</button>
       </section>
 
+      <!-- ============ 2b. DEBRIEF: John D'Brief explains how to play (skippable) ============ -->
+      <section class="dl-screen" id="screen-debrief" hidden>
+        <div class="pp-debrief-stage">
+          <div class="pp-debrief-scene">
+            <!-- three poses swap while he talks, same as the paralegal debrief -->
+            <div class="pp-john" id="john" aria-hidden="true">
+              <img class="pose on" src="../assets/characters/john-dbrief-1.png" alt="" />
+              <img class="pose" src="../assets/characters/john-dbrief-2.png" alt="" />
+              <img class="pose" src="../assets/characters/john-dbrief-3.png" alt="" />
+            </div>
+          </div>
+          <!-- CRT screen effects: scanlines, a slow rolling band, flicker (css/ui.css) -->
+          <div class="crt-fx" aria-hidden="true"></div>
+          <svg class="crt-defs" width="0" height="0" aria-hidden="true" focusable="false">
+            <filter id="crt-wave" x="-2%" y="0" width="104%" height="100%">
+              <!-- noise that only changes down the screen = rows nudged sideways (wavy lines) -->
+              <feTurbulence type="fractalNoise" baseFrequency="0.0004 0.035" numOctaves="1" seed="1" result="n">
+                <animate attributeName="seed" values="1;4;2;7;3;9;5;8" dur="1.2s" calcMode="discrete" repeatCount="indefinite" />
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </svg>
+          <div class="pp-dialogue" id="debrief-box">
+            <div class="pp-speaker">John D'Brief</div>
+            <p class="pp-line" id="debrief-line" aria-live="polite"></p>
+            <span class="pp-progress" id="debrief-progress"></span>
+          </div>
+        </div>
+        <div class="pp-row">
+          <button id="btn-skip">Skip debrief ▶▶</button>
+          <button class="primary" id="btn-debrief-next">Next ▶ <small>(Enter)</small></button>
+        </div>
+      </section>
+
       <!-- ============ 3. INVESTIGATION (file / suspects / suspect) ============ -->
       <section class="dl-screen" id="screen-investigate" hidden>
         <nav class="dl-toolbar">
@@ -68,6 +104,7 @@
             <button role="tab" data-view="suspects">People of interest</button>
           </div>
           <div class="dl-toolbar-right">
+            <button id="btn-replay">Replay debrief</button>
             <button data-go="menu">Menu</button>
             <button class="dl-answer-btn" id="btn-answer">✎ Answer</button>
           </div>
@@ -104,9 +141,16 @@
 
         <!-- 3c. single suspect file -->
         <div class="dl-view" id="view-suspect" hidden>
-          <div class="dl-book">
-            <article class="dl-page dl-page-profile" id="suspect-left"></article>
-            <article class="dl-page" id="suspect-right"></article>
+          <!-- one sheet per person in the same folder as the case file; the person in
+               focus is on the pile, the ones before lie on the (dimmed) left flap -->
+          <div class="df-desk" id="people-desk">
+            <div class="df-stack" id="people-stack">
+              <div class="df-flap" aria-hidden="true"></div>
+              <div class="df-board" aria-hidden="true"></div>
+              <!-- sheets are added here by detective.js -->
+            </div>
+            <button class="df-arrow prev" id="people-prev" aria-label="Previous person">◀</button>
+            <button class="df-arrow next" id="people-next" aria-label="Next person">▶</button>
           </div>
           <div class="dl-suspect-actions">
             <button data-view="suspects">&larr; People of interest</button>

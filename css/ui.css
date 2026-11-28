@@ -342,3 +342,203 @@ body.game-dark .topbar .key-hint { color: #bbb; }
 .dl-criteria { margin: 0.4rem 0 0.2rem 1.1rem; text-align: left; }
 .dl-criteria li { margin-bottom: 0.5rem; line-height: 1.35; }
 .dl-criteria em { color: #5a4632; }
+
+/* ---------- the classified folder: same closed-folder art as the paralegal game ----------
+   folder-cover.png is the front cover; folder-closed.png (papers + back folder
+   poking out) sits behind it, lined up with the cover. */
+.dl-bg .dl-folder {
+  position: relative;
+  isolation: isolate;
+  height: 74%;
+  aspect-ratio: 643 / 767;
+  border: none;
+  box-shadow: none;
+  /* three columns: the spine (left), the usable cover, the narrow right edge +
+     blue tab. Grid column % are measured on the folder itself, so the text is
+     centred on the cover at any size. */
+  display: grid;
+  grid-template-columns: 10% 1fr 15%;
+  align-content: center;
+  justify-items: center;
+  padding: 0;
+  background: url("../assets/paralegal/folder-cover.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  color: #f3e6c8;
+  --line: #f3e6c8;
+  --muted: #cdb594;
+}
+.dl-bg .dl-folder::before {
+  content: "";
+  position: absolute;
+  left: -14%;
+  top: -7.3%;
+  width: 122.08%;
+  height: 113.17%;
+  background: url("../assets/paralegal/folder-closed.png") 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  z-index: -1;
+}
+.dl-bg .dl-folder:hover,
+.dl-bg .dl-folder:focus-visible {
+  background: url("../assets/paralegal/folder-cover.png") 0 0 / 100% 100% no-repeat;
+  color: #f3e6c8;
+  box-shadow: none;
+  transform: translate(-3px, -4px) rotate(-0.6deg);
+  filter: brightness(1.08);
+  outline: none;
+}
+.dl-bg .dl-folder > * { grid-column: 2; text-align: center; }
+.dl-bg .dl-folder .dl-stamp { border-color: #f3e6c8; color: #f3e6c8; }
+
+/* ---------- John D'Brief over the photo (no white backing) ----------
+   The paralegal version uses a white backing that also makes the CRT's bright
+   line. Here the backing is see-through and a white glow layer only exists
+   while the picture switches on / off, so the TV effect still shows. */
+.dl-bg .pp-debrief-stage { background: transparent; }
+.dl-bg #screen-debrief.crt-on .pp-debrief-stage::after,
+.dl-bg #screen-debrief.crt-off .pp-debrief-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #fff;
+  pointer-events: none;
+}
+.dl-bg #screen-debrief.crt-on .pp-debrief-stage::after  { animation: crt-glow-on 0.55s both; }
+.dl-bg #screen-debrief.crt-off .pp-debrief-stage::after { animation: crt-glow-off 0.42s both; }
+@keyframes crt-glow-on  { 0%, 30% { opacity: 1; } 65%, 100% { opacity: 0; } }
+@keyframes crt-glow-off { 0% { opacity: 0; } 40%, 100% { opacity: 1; } }
+
+/* ---------- People of interest folder: one sheet per person ----------
+   Interview log at the top; portrait (at most the bottom half, a little wider
+   than tall so the whole sprite fits) with the name and role beside it. */
+.dl-person-sheet { display: flex; flex-direction: column; }
+.dl-person-sheet h2 { margin-bottom: 0.4rem; }
+.dl-person-sheet .dl-interview { flex: 1; min-height: 0; overflow: auto; font-size: 0.82rem; line-height: 1.45; }
+.dl-person-sheet .df-page-no { margin-bottom: 0.15rem; }
+.dl-person-sheet h2 { font-size: 0.95rem; }
+.dl-person-sheet .dl-q { margin-bottom: 0.45rem; }
+.dl-person-foot {
+  flex: none;
+  height: 40%;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.7rem;
+  margin-top: 0.5rem;
+}
+.dl-person-sheet .dl-portrait.big.dl-portrait-sheet {
+  width: 64%;
+  height: 100%;
+  aspect-ratio: auto;
+  max-width: none;
+  margin: 0;
+  flex: none;
+  border: 2px solid #1b120c;
+  background: rgba(255, 255, 255, 0.35);
+}
+.dl-person-id { padding-bottom: 0.2rem; min-width: 0; }
+.dl-person-id h3 { font-size: 0.95rem; text-decoration: underline; margin: 0 0 0.3rem; line-height: 1.2; }
+.dl-person-id p { font-size: 0.75rem; color: #5a4632; margin: 0; }
+/* the old hint fits the folder too */
+#view-suspect .df-desk { flex: 1; }
+
+/* ---------- the table (assets/detective/table.png) under every folder scene ----------
+   The classified folder and the whole investigation (case file, People of
+   interest folder for one person) sit on the table; the People of interest grid
+   does not. The menu, John's debrief and
+   the Case Closed card keep the evidence-board photo.
+   Paranormal Paralegal: the menu folder and the desk sit on it too (not the debrief). */
+#screen-folder,
+#screen-investigate,
+.pp-game #screen-cover,
+.pp-game #screen-desk {
+  /* edges fade into black (top layers), over the table zoomed in a little so
+     the fade has wood to work with */
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 85%, #000 100%),
+    linear-gradient(to right, #000 0%, transparent 9%, transparent 91%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 11%, transparent 89%, #000 100%),
+    #000 url("../assets/detective/table.png") center / 116% auto no-repeat;
+}
+/* the People of interest grid has no folder, so it keeps the evidence-board photo;
+   clicking a person opens their folder back on the table */
+#screen-investigate:has(#view-suspects:not([hidden])) { background: transparent; }
+/* the folder screen: "Back to menu" floats in the corner, so the folder and the
+   difficulty card are centred on the whole table */
+#screen-folder { position: absolute; }
+#screen-folder .dl-folder-row { height: 100%; }
+#screen-folder .dl-back { position: absolute; left: 1.5rem; bottom: 1.2rem; z-index: 5; }
+
+/* ---------- Paranormal Paralegal: John's debrief in the haunted room ----------
+   Same fade-to-black edges as the table, over the room zoomed in a little. */
+.pp-game #screen-debrief .pp-debrief-stage { background: #000; }
+/* on its own layer so the CRT ripple (#crt-wave) can bend it without touching the text */
+.pp-game #screen-debrief .pp-debrief-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  filter: url(#crt-wave);
+  background:
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 85%, #000 100%),
+    linear-gradient(to right, #000 0%, transparent 9%, transparent 91%, #000 100%),
+    linear-gradient(to bottom, #000 0%, transparent 11%, transparent 89%, #000 100%),
+    #000 url("../assets/paralegal/debrief-background.png") center / 116% auto no-repeat;
+}
+
+/* ---------- CRT screen effects on John's debrief (both games) ----------
+   Runs the whole time the debrief is up, kept light so the text stays easy to read:
+   - fine scanlines that creep down the screen, with a faint flicker
+   - a soft brighter band that rolls from top to bottom every few seconds
+   - John (and the haunted room in the paralegal version) ripple sideways in thin wavy lines (#crt-wave) */
+.crt-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.crt-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 4;               /* over John and the text box */
+  pointer-events: none;
+  overflow: hidden;
+}
+.crt-fx::before {
+  content: "";
+  position: absolute;
+  inset: -4px 0 0;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  animation: crt-scan 0.9s linear infinite, crt-flicker 3.7s steps(1) infinite;
+}
+.crt-fx::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 26%;
+  top: -26%;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.025) 35%, rgba(255, 255, 255, 0.045) 50%, rgba(255, 255, 255, 0.025) 65%, transparent);
+  mix-blend-mode: screen;
+  animation: crt-roll 6.5s linear infinite;
+}
+@keyframes crt-scan { to { transform: translateY(3px); } }
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  31% { opacity: 0.8; }
+  32% { opacity: 1; }
+  67% { opacity: 0.88; }
+  68% { opacity: 1; }
+}
+@keyframes crt-roll { to { top: 100%; } }
+/* the wavy ripple: John, and the room in the paralegal version */
+#screen-debrief .pp-john { filter: url(#crt-wave); }
+#screen-debrief .pp-john { animation: crt-jitter 5s steps(1) infinite; }
+@keyframes crt-jitter {
+  0%, 100% { translate: 0 0; }
+  47% { translate: 1px 0; }
+  48% { translate: -1px 0; }
+  49% { translate: 0 0; }
+  83% { translate: -1px 0; }
+  84% { translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crt-fx::before, .crt-fx::after, #screen-debrief .pp-john { animation: none; }
+  .crt-fx::after { display: none; }
+  #screen-debrief .pp-john, .pp-game #screen-debrief .pp-debrief-stage::before { filter: none; }
+}
